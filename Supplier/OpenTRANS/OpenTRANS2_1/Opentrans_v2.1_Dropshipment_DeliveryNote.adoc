@@ -1,0 +1,400 @@
+= Opentrans V2.1 DropShipment DeliveryNote
+Competec Service AG
+:doctype: book
+v1.1, 12-07-2024
+
+[preface]
+== Preface
+
+This document describes the implementation of Opentrans V2.1 for supplier dropshipment delivery notes / dispatch notification.
+
+<<<
+
+== Dispatch Notification Header
+
+=== Dispatch Notification Info
+
+.dispatch notification info elements
+[width="100%",options="header",cols="3,2,2"]
+|====================================================================================
+| Element name               | Description         | Example
+| DISPATCHNOTIFICATION_ID    | Delivery Note ID    | 1112223334
+| DISPATCHNOTIFICATION_DATE  | Date Time           | 2023-04-22T09:48:11
+| DELIVERY_DATE              | Element             | <<DeliveryDate>>
+| PARTIES                    | Parties             | <<Parties>>
+| SUPPLIER_IDREF             | Supplier's ID       | <<ShipPartiesRef>>
+| BUYER_IDREF                | Buyer's ID          | <<ShipPartiesRef>>
+| SHIPMENT_PARTIES_REFERENCE | References          | <<ShipPartiesRef>>
+| SHIPMENT_ID                | Shipment ID         | <<TrackAndTrace>>
+| TRACKING_TRACING_URL       | Tracking URL        | <<TrackAndTrace>>
+|====================================================================================
+
+<<<
+
+[[DeliveryDate]]
+Delivery Date
+~~~~~~~~~~~~
+
+The end date is used as delivery date.
+
+.DeliveryDate Elements
+[width="100%",options="header"]
+|====================================================================================
+| Element name         | Description   | Example
+| DELIVERY_START_DATE  | Date Time     | 2023-02-07T00:00:00
+| DELIVERY_END_DATE    | Date Time     | 2023-02-08T00:00:00
+|====================================================================================
+
+.Example:
+[source,xml]
+----
+<DELIVERY_DATE>
+  <DELIVERY_START_DATE>2023-02-07T00:00:00</DELIVERY_START_DATE>
+  <DELIVERY_END_DATE>2023-02-08T00:00:00</DELIVERY_END_DATE>
+</DELIVERY_DATE>
+----
+
+<<<
+
+[[Parties]]
+Parties
+^^^^^^
+Required parties are BUYER, SUPPLIER and FINAL_DELIVERY.
+
+.Party Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name   | Description                | Example      | Remarks
+| PARTY_ID       | buyer_specific ID          | A1234        | Attribute type defines party. Mandatory: buyer_specific.
+| PARTY_ROLE     | Identifies the role of this party | buyer |
+| ADDRESS        | Address data               |  <<Address>> | for delivery party required.
+|=======================================================================
+
+Supported codes for PARTY_ROLE and their interpretation:
+
+[width="100%",options="header"]
+|========================================================================
+| Code              | Description       | Remarks
+| buyer             | Buyers Address    | mandatory
+| supplier          | Suppliers Address | mandatory
+| final_delivery    | Delivery Address  | mandatory
+|========================================================================
+
+[[Address]]
+Address
+^^^^^^
+Addresses may be omitted, except for final_delivery.
+
+.Address Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name    | Description         | Example
+| NAME            | Company Name        | Sample AG
+| STREET          | Street              | Mustergasse 1
+| ZIP             | ZIP                 | 8000
+| CITY            | City                | Zürich
+| STATE           | Canton              | ZH
+| COUNTRY_CODED   | Country code        | CH
+|=======================================================================
+
+<<<
+
+.Example Parties Block:
+[source,xml]
+----
+<PARTIES>
+    <PARTY>
+        <bmecat:PARTY_ID type="buyer_specific">L123456</bmecat:PARTY_ID>
+        <bmecat:PARTY_ID type="gln">760000000000</bmecat:PARTY_ID>
+        <PARTY_ROLE>supplier</PARTY_ROLE>
+    </PARTY>
+    <PARTY>
+        <bmecat:PARTY_ID type="buyer_specific">K22222</bmecat:PARTY_ID>
+        <PARTY_ROLE>final_delivery</PARTY_ROLE>
+        <ADDRESS>
+            <bmecat:NAME>Max Muster</bmecat:NAME>
+            <bmecat:STREET>Gartenweg 123</bmecat:STREET>
+            <bmecat:ZIP>1212</bmecat:ZIP>
+            <bmecat:CITY>Musterlingen</bmecat:CITY>
+        </ADDRESS>
+    </PARTY>
+    <PARTY>
+        <bmecat:PARTY_ID type="buyer_specific">A1234567</bmecat:PARTY_ID>
+        <bmecat:PARTY_ID type="gln">769999999999</bmecat:PARTY_ID>
+        <PARTY_ROLE>buyer</PARTY_ROLE>
+    </PARTY>
+</PARTIES>
+----
+
+<<<
+
+[[ShipPartiesRef]]
+Parties References
+^^^^^^^^^^^^^^^^^^
+The type for each reference is supplier_specific.
+
+.Parties references
+[width="100%",options="header",cols="3,2,2"]
+|=======================================================================
+| Element name     | Description                          | Example
+| BUYER_IDREF      | defines buyer party id with type     | 444444
+| SUPPLIER_IDREF   | defines supplier party id with type  | 666666
+| SHIPMENT_PARTIES_REFERENCE   | defines delivery party id with type  | 444444
+|=======================================================================
+
+.Example:
+[source,xml]
+----
+<DISPATCHNOTIFICATION_INFO>
+<!-- more elements here -->
+<bmecat:SUPPLIER_IDREF type="buyer_specific">L123456</bmecat:SUPPLIER_IDREF>
+<bmecat:BUYER_IDREF type="buyer_specific">A1234567</bmecat:BUYER_IDREF>
+
+<SHIPMENT_PARTIES_REFERENCE>
+    <DELIVERY_IDREF type="buyer_specific">K22222</DELIVERY_IDREF>
+</SHIPMENT_PARTIES_REFERENCE>
+<!-- more elements here -->
+</DISPATCHNOTIFICATION_INFO>
+----
+
+[[TrackAndTrace]]
+Tracking and Tracing
+^^^^^^^^^^^^^^^^^^^^
+
+.tracking and tracing information
+[width="100%",options="header"]
+|=======================================================================
+| Element name          | Description             | Example
+| SHIPMENT_ID           | id to track parcel      | see code example
+| TRACKING_TRACING_URL  | url to track parcel     | see code example
+|=======================================================================
+
+.Example:
+[source,xml]
+----
+<DISPATCHNOTIFICATION_INFO>
+<!-- more elements here -->
+<SHIPMENT_ID>SHIP_ID_1234567</SHIPMENT_ID>
+<TRACKING_TRACING_URL>www.sometrackingpage.com/trackandtrace</TRACKING_TRACING_URL>
+<!-- more elements here -->
+</DISPATCHNOTIFICATION_INFO>
+----
+
+<<<
+
+== Dispatch Notification Item List
+
+[[DNItemList]]
+Dispatch Notification Items
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.Dispatch Notification item list element
+[width="100%",options="header"]
+|===================================================================================
+| Element name                     | Description             | Example       | Remarks
+| DISPATCHNOTIFICATION_ITEM_LIST   | contains all line items | <<DNItem>>    | at least one line is provided
+|===================================================================================
+
+[[DNItem]]
+=== Dispatch Notification Item
+
+.Dispatch Notification Item Elements
+[width="100%",options="header",cols="3,2,2"]
+|=======================================================================
+| Element name               | Description           | Example
+| LINE_ITEM_ID               | Line number           | 10
+| PRODUCT_ID                 | Product IDs           | <<ProductID>>
+| QUANTITY                   | Amount ordered        | 1
+| ORDER_UNIT                 | Unit, always p. piece | C62
+| ORDER_REFERENCE            | Reference to Order by buyer    | <<OrderRef>>
+| SHIPMENT_PARTIES_REFERENCE | ID to delivery address         | <<ShipRef>>
+|=======================================================================
+
+<<<
+
+[[ProductID]]
+==== Product ID
+
+.Product Id elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name      | Description            | Example        | type
+| BUYER_PID         | Product id by buyer    | abc1234        | <<GlossSku, sku>>
+| DESCRIPTION_SHORT | Product name           | Sample Product | Language is always german (ger)
+|=======================================================================
+
+.Example:
+[source,xml]
+----
+<PRODUCT_ID>
+    <bmecat:BUYER_PID>1567326</bmecat:BUYER_PID>
+    <bmecat:DESCRIPTION_SHORT>Some product text</bmecat:DESCRIPTION_SHORT>
+</PRODUCT_ID>
+----
+
+[[OrderRef]]
+==== Order Reference
+
+.Order Reference elements
+[width="90%",options="header"]
+|=======================================================
+| Element name  | Description              | Example
+| ORDER_ID      | original order id        | 4559022201
+| LINE_ITEM_ID  | original order line id   | 10
+|=======================================================
+
+.Example:
+[source,xml]
+----
+<ORDER_REFERENCE>
+  <ORDER_ID>4559022201</ORDER_ID>
+  <LINE_ITEM_ID>10</LINE_ITEM_ID>
+</ORDER_REFERENCE>
+----
+
+[[ShipRef]]
+==== Shipment Parties Reference
+
+.Shipment Party Reference elements
+[width="90%",options="header"]
+|==========================================================
+| Element name     | Description             | Example
+| DELIVERY_IDREF   | ID of delivery address  | 444444
+|==========================================================
+
+.Example:
+[source,xml]
+----
+<SHIPMENT_PARTIES_REFERENCE>
+  <DELIVERY_IDREF type="supplier_specific">444444</DELIVERY_IDREF>
+</SHIPMENT_PARTIES_REFERENCE>
+----
+
+<<<
+
+[[DNSummary]]
+== Dispatch Notification Summary
+
+.Dispatch Notification summary Elements
+[width="90%",options="header"]
+|=====================================================
+| Element name      | Description          | Example
+| TOTAL_ITEM_NUM    | Count of line items  | 1
+|=====================================================
+
+.Example:
+[source,xml]
+----
+<DISPATCHNOTIFICATION_SUMMARY>
+  <TOTAL_ITEM_NUM>1</TOTAL_ITEM_NUM>
+</DISPATCHNOTIFICATION_SUMMARY>
+----
+
+<<<
+
+== Appendix
+
+=== Sample Dispatch Notification
+
+[source,xml]
+----
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<DISPATCHNOTIFICATION
+ xmlns="http://www.opentrans.org/XMLSchema/2.1" version="2.1"
+ xmlns:bmecat="http://www.bmecat.org/bmecat/2005">
+  <DISPATCHNOTIFICATION_HEADER>
+    <DISPATCHNOTIFICATION_INFO>
+        <DISPATCHNOTIFICATION_ID>DN1122334455</DISPATCHNOTIFICATION_ID>
+        <DISPATCHNOTIFICATION_DATE>2024-05-11T10:00:00+01:00</DISPATCHNOTIFICATION_DATE>
+        <DELIVERY_DATE>
+            <DELIVERY_START_DATE>2024-02-29T10:00:00+01:00</DELIVERY_START_DATE>
+            <DELIVERY_END_DATE>2024-02-29T10:00:00+01:00</DELIVERY_END_DATE>
+        </DELIVERY_DATE>
+        <PARTIES>
+            <PARTY>
+                <bmecat:PARTY_ID type="buyer_specific">L123456</bmecat:PARTY_ID>
+                <bmecat:PARTY_ID type="gln">760000000000</bmecat:PARTY_ID>
+                <PARTY_ROLE>supplier</PARTY_ROLE>
+            </PARTY>
+            <PARTY>
+                <bmecat:PARTY_ID type="buyer_specific">K22222</bmecat:PARTY_ID>
+                <PARTY_ROLE>final_delivery</PARTY_ROLE>
+                <ADDRESS>
+                    <bmecat:NAME>Max Muster</bmecat:NAME>
+                    <bmecat:STREET>Gartenweg 123</bmecat:STREET>
+                    <bmecat:ZIP>1212</bmecat:ZIP>
+                    <bmecat:CITY>Musterlingen</bmecat:CITY>
+                </ADDRESS>
+            </PARTY>
+            <PARTY>
+                <bmecat:PARTY_ID type="buyer_specific">A1234567</bmecat:PARTY_ID>
+                <bmecat:PARTY_ID type="gln">769999999999</bmecat:PARTY_ID>
+                <PARTY_ROLE>buyer</PARTY_ROLE>
+            </PARTY>
+        </PARTIES>
+
+        <bmecat:SUPPLIER_IDREF type="buyer_specific">L123456</bmecat:SUPPLIER_IDREF>
+        <bmecat:BUYER_IDREF type="buyer_specific">A1234567</bmecat:BUYER_IDREF>
+
+        <SHIPMENT_PARTIES_REFERENCE>
+            <DELIVERY_IDREF type="buyer_specific">K22222</DELIVERY_IDREF>
+        </SHIPMENT_PARTIES_REFERENCE>
+
+        <SHIPMENT_ID>SHIP_ID_1234567</SHIPMENT_ID>
+        <TRACKING_TRACING_URL>www.sometrackingpage.com/trackandtrace/findMySendungsnummer</TRACKING_TRACING_URL>
+    </DISPATCHNOTIFICATION_INFO>
+  </DISPATCHNOTIFICATION_HEADER>
+
+  <DISPATCHNOTIFICATION_ITEM_LIST>
+    <DISPATCHNOTIFICATION_ITEM>
+        <LINE_ITEM_ID>1</LINE_ITEM_ID>
+        <PRODUCT_ID>
+            <bmecat:BUYER_PID>1567285</bmecat:BUYER_PID>
+            <bmecat:DESCRIPTION_SHORT>Notebooktasche</bmecat:DESCRIPTION_SHORT>
+        </PRODUCT_ID>
+        <QUANTITY>2</QUANTITY>
+        <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+        <ORDER_REFERENCE>
+            <ORDER_ID>1990845089</ORDER_ID>
+            <LINE_ITEM_ID>300</LINE_ITEM_ID>
+        </ORDER_REFERENCE>
+        <SHIPMENT_PARTIES_REFERENCE>
+            <DELIVERY_IDREF type="buyer_specific">K22222</DELIVERY_IDREF>
+        </SHIPMENT_PARTIES_REFERENCE>
+    </DISPATCHNOTIFICATION_ITEM>
+
+    <DISPATCHNOTIFICATION_ITEM>
+        <LINE_ITEM_ID>2</LINE_ITEM_ID>
+        <PRODUCT_ID>
+            <bmecat:BUYER_PID>1567326</bmecat:BUYER_PID>
+            <bmecat:DESCRIPTION_SHORT>Some other product text, little longer</bmecat:DESCRIPTION_SHORT>
+        </PRODUCT_ID>
+        <QUANTITY>2</QUANTITY>
+        <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+        <ORDER_REFERENCE>
+            <ORDER_ID>1990845089</ORDER_ID>
+            <LINE_ITEM_ID>13</LINE_ITEM_ID>
+        </ORDER_REFERENCE>
+        <SHIPMENT_PARTIES_REFERENCE>
+            <DELIVERY_IDREF type="buyer_specific">K22222</DELIVERY_IDREF>
+        </SHIPMENT_PARTIES_REFERENCE>
+    </DISPATCHNOTIFICATION_ITEM>
+
+  </DISPATCHNOTIFICATION_ITEM_LIST>
+
+  <DISPATCHNOTIFICATION_SUMMARY>
+    <TOTAL_ITEM_NUM>2</TOTAL_ITEM_NUM>
+  </DISPATCHNOTIFICATION_SUMMARY>
+</DISPATCHNOTIFICATION>
+
+----
+
+<<<
+
+[glossary]
+== Glossary
+
+[glossary]
+[[GlossSku]]
+sku::
+Stock Keeping Unit, product id by competec.
