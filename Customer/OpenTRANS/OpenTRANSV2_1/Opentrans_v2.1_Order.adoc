@@ -1,0 +1,368 @@
+= Opentrans V2.1 Orders
+Competec Service AG
+:doctype: book
+v1.0, 02-06-2023: Initial document
+
+
+[preface]
+Preface
+-------
+This document describes the implementation of Opentrans V2.1 for customer orders.
+
+Status
+~~~~~~
+[width="90%",options="header"]
+|============================
+| Code | Description     
+| M    | Mandatory Field 
+| C    | Conditional Field 
+|============================
+
+Order Header
+------------
+
+[[ControlInfo]]
+Control Info
+~~~~~~~~~~~~
+.Control info elements
+[width="100%",options="header", cols="1,5,1"]
+|=======================================================================
+| Element name       | Description                          | Status
+| GENERATION_DATE    | Date and Time of Document generation | M
+| STOP_AUTOMATIC_PROCESSING | If set, order will be considered a test order. | C
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<CONTROL_INFO>
+	<GENERATION_DATE>2023-02-10</GENERATION_DATE>
+</CONTROL_INFO>
+----
+
+[[OrderInfo]]
+Order Info
+~~~~~~~~~~
+.Order info elements
+[width="100%",options="header", cols="1,5,1,3,3"]
+|====================================================================================
+| Element name      | Description         | Status | Example           | Remarks
+| ORDER_ID          | Customers Order ID  | M      | ABC123            |
+| ORDER_DATE        | Date Time           | M      | 2022-11-21T12:00:00 | 
+| PARTIES           | Parties             | M      | <<Parties>>       |
+| ORDER_PARTIES_REFERENCES | References   | M      | <<OrderPartiesRef>> |
+| CURRENCY          | Currency            | M      | CHF               | must be CHF 
+|====================================================================================
+
+[[Parties]]
+Parties
+^^^^^^^
+A List of Party blocks. At least two parties (buyer and supplier) must be provided. 
+If delivery is omitted, delivery will go to buyers address.
+
+.Party Elements
+[width="100%",options="header", cols="1,5,1,3,3"]
+|=======================================================================
+| Element name   | Description         | Status | Example     | Remarks
+| PARTY_ID       | ID, GLN, DUNS...    | M      | A1234       | Attribute type defines party
+| PARTY_ROLE     | Identifies the role of this party  | M | buyer     | only supported codes
+| ADDRESS        | Address data        | M      |  <<Address>> |
+|=======================================================================
+
+Allowed values for Attribute type and their interpretation:
+
+[width="100%",options="header"]
+|==============================================
+| PARTY_ID type =      | Description
+| supplier_specific    | ID given by supplier
+| buyer_specific       | ID given by buyer
+|==============================================
+
+Supported codes for PARTY_ROLE and their interpretation:
+[width="100%",options="header", cols="1,5,1,5"]
+|==============================================
+| Code            | Description              | Status | Remarks
+| buyer           | Buyer identification     | M      | 
+| supplier        | Supplier identification  | M      | At least an ID must be provided      
+| final_delivery  | Full Address             | C      | If present, shipping will go to this address
+| delivery        | Full Address             | C      | Only parsed if no final_delivery given.
+|==============================================
+
+[[Address]]
+Address
+^^^^^^^
+Only three addresses are processed: buyer, supplier and if provided, one delivery address.
+
+* The buyer party must provide an ID.
+* The supplier party may be reduced to the Party ID and Role.
+* A (final-)delivery party must contain a complete address. If omitted, buyer's default delivery address will be used.
+
+.Address Elements
+[width="100%",options="header", cols="1,5,1,3,3"]
+|=======================================================================
+| Element name    | Description         | Status | Example       | Remarks
+| NAME            | Company Name        | M      | Sample AG     | 
+| NAME2           | Additional Line     |        | Department X  | 
+| NAME3           | Additional Line     |        |               | 
+| NAME4           | Additional Line     |        |               |
+| CONTACT_DETAILS | Contact block       |        | <<ContactDetails>> |  Delivery Address only
+| STREET          | Street              | M      | CHN 34.5      | 
+| STREET2         | Additional line     | M      | Mustergasse 1 | 
+| ZIP             | ZIP                 | M      | 8000          | 
+| CITY            | City                | M      | Zürich        | 
+| STATE           | Canton              |        | ZH            | 
+| COUNTRY_CODED   | Country code        |        | CH            | Only CH allowed
+|=======================================================================
+
+[[ContactDetails]]
+Contact details
+^^^^^^^^^^^^^^^
+Contact details are mapped for delivery address only.
+
+.Contact details
+[width="100%",options="header", cols="1,5,1,3,3"]
+|=======================================================================
+| Element name    | Description      | Status | Example          | Remarks
+| CONTACT_NAME    | Contacts name    |        | M. Muster        |
+| CONTACT_PHONE   | Contacts phone   |        | +41 56 1234455   | 
+| CONTACT_MAILS   | Email Element    |        |                  | only first mail
+|=======================================================================
+
+.Example Party Block with contact details:
+[source, xml]
+----
+<PARTY>
+	<bmecat:PARTY_ID type="buyer_specific">A1234</bmecat:PARTY_ID>
+	<PARTY_ROLE>delivery</PARTY_ROLE>
+	<ADDRESS>
+		<bmecat:NAME>Sample AG</bmecat:NAME>
+		<bmecat:NAME2>Department X</bmecat:NAME2>
+		<CONTACT_DETAILS>
+			<bmecat:CONTACT_NAME>M. Muster</bmecat:CONTACT_NAME>
+		</CONTACT_DETAILS>
+		<bmecat:STREET>Mustergasse 1</bmecat:STREET>
+		<bmecat:ZIP>8000</bmecat:ZIP>
+		<bmecat:CITY>Zürich</bmecat:CITY>
+		<bmecat:STATE>ZH</bmecat:STATE>
+		<bmecat:COUNTRY>CH</bmecat:COUNTRY>
+	</ADDRESS>
+</PARTY>
+----
+
+[[OrderPartiesRef]]
+Order parties references
+^^^^^^^^^^^^^^^^^^^^^^^^
+The type for each reference may be buyer_specific, supplier_specific or party_specific.
+
+.Order parties references
+[width="100%",options="header", cols="1,5,1,3,3"]
+|=======================================================================
+| Element name     | Description                          | Status | Example  | Remarks
+| BUYER_IDREF      | defines buyer party id with type     | M      | A1234    | This ID is used to identify the buyer by competec.
+| SUPPLIER_IDREF   | defines supplier party id with type  | M      | B5432    |
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<ORDER_PARTIES_REFERENCE>
+	<bmecat:BUYER_IDREF type="supplier_specific">A1234</bmecat:BUYER_IDREF>
+	<bmecat:SUPPLIER_IDREF type="buyer_specific">B5432</bmecat:SUPPLIER_IDREF>
+</ORDER_PARTIES_REFERENCE>
+----
+
+Order Item List
+---------------
+
+[[OrderITem]]
+Order Item
+~~~~~~~~~~
+.Order item element
+[width="100%",options="header", cols="1,5,1,3,3"]
+|=======================================================================
+| Element name | Description             | Status | Example       | Remarks
+| ORDER_ITEM   | contains all line items | M      | <<OrderItem>> | At least one line item must be provided
+|=======================================================================
+
+[[OrderItem]]
+Order Item
+^^^^^^^^^^^
+
+.Order item Elements
+[width="100%",options="header", cols="1,5,1,3,3"]
+|=======================================================================
+| Element name      | Description         | Status | Example        | Remarks
+| LINE_ITEM_ID      | Line number         | M      | 1              | 
+| PRODUCT_ID        | Product IDs         | M      | <<ProductID>>  | Must at least provide an <<GlossSku, sku>>
+| QUANTITY          | Amount ordered      | M      | 10             | 
+| ORDER_UNIT        | Unit                | M      | C62            | Only C62 supported
+| PRODUCT_PRICE_FIX |                     | M      | <<ProductPriceFix>> | 
+| PRICE_LINE_AMOUNT | Net total price     | M      | 502.00         | 
+|=======================================================================
+
+
+[[ProductID]]
+Product ID
+^^^^^^^^^^^
+.Product Id elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name      | Description            | Status | Example        | type
+| SUPPLIER_PID      | Product id by supplier | M      | 1513           | <<GlossSku, sku>>
+| INTERNATIONAL_PID | EAN code               |        | 7613081045766  | <<GlossEan, ean>>
+| DESCRIPTION_SHORT | Product name           |        | Sample Product | max 100 characters
+| DESCRIPTION_LONG  | Product description    |        | Sample Product extended Text | only parsed, if short text is empty
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<PRODUCT_ID>
+	<bmecat:SUPPLIER_PID type="supplier_specific">1513</bmecat:SUPPLIER_PID>
+	<bmecat:INTERNATIONAL_PID type="ean">7613081045766</bmecat:INTERNATIONAL_PID>
+	<bmecat:DESCRIPTION_SHORT>Sample Product</bmecat:DESCRIPTION_SHORT>
+	<bmecat:DESCRIPTION_LONG>Sample Product extended Text</bmecat:DESCRIPTION_LONG>
+</PRODUCT_ID>
+----
+
+
+[[ProductPriceFix]]
+Product price fixed
+^^^^^^^^^^^^^^^^^^
+.Product price fixed elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name      | Description     | Status | Example   | Remarks
+| PRICE_AMOUNT      | amount per unit | M      | 50.20     | 
+|=======================================================================
+
+
+.Example:
+[source, xml]
+----
+<PRODUCT_PRICE_FIX>
+	<bmecat:PRICE_AMOUNT>50.20</bmecat:PRICE_AMOUNT>
+</PRODUCT_PRICE_FIX>
+----
+
+
+[[OrderSummary]]
+Order Summary
+^^^^^^^^^^^^^
+.Order summary Elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name      | Description         | Status | Example       | Remarks
+| TOTAL_ITEM_NUM    | Count of line items | M      | 1             | 
+| TOTAL_AMOUNT      | Net amount          | M      | 502.00        | 
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<ORDER_SUMMARY>
+	<TOTAL_ITEM_NUM>1</TOTAL_ITEM_NUM>
+	<TOTAL_AMOUNT>502.00</TOTAL_AMOUNT>
+</ORDER_SUMMARY>
+----
+
+Appendix
+--------
+
+Sample Order
+~~~~~~~~~~~~
+[source, xml]
+----
+<?xml version="1.0" encoding="utf-8"?>
+<OPENTRANS xmlns="http://www.opentrans.org/XMLSchema/2.1"
+	xmlns:bmecat="http://www.bmecat.org/bmecat/2005">
+  <ORDER type="standard" version="2.1"
+    xmlns="http://www.opentrans.org/XMLSchema/2.1"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:bmecat="http://www.bmecat.org/bmecat/2005">
+    <ORDER_HEADER>
+      <CONTROL_INFO>
+        <GENERATION_DATE>2023-02-10</GENERATION_DATE>
+      </CONTROL_INFO>
+      <ORDER_INFO>
+        <ORDER_ID>ABC123</ORDER_ID>
+        <ORDER_DATE>2022-11-21T12:00:00</ORDER_DATE>
+        <PARTIES>
+          <PARTY>
+            <PARTY_ID type="supplier_specific">A1234</PARTY_ID>
+            <PARTY_ROLE>buyer</PARTY_ROLE>
+            <ADDRESS>
+              <bmecat:NAME>Your Company Name</bmecat:NAME>
+              <bmecat:STREET>Streetname 1</bmecat:STREET>
+              <bmecat:ZIP>8953</bmecat:ZIP>
+              <bmecat:CITY>Dietikon</bmecat:CITY>
+              <bmecat:STATE>ZH</bmecat:STATE>
+              <bmecat:COUNTRY>CH</bmecat:COUNTRY>
+            </ADDRESS>
+          </PARTY>
+          <PARTY>
+            <bmecat:PARTY_ID type="buyer_specific">A1234</bmecat:PARTY_ID>
+            <PARTY_ROLE>delivery</PARTY_ROLE>
+            <ADDRESS>
+              <bmecat:NAME>Sample AG</bmecat:NAME>
+              <bmecat:NAME2>Department X</bmecat:NAME2>
+              <CONTACT_DETAILS>
+                <bmecat:CONTACT_NAME>M. Muster</bmecat:CONTACT_NAME>
+              </CONTACT_DETAILS>
+              <bmecat:STREET>Mustergasse 1</bmecat:STREET>
+              <bmecat:ZIP>8000</bmecat:ZIP>
+              <bmecat:CITY>Zürich</bmecat:CITY>
+              <bmecat:STATE>ZH</bmecat:STATE>
+              <bmecat:COUNTRY>CH</bmecat:COUNTRY>
+            </ADDRESS>
+          </PARTY>
+          <PARTY>
+            <bmecat:PARTY_ID type="buyer_specific">B5432</bmecat:PARTY_ID>
+            <PARTY_ROLE>supplier</PARTY_ROLE>
+          </PARTY>
+        </PARTIES>
+        <ORDER_PARTIES_REFERENCE>
+          <bmecat:BUYER_IDREF type="supplier_specific">A1234</bmecat:BUYER_IDREF>
+          <bmecat:SUPPLIER_IDREF type="buyer_specific">>B5432</bmecat:SUPPLIER_IDREF>
+        </ORDER_PARTIES_REFERENCE>
+        <bmecat:CURRENCY>CHF</bmecat:CURRENCY>
+      </ORDER_INFO>
+    </ORDER_HEADER>
+    <ORDER_ITEM_LIST>
+      <ORDER_ITEM>
+        <LINE_ITEM_ID>1</LINE_ITEM_ID>
+        <PRODUCT_ID>
+          <bmecat:SUPPLIER_PID type="supplier_specific">1513</bmecat:SUPPLIER_PID>
+          <bmecat:INTERNATIONAL_PID type="ean">7613081045766</bmecat:INTERNATIONAL_PID>
+          <bmecat:DESCRIPTION_SHORT>Sample Product</bmecat:DESCRIPTION_SHORT>
+          <bmecat:DESCRIPTION_LONG>Sample Product extended Text</bmecat:DESCRIPTION_LONG>
+        </PRODUCT_ID>
+        <QUANTITY>10</QUANTITY>
+        <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+        <PRODUCT_PRICE_FIX>
+          <bmecat:PRICE_AMOUNT>50.20</bmecat:PRICE_AMOUNT>
+        </PRODUCT_PRICE_FIX>
+        <PRICE_LINE_AMOUNT>502.00</PRICE_LINE_AMOUNT>
+      </ORDER_ITEM>
+    </ORDER_ITEM_LIST>
+    <ORDER_SUMMARY>
+      <TOTAL_ITEM_NUM>1</TOTAL_ITEM_NUM>
+      <TOTAL_AMOUNT>502.00</TOTAL_AMOUNT>
+    </ORDER_SUMMARY>
+  </ORDER>
+</OPENTRANS>
+----
+
+[glossary]
+Glossary
+--------
+
+[glossary]
+[[GlossSku]]
+sku::
+  Stock Keeping Unit, product id by competec.
+
+[[GlossEan]]
+ean::
+  European Article Number.

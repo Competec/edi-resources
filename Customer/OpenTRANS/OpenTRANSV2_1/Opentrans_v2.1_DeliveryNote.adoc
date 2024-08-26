@@ -1,0 +1,542 @@
+= Opentrans V2.1 DeliveryNote
+Competec Service AG
+:doctype: book
+v1.1, 13-07-2023
+
+
+[preface]
+Preface
+-------
+This document describes the implementation of Opentrans V2.1 for customer delivery notes / dispatch notification.
+
+
+Delivery Note Header
+--------------------
+
+Control Info
+~~~~~~~~~~~~
+.Control info elements
+[width="100%",options="header", cols="1,5"]
+|=======================================================================
+| Element name       | Description
+| GENERATION_DATE    | Date and Time of Document generation 
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<CONTROL_INFO>
+  <GENERATOR_INFO>Competec EDI</GENERATOR_INFO>
+  <GENERATION_DATE>2023-04-23T09:48:11</GENERATION_DATE>
+</CONTROL_INFO>
+----
+
+Dispatch Notification Info
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+.dispatch notification info elements
+[width="100%",options="header", cols="3,2,2"]
+|====================================================================================
+| Element name               | Description         | Example
+| DISPATCHNOTIFICATION_ID    | Delivery Note ID    | 1112223334          
+| DISPATCHNOTIFICATION_DATE  | Date Time           | 2023-04-22T09:48:11
+| DELIVERY_DATE              | Element             | <<DeliveryDate>>
+| PARTIES                    | Parties             | <<Parties>>         
+| SUPPLIER_IDREF             | Supplier's ID       | <<ShipPartiesRef>>   
+| BUYER_IDREF                | Buyer's ID          | <<ShipPartiesRef>>   
+| SHIPMENT_PARTIES_REFERENCE | Shipping ID         | <<ShipPartiesRef>>   
+| TRACKING_TRACING_URL       | Postpack url        | <<LogDetailInfo>>    
+| LOGISTIC_DETAILS_INFO      | Element             | <<LogisticsDetailInfo>> 
+|====================================================================================
+
+[[DeliveryDate]]
+Delivery Date
+~~~~~~~~~~~~~
+The delivery dates are just an estimate, they are not guaranteed.
+
+.DeliveryDate Elements
+[width="100%",options="header"]
+|====================================================================================
+| Element name         | Description   | Example
+| DELIVERY_START_DATE  | Date Time     | 2023-02-07T00:00:00
+| DELIVERY_END_DATE    | Date Time     | 2023-02-08T00:00:00
+|====================================================================================
+
+.Example:
+[source, xml]
+----
+<DELIVERY_DATE>
+  <DELIVERY_START_DATE>2023-02-07T00:00:00</DELIVERY_START_DATE>
+  <DELIVERY_END_DATE>2023-02-08T00:00:00</DELIVERY_END_DATE>
+</DELIVERY_DATE>
+----
+            
+[[Parties]]
+Parties
+^^^^^^^
+
+.Party Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name   | Description                | Example      | Remarks
+| PARTY_ID       | competec ID, GLN, DUNS...  | A1234        | Attribute type defines party
+| PARTY_ROLE     | Identifies the role of this party | buyer | 
+| ADDRESS        | Address data               |  <<Address>> |
+|=======================================================================
+
+Values for Attribute type and their interpretation:
+
+[width="100%",options="header"]
+|===========================================================
+| PARTY_ID type =      | Description
+| supplier_specific    | ID given by supplier
+| buyer_specific       | ID given by buyer
+|===========================================================
+
+Supported codes for PARTY_ROLE and their interpretation:
+[width="100%",options="header"]
+|========================================================================
+| Code              | Description       | Remarks
+| buyer             | Buyers Address    | buyer_specific id provided if present
+| supplier          | Suppliers Address | 
+| delivery          | Delivery Address  |
+|========================================================================
+
+[[Address]]
+Address
+^^^^^^^
+Addresses for all parties are always provided.
+
+.Address Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name    | Description         | Example
+| NAME            | Company Name        | Sample AG
+| NAME2           | Additional Line     | Department X 
+| NAME3           | Additional Line     | CHN 34.5
+| CONTACT_DETAILS | Contact block       | <<ContactDetails>> 
+| STREET          | Street              | Mustergasse 1 
+| ZIP             | ZIP                 | 8000 
+| CITY            | City                | Zürich
+| STATE           | Canton              | ZH 
+| COUNTRY_CODED   | Country code        | CH
+|=======================================================================
+
+[[ContactDetails]]
+Contact details
+^^^^^^^^^^^^^^^
+
+.Contact details
+[width="100%",options="header"]
+|=======================================================================
+| Element name    | Description      | Example
+| CONTACT_NAME    | Contacts name    | M. Muster
+|=======================================================================
+
+.Example Party Block with contact details:
+[source, xml]
+----
+<PARTY>
+  <ns2:PARTY_ID type="supplier_specific">444444</ns2:PARTY_ID>
+  <PARTY_ROLE>delivery</PARTY_ROLE>
+    <ADDRESS>
+      <ns2:NAME>Sample AG</ns2:NAME>
+      <ns2:NAME2>Department X</ns2:NAME2>
+      <ns2:NAME3>CHN 34.5</ns2:NAME3>
+      <CONTACT_DETAILS>
+        <ns2:CONTACT_NAME>M. Muster</ns2:CONTACT_NAME>
+      </CONTACT_DETAILS>
+      <ns2:STREET>Mustergasse 1</ns2:STREET>
+      <ns2:ZIP>8000</ns2:ZIP>
+      <ns2:CITY>Zürich</ns2:CITY>
+      <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+    </ADDRESS>
+  </PARTY>
+----
+
+[[ShipPartiesRef]]
+Parties References
+^^^^^^^^^^^^^^^^^^
+The type for each reference is supplier_specific.
+
+.Parties references
+[width="100%",options="header", cols="3,2,2"]
+|=======================================================================
+| Element name     | Description                          | Example
+| BUYER_IDREF      | defines buyer party id with type     | 444444
+| SUPPLIER_IDREF   | defines supplier party id with type  | 666666
+| SHIPMENT_PARTIES_REFERENCE   | defines delivery party id with type  | 444444
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<ns2:SUPPLIER_IDREF type="supplier_specific">666666</ns2:SUPPLIER_IDREF>
+<ns2:BUYER_IDREF type="supplier_specific">444444</ns2:BUYER_IDREF>
+
+<SHIPMENT_PARTIES_REFERENCE>
+  <DELIVERY_IDREF type="supplier_specific">444444</DELIVERY_IDREF>
+</SHIPMENT_PARTIES_REFERENCE>
+----
+
+[[LogDetailInfo]]
+Tracking and Logistics Details
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+If available, tracking information is added. Only the first tracking url can be passed.
+
+.tracking and tracing information
+[width="100%",options="header"]
+|=======================================================================
+| Element name          | Description             | Example
+| TRACKING_TRACING_URL  | url to track parcel     | see code example
+| LOGISTIC_DETAILS_INFO | List of Packages        | <<LogisticsDetailInfo>>
+|=======================================================================
+
+
+Logistic Detail Info
+^^^^^^^^^^^^^^^^^^^^
+
+[[LogisticsDetailInfo]]
+.Logistics Detail Info
+[width="100%",options="header"]
+|=======================================================================
+| Element name          | Description             | Example
+| PACKAGE_INFO          | List of Packages        |
+| ->PACKAGE             | Package                 | 
+| ->->PACKAGE_ID        | tracking Id and type    | 99.37.115923.25417339 
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<TRACKING_TRACING_URL>https://service.post.ch/EasyTrack/submitParcelData.do?formattedParcelCodes=99.37.115923.25417339&amp;p_language=de</TRACKING_TRACING_URL>
+<LOGISTIC_DETAILS_INFO>
+  <PACKAGE_INFO>
+    <PACKAGE>
+      <PACKAGE_ID type="buyer_specific">99.37.115923.25417339</PACKAGE_ID>
+    </PACKAGE>
+  </PACKAGE_INFO>
+</LOGISTIC_DETAILS_INFO>
+----
+
+Dispatch Notification Item List
+-------------------------------
+
+[[DNItemList]]
+Dispatch Notification Items
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.Dispatch Notification item list element
+[width="100%",options="header"]
+|===================================================================================
+| Element name                     | Description             | Example       | Remarks
+| DISPATCHNOTIFICATION_ITEM_LIST   | contains all line items | <<DNItem>>    | at least one line is provided
+|===================================================================================
+
+[[DNItem]]
+Dispatch Notification Item
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.Dispatch Notification Item Elements
+[width="100%",options="header", cols="3,2,2"]
+|=======================================================================
+| Element name               | Description           | Example
+| LINE_ITEM_ID               | Line number           | 10
+| PRODUCT_ID                 | Product IDs           | <<ProductID>>
+| QUANTITY                   | Amount ordered        | 1
+| ORDER_UNIT                 | Unit, always p. piece | C62
+| DELIVERY_REFERENCE         | Delivery Dates        | <<DeliveryRef>>
+| ORDER_REFERENCE            | Reference to Order by buyer    | <<OrderRef>>
+| SUPPLIER_ORDER_REFERENCE   | Reference to Order by supplier | <<SupOrderRef>>
+| SHIPMENT_PARTIES_REFERENCE | ID to delivery address         | <<ShipRef>>
+|=======================================================================
+
+
+[[ProductID]]
+Product ID
+^^^^^^^^^^
+.Product Id elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name      | Description            | Example        | type
+| SUPPLIER_PID      | Product id by supplier | 1513           | <<GlossSku, sku>>
+| BUYER_PID         | Product id by buyer    | abc1234        | 
+| INTERNATIONAL_PID | EAN code               | 7613081045766  | <<GlossEan, ean>>
+| DESCRIPTION_SHORT | Product name           | Sample Product | Language is always german (ger)
+| MANUFACTURER_INFO | Manufacturer ID        | <<ManufacturerInfo>> |
+|=======================================================================
+
+
+[[ManufacturerInfo]]
+Manufacturer Info
+^^^^^^^^^^^^^^^^^
+.Manufacturer elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name      | Description      | Example   | Remarks
+| MANUFACTURER_PID  | Manufacturers ID | F00354    | may be omitted
+|=======================================================================
+
+
+.Example:
+[source, xml]
+----
+<PRODUCT_ID>
+  <ns2:SUPPLIER_PID type="supplier_specific">1513</ns2:SUPPLIER_PID>
+  <ns2:BUYER_PID>abc1234</ns2:BUYER_PID>
+  <ns2:INTERNATIONAL_PID type="ean">7613081045766</ns2:INTERNATIONAL_PID>
+  <ns2:DESCRIPTION_SHORT lang="ger">Sample Product</ns2:DESCRIPTION_SHORT>
+  <MANUFACTURER_INFO>
+    <ns2:MANUFACTURER_PID>F00354</ns2:MANUFACTURER_PID>
+  </MANUFACTURER_INFO>
+</PRODUCT_ID>
+----
+
+[[DeliveryRef]]
+Delivery Reference
+^^^^^^^^^^^^^^^^^
+.Delivery Reference elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name      | Description         | Example
+| DELIVERY_DATE     | Delivery time range | see code example
+|=======================================================================
+
+
+.Example:
+[source, xml]
+----
+<DELIVERY_REFERENCE>
+  <DELIVERY_DATE type="optional">
+    <DELIVERY_START_DATE>2023-03-14T00:00:00</DELIVERY_START_DATE>
+    <DELIVERY_END_DATE>2023-03-15T00:00:00</DELIVERY_END_DATE>
+  </DELIVERY_DATE>
+</DELIVERY_REFERENCE>
+----
+
+[[OrderRef]]
+Order Reference
+^^^^^^^^^^^^^^^
+.Order Reference elements
+[width="90%",options="header"]
+|==============================================
+| Element name  | Description      | Example
+| ORDER_ID      | buyers order id  | 4559022201
+| LINE_ITEM_ID  | buyers line id   | 10
+|==============================================
+
+.Example:
+[source, xml]
+----
+<ORDER_REFERENCE>
+  <ORDER_ID>4559022201</ORDER_ID>
+  <LINE_ITEM_ID>10</LINE_ITEM_ID>
+</ORDER_REFERENCE>
+----
+
+[[SupOrderRef]]
+Supplier Order Reference
+^^^^^^^^^^^^^^^^^^^^^^^^
+.Supplier Order Reference elements
+[width="90%",options="header"]
+|==========================================================
+| Element name           | Description         | Example
+| SUPPLIER_ORDER_ID      | suppliers order id  | 123456
+| SUPPLIER_LINE_ITEM_ID  | suppliers line id   | 10000
+|==========================================================
+
+.Example:
+[source, xml]
+----
+<SUPPLIER_ORDER_REFERENCE>
+  <SUPPLIER_ORDER_ID>123456</SUPPLIER_ORDER_ID>
+  <SUPPLIER_ORDER_ITEM_ID>10000</SUPPLIER_ORDER_ITEM_ID>
+</SUPPLIER_ORDER_REFERENCE>
+----
+
+[[ShipRef]]
+Shipment Parties Reference
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+.Shipment Party Reference elements
+[width="90%",options="header"]
+|==========================================================
+| Element name     | Description             | Example
+| DELIVERY_IDREF   | ID of delivery address  | 444444
+|==========================================================
+
+.Example:
+[source, xml]
+----
+<SHIPMENT_PARTIES_REFERENCE>
+  <DELIVERY_IDREF type="supplier_specific">444444</DELIVERY_IDREF>
+</SHIPMENT_PARTIES_REFERENCE>
+----
+
+[[DNSummary]]
+Dispatch Notification Summary
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.Dispatch Notification summary Elements
+[width="90%",options="header"]
+|=====================================================
+| Element name      | Description          | Example
+| TOTAL_ITEM_NUM    | Count of line items  | 1
+|=====================================================
+
+.Example:
+[source, xml]
+----
+<DISPATCHNOTIFICATION_SUMMARY>
+  <TOTAL_ITEM_NUM>1</TOTAL_ITEM_NUM>
+</DISPATCHNOTIFICATION_SUMMARY>
+----
+
+Appendix
+--------
+
+Sample Dispatch Notification
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[source, xml]
+----
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OPENTRANS xmlns="http://www.opentrans.org/XMLSchema/2.1" xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+  xmlns:ns2="http://www.bmecat.org/bmecat/2005" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#">
+  <DISPATCHNOTIFICATION version="2.1">
+    <DISPATCHNOTIFICATION_HEADER>
+      <CONTROL_INFO>
+        <GENERATOR_INFO>Competec EDI</GENERATOR_INFO>
+        <GENERATION_DATE>2023-04-23T09:48:11</GENERATION_DATE>
+      </CONTROL_INFO>
+      <DISPATCHNOTIFICATION_INFO>
+        <DISPATCHNOTIFICATION_ID>30535144</DISPATCHNOTIFICATION_ID>
+        <DISPATCHNOTIFICATION_DATE>2022-04-22T09:48:11</DISPATCHNOTIFICATION_DATE>
+        <DELIVERY_DATE>
+          <DELIVERY_START_DATE>2023-02-07T00:00:00</DELIVERY_START_DATE>
+          <DELIVERY_END_DATE>2023-02-08T00:00:00</DELIVERY_END_DATE>
+        </DELIVERY_DATE>
+        <PARTIES>
+          <PARTY>
+            <ns2:PARTY_ID type="buyer_specific">AN123456789</ns2:PARTY_ID>
+            <ns2:PARTY_ID type="supplier_specific">444444</ns2:PARTY_ID>
+            <PARTY_ROLE>buyer</PARTY_ROLE>
+            <ADDRESS>
+              <ns2:NAME>Sample AG</ns2:NAME>
+              <ns2:NAME2>Department X</ns2:NAME2>
+              <ns2:NAME3>CHN 34.5</ns2:NAME3>
+              <CONTACT_DETAILS>
+                <ns2:CONTACT_NAME>M. Muster</ns2:CONTACT_NAME>
+              </CONTACT_DETAILS>
+              <ns2:STREET>Mustergasse 1</ns2:STREET>
+              <ns2:ZIP>8000</ns2:ZIP>
+              <ns2:CITY>Zürich</ns2:CITY>
+              <ns2:COUNTRY>CH</ns2:COUNTRY>
+            </ADDRESS>
+          </PARTY>
+          <PARTY>
+            <ns2:PARTY_ID type="supplier_specific">444444</ns2:PARTY_ID>
+            <PARTY_ROLE>invoice_recipient</PARTY_ROLE>
+            <ADDRESS>
+              <ns2:NAME>Sample AG</ns2:NAME>
+              <ns2:STREET>Mustergasse 1</ns2:STREET>
+              <ns2:ZIP>8000</ns2:ZIP>
+              <ns2:CITY>Zürich</ns2:CITY>
+              <ns2:COUNTRY>CH</ns2:COUNTRY>
+            </ADDRESS>
+          </PARTY>
+          <PARTY>
+            <ns2:PARTY_ID type="supplier_specific">444444</ns2:PARTY_ID>
+            <PARTY_ROLE>delivery</PARTY_ROLE>
+            <ADDRESS>
+              <ns2:NAME>Sample AG</ns2:NAME>
+              <ns2:NAME2>Department X</ns2:NAME2>
+              <ns2:NAME3>CHN 34.5</ns2:NAME3>
+              <CONTACT_DETAILS>
+                <ns2:CONTACT_NAME>M. Muster</ns2:CONTACT_NAME>
+              </CONTACT_DETAILS>
+              <ns2:STREET>Mustergasse 1</ns2:STREET>
+              <ns2:ZIP>8000</ns2:ZIP>
+              <ns2:CITY>Zürich</ns2:CITY>
+              <ns2:COUNTRY>CH</ns2:COUNTRY>
+            </ADDRESS>
+          </PARTY>
+          <PARTY>
+            <ns2:PARTY_ID type="supplier_specific">666666</ns2:PARTY_ID>
+            <PARTY_ROLE>supplier</PARTY_ROLE>
+            <ADDRESS>
+              <ns2:NAME>BRACK.CH AG</ns2:NAME>
+              <ns2:STREET>Hintermättlistr. 3</ns2:STREET>
+              <ns2:ZIP>5506</ns2:ZIP>
+              <ns2:CITY>Mägenwil</ns2:CITY>
+              <ns2:COUNTRY>CH</ns2:COUNTRY>
+              <ns2:VAT_ID>CHE-191.398.369 MWST</ns2:VAT_ID>
+              <ns2:PHONE type="office">062 889 80 80</ns2:PHONE>
+            </ADDRESS>
+          </PARTY>
+        </PARTIES>
+        <ns2:SUPPLIER_IDREF type="supplier_specific">666666</ns2:SUPPLIER_IDREF>
+        <ns2:BUYER_IDREF type="supplier_specific">444444</ns2:BUYER_IDREF>
+        <SHIPMENT_PARTIES_REFERENCE>
+          <DELIVERY_IDREF type="supplier_specific">444444</DELIVERY_IDREF>
+        </SHIPMENT_PARTIES_REFERENCE>
+      </DISPATCHNOTIFICATION_INFO>
+    </DISPATCHNOTIFICATION_HEADER>
+    <DISPATCHNOTIFICATION_ITEM_LIST>
+      <DISPATCHNOTIFICATION_ITEM>
+        <LINE_ITEM_ID>10</LINE_ITEM_ID>
+        <PRODUCT_ID>
+          <ns2:SUPPLIER_PID type="supplier_specific">1513</ns2:SUPPLIER_PID>
+          <ns2:BUYER_PID>abc1234</ns2:BUYER_PID>
+          <ns2:INTERNATIONAL_PID type="ean">7613081045766</ns2:INTERNATIONAL_PID>
+          <ns2:DESCRIPTION_SHORT lang="ger">TestArtikel</ns2:DESCRIPTION_SHORT>
+          <MANUFACTURER_INFO>
+            <ns2:MANUFACTURER_PID>F00354</ns2:MANUFACTURER_PID>
+          </MANUFACTURER_INFO>
+        </PRODUCT_ID>
+        <QUANTITY>1</QUANTITY>
+        <ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
+        <PRODUCT_PRICE_FIX>
+          <ns2:PRICE_AMOUNT>2.76</ns2:PRICE_AMOUNT>
+        </PRODUCT_PRICE_FIX>
+        <PRICE_LINE_AMOUNT>2.76</PRICE_LINE_AMOUNT>
+        <DELIVERY_DATE type="fixed">
+          <DELIVERY_START_DATE>2023-02-08T00:00:00</DELIVERY_START_DATE>
+          <DELIVERY_END_DATE>2023-02-09T00:00:00</DELIVERY_END_DATE>
+        </DELIVERY_DATE>
+      </ORDERRESPONSE_ITEM>
+        <DELIVERY_REFERENCE>
+          <DELIVERY_DATE type="optional">
+            <DELIVERY_START_DATE>2023-03-14T00:00:00</DELIVERY_START_DATE>
+            <DELIVERY_END_DATE>2023-03-15T00:00:00</DELIVERY_END_DATE>
+          </DELIVERY_DATE>
+        </DELIVERY_REFERENCE>
+        <ORDER_REFERENCE>
+          <ORDER_ID>4559022201</ORDER_ID>
+          <LINE_ITEM_ID>10</LINE_ITEM_ID>
+        </ORDER_REFERENCE>
+        <SUPPLIER_ORDER_REFERENCE>
+          <SUPPLIER_ORDER_ID>123456</SUPPLIER_ORDER_ID>
+          <SUPPLIER_ORDER_ITEM_ID>10000</SUPPLIER_ORDER_ITEM_ID>
+        </SUPPLIER_ORDER_REFERENCE>
+        <SHIPMENT_PARTIES_REFERENCE>
+          <DELIVERY_IDREF type="supplier_specific">444444</DELIVERY_IDREF>
+        </SHIPMENT_PARTIES_REFERENCE>
+      </DISPATCHNOTIFICATION_ITEM>
+    </DISPATCHNOTIFICATION_ITEM_LIST>
+    <DISPATCHNOTIFICATION_SUMMARY>
+      <TOTAL_ITEM_NUM>1</TOTAL_ITEM_NUM>
+    </DISPATCHNOTIFICATION_SUMMARY>
+  </DISPATCHNOTIFICATION>
+</OPENTRANS>
+
+----
+
+[glossary]
+Glossary
+--------
+
+[glossary]
+[[GlossSku]]
+sku::
+  Stock Keeping Unit, product id by competec.
+
+[[GlossEan]]
+ean::
+  European Article Number.

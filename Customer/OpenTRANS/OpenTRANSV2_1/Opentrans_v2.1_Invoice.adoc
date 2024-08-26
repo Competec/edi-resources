@@ -1,0 +1,507 @@
+= Opentrans V2.1 Invoice
+Competec Service AG
+:doctype: book
+v1.1, 13-07-2023
+
+
+[preface]
+Preface
+-------
+This document describes the implementation of Opentrans V2.1 for customer invoice.
+
+
+Order Response Header
+---------------------
+
+[[ControlInfo]]
+Control Info
+~~~~~~~~~~~~
+.Control info elements
+[width="100%", options="header", cols="1,2"]
+|=======================================================================
+| Element name       | Description
+| GENERATION_DATE    | Date and Time of Document generation 
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<CONTROL_INFO>
+  <GENERATOR_INFO>Competec EDI</GENERATOR_INFO>
+  <GENERATION_DATE>2023-04-23T09:48:11</GENERATION_DATE>
+</CONTROL_INFO>
+----
+
+[[InvoiceInfo]]
+Invoice Info
+~~~~~~~~~~~~
+.Invoice info elements
+[width="100%",options="header", cols="3,2,2,2"]
+|====================================================================================
+| Element name         | Description         | Example             | Remarks
+| INVOICE_ID           | Customers Order ID  | 1112223334          |
+| INVOICE_DATE         | Date Time           | 2023-03-16T00:00:00 | 
+| INVOICE_TYPE         | Type of Invoice     | invoice             | 
+| DELIVERY_DATE        | Date Time           | <<DeliveryDate>>    | 
+| PARTIES              | Parties             | <<Parties>>         |
+| INVOICE_ISSUER_IDREF | Reference key       | 666666              |
+| INVOICE_RECIPIENT_IDREF | Reference key    | 444444              |
+| CURRENCY             | Currency            | CHF                 | only CHF
+| PAYMENT              | Payment conditions  | <<Payment>>         | 
+| REMARKS              | additional Infos    | see code sample     | qrIbam, qrRef and OrderReference
+|====================================================================================
+
+[[DeliveryDate]]
+Delivery Date
+~~~~~~~~~~~~~
+
+.DeliveryDate Elements
+[width="100%",options="header", cols="3,2,2,2"]
+|====================================================================================
+| Element name         | Description   | Example             | Remarks
+| DELIVERY_START_DATE  | Date Time     | 2023-03-15T00:00:00 | always at start of day
+| DELIVERY_END_DATE    | Date Time     | 2023-03-16T00:00:00 | always at start of day
+|====================================================================================
+
+.Example:
+[source, xml]
+----
+<DELIVERY_DATE type="optional">
+  <DELIVERY_START_DATE>2023-03-15T00:00:00</DELIVERY_START_DATE>
+  <DELIVERY_END_DATE>2023-03-16T00:00:00</DELIVERY_END_DATE>
+</DELIVERY_DATE>
+----
+            
+[[Parties]]
+Parties
+^^^^^^^
+
+.Party Elements
+[width="100%",options="header", cols="3,2,2,2"]
+|=======================================================================
+| Element name   | Description         | Example           | Remarks
+| PARTY_ID       | ID, GLN, DUNS...    | A1234             | Attribute type defines party
+| PARTY_ROLE     | defined values      | invoice_recipient | 
+| ADDRESS        | Address data        | <<Address>>      |
+|=======================================================================
+
+Values for Attribute type and their interpretation:
+
+[width="100%",options="header"]
+|===========================================================
+| PARTY_ID type =      | Description
+| supplier_specific    | ID given by supplier
+| buyer_specific       | ID given by buyer
+|===========================================================
+
+Supported codes for PARTY_ROLE and their interpretation:
+[width="100%",options="header"]
+|====================================
+| Code              | Description
+| supplier          | Full Address
+| invoice_recipient | Full Address
+|====================================
+
+
+[[Address]]
+Address
+^^^^^^^
+.Address Elements
+[width="100%",options="header", cols="3,2,2,2"]
+|=======================================================================
+| Element name    | Description         | Example           | Remarks
+| NAME            | Company Name        | Sample AG         | 
+| NAME2           | Additional Line     | Department X      | 
+| NAME3           | Additional Line     | CHN 34.5          |
+| CONTACT_DETAILS | Contact block       | <<ContactDetails>> | only Name provided
+| STREET          | Street              | Mustergasse 1     | 
+| ZIP             | ZIP                 | 8000              | 
+| CITY            | City                | Zürich            | 
+| COUNTRY_CODED   | Country code        | CH                | 
+| PHONE           | Phone Number        | 055 123 45 67     | optional, supplier only
+| VAT_ID          | Vat ID              | CHE-123.123.123   | optional
+|=======================================================================
+
+
+[[ContactDetails]]
+Contact details
+^^^^^^^^^^^^^^^
+.Contact details
+[width="100%",options="header", cols="3,2,2"]
+|=======================================================================
+| Element name    | Description      | Example
+| CONTACT_NAME    | Contacts name    | M. Muster
+|=======================================================================
+
+.Party Block with contact details:
+[source, xml]
+----
+<PARTY>
+  <ns2:PARTY_ID type="supplier_specific">444444</ns2:PARTY_ID>
+  <PARTY_ROLE>invoice_recipient</PARTY_ROLE>
+    <ADDRESS>
+      <ns2:NAME>Sample AG</ns2:NAME>
+      <ns2:NAME2>Department X</ns2:NAME2>
+      <ns2:NAME3>CHN 34.5</ns2:NAME3>
+      <CONTACT_DETAILS>
+        <ns2:CONTACT_NAME>M. Muster</ns2:CONTACT_NAME>
+      </CONTACT_DETAILS>
+      <ns2:STREET>Mustergasse 1</ns2:STREET>
+      <ns2:ZIP>8000</ns2:ZIP>
+      <ns2:CITY>Zürich</ns2:CITY>
+      <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+    </ADDRESS>
+  </PARTY>
+----
+
+
+Invoice Issuer and Recipient References
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.Invoice references
+[width="100%",options="header", cols="3,2,2"]
+|===========================================================
+| Element name              | Description         | Example
+| INVOICE_ISSUER_IDREF      | invoicing party     | 666666
+| INVOICE_RECIPIENT_IDREF   | invoicee party      | 444444
+|===========================================================
+
+.Example:
+[source, xml]
+----
+<INVOICE_ISSUER_IDREF type="supplier_specific">666666</INVOICE_ISSUER_IDREF>
+<INVOICE_RECIPIENT_IDREF type="supplier_specific">444444</INVOICE_RECIPIENT_IDREF>   
+----
+
+[[Payment]]
+Payment
+^^^^^^^^
+May also contain Skonto Information.
+
+.Payment element
+[width="100%",options="header", cols="3,2,2,2"]
+|===================================================================================
+| Element name        | Description   | Example     | Remarks
+| PAYMENT_TERMS       | Element       |             | can be multiple
+| ->TIME_FOR_PAYMENT  | Element       |             | can contain discount_factor
+| ->->DAYS            | Count of Days | 30          | 
+| ->VALUE_DATE        | Date          | 15.03.23    | 
+|===================================================================================
+
+.Example:
+[source, xml]
+----
+<PAYMENT>
+  <PAYMENT_TERMS>
+    <TIME_FOR_PAYMENT>
+      <DAYS>30</DAYS>
+    </TIME_FOR_PAYMENT>
+    <VALUE_DATE>15.03.23</VALUE_DATE>
+  </PAYMENT_TERMS>
+</PAYMENT>
+----
+
+[[Remarks]]
+Remarks
+^^^^^^^
+Additional Information for payment is added in remarks:
+OrderReference, qrIban and qrRef
+
+.Remark element
+[width="100%",options="header", cols="3,2,2,2"]
+|===================================================================================
+| Element name     | type              | Description         | Example
+| REMARKS          | OrderReference    | Contains Order ID   | 12345678 
+| REMARKS          | qrIban            | Contains IBAN       | CH7030000001500494724
+| REMARKS          | qrRef             | Contains IBAN       | 000000000001111111305351562
+|===================================================================================
+
+.Example:
+[source, xml]
+----
+<REMARKS type="OrderReference">12345678</REMARKS>
+<REMARKS type="qrIban">CH7030000001500494724</REMARKS>
+<REMARKS type="qrRef">000000000001111111305351562</REMARKS>
+----
+
+
+Invoice Item List
+-----------------
+
+[[InvoiceItems]]
+Invoice Items
+~~~~~~~~~~~~
+There is at least one invoice item provided. 
+
+.Invoice item element
+[width="100%",options="header", cols="3,2,2"]
+|===================================================================================
+| Element name         | Description             | Example
+| INVOICE_ITEM_LIST    | contains all line items | <<InvoiceItem>>
+|===================================================================================
+
+[[InvoiceItem]]
+Invoice Item
+^^^^^^^^^^^^^
+All items are provided with Unit C62, piece (STK).
+
+.Invoice Item Elements
+[width="100%",options="header", cols="3,2,2"]
+|=======================================================================
+| Element name           | Description                        | Example
+| LINE_ITEM_ID           | Line number of invoice item        | 10
+| PRODUCT_ID             | Product IDs                        | <<ProductID>>
+| QUANTITY               | Amount ordered                     | 1
+| ORDER_UNIT             | Unit                               | C62
+| PRODUCT_PRICE_FIX      |                                    | <<ProductPriceFix>>
+| PRICE_LINE_AMOUNT      | Net total price                    | 2.76                
+| ORDER_REFERENCE          | Customer Order and Line references | <<OrderRef>> 
+| SUPPLIER_ORDER_REFERENCE | Supplier Order and Line references | <<SupOrderRef>>
+|=======================================================================
+
+
+[[ProductID]]
+Product ID
+^^^^^^^^^^^
+.Product Id elements
+[width="100%",options="header", cols="3,2,2,2"]
+|=======================================================================
+| Element name      | Description            | Example        | type
+| SUPPLIER_PID      | Product id by supplier | 1513           | <<GlossSku, sku>>
+| INTERNATIONAL_PID | EAN code               | 7613081045766  | <<GlossEan, ean>>
+| BUYER_PID         | Product id by buyer    | aa1234         | only if provided
+| DESCRIPTION_SHORT | Product name           | Sample Product | Language is always german (ger)
+| SERIAL_NUMBER     | List of Serial numbers | 111555666      | only for Products with serial numbers.
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<PRODUCT_ID>
+  <ns2:SUPPLIER_PID>250035</ns2:SUPPLIER_PID>
+  <ns2:INTERNATIONAL_PID>4033653140379</ns2:INTERNATIONAL_PID>
+  <ns2:BUYER_PID>A005</ns2:BUYER_PID>
+  <ns2:DESCRIPTION_SHORT>Caran d'Ache Druckbleistift Fixpencil</ns2:DESCRIPTION_SHORT>
+  <SERIAL_NUMBER>15861331</SERIAL_NUMBER>
+</PRODUCT_ID>
+----
+
+
+[[ProductPriceFix]]
+Product price fixed
+^^^^^^^^^^^^^^^^^^
+.Product price fixed elements
+[width="100%",options="header", cols="3,2,2"]
+|=======================================================================
+| Element name      | Description         | Example
+| PRICE_AMOUNT      | amount per unit     | 10.31 
+| TAX_DETAILS_FIX   | Tax Details Element | see code below
+|=======================================================================
+
+
+.Example:
+[source, xml]
+----
+<PRODUCT_PRICE_FIX>
+  <ns2:PRICE_AMOUNT>10.31</ns2:PRICE_AMOUNT>
+  <TAX_DETAILS_FIX>
+    <ns2:TAX_TYPE>VAT</ns2:TAX_TYPE>
+    <ns2:TAX>0.077</ns2:TAX>
+    <TAX_AMOUNT>7.94</TAX_AMOUNT>
+  </TAX_DETAILS_FIX>
+</PRODUCT_PRICE_FIX>
+----
+
+[[OrderRef]]
+Order Reference and Supplier Order reference
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.Order reference
+[width="100%",options="header", cols="3,2,2"]
+|=======================================================================
+| Element name   | Description        | Example
+| ORDER_ID       | Customer Order Id  | 112233 
+| LINE_ITEM_ID   | Customer Line Id   | 1    
+|=======================================================================
+
+[[SupOrderRef]]
+.Supplier order reference
+[width="100%",options="header", cols="3,2,2"]
+|=======================================================================
+| Element name            | Description        | Example
+| SUPPLIER_ORDER_ID       | Supplier Order Id  | 2456789
+| SUPPLIER_LINE_ITEM_ID   | Supplier Line Id   | 10000
+|=======================================================================
+
+
+.Example:
+[source, xml]
+----
+<ORDER_REFERENCE>
+  <ORDER_ID>4800070257</ORDER_ID>
+  <LINE_ITEM_ID>1</LINE_ITEM_ID>
+</ORDER_REFERENCE>
+
+<SUPPLIER_ORDER_REFERENCE>
+  <SUPPLIER_ORDER_ID>31413172</SUPPLIER_ORDER_ID>
+  <SUPPLIER_ORDER_ITEM_ID>10000</SUPPLIER_ORDER_ITEM_ID>
+</SUPPLIER_ORDER_REFERENCE>
+----
+
+
+
+
+
+[[InvoiceSummary]]
+Invoice Summary
+^^^^^^^^^^^^^^^
+Tax types are always VAT, there are no other types implemented.
+
+.Invoice summary Elements
+[width="90%",options="header"]
+|=====================================================
+| Element name      | Description          | Example
+| TOTAL_ITEM_NUM    | Count of line items  | 9  
+| NET_VALUE_GOODS   | Net value total      | 287.56
+| TOTAL_AMOUNT      | Net amount           | 309.7
+| TOTAL_TAX         | TAX_DETAILS_FIXED    | 
+| -> TAX_TYPE       | Type of tax          | VAT
+| -> TAX            | Tax value            | 7.7  
+| -> TAX_AMOUNT     | Tax price            | 22.14 
+| -> TAX_BASE       | Tax base             | 287.55
+|=====================================================
+
+
+Appendix
+--------
+
+Sample Orderresponse
+~~~~~~~~~~~~~~~~~~~~
+[source, xml]
+----
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OPENTRANS xmlns="http://www.opentrans.org/XMLSchema/2.1" xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+  xmlns:ns2="http://www.bmecat.org/bmecat/2005" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#">
+  <INVOICE version="2.1">
+    <INVOICE_HEADER>
+      <CONTROL_INFO>
+        <GENERATOR_INFO>Competec EDI</GENERATOR_INFO>
+        <GENERATION_DATE>2022-04-22T09:48:11</GENERATION_DATE>
+      </CONTROL_INFO>
+      <INVOICE_INFO>
+        <INVOICE_ID>30535156</INVOICE_ID>
+        <INVOICE_DATE>2022-04-22T09:48:11</INVOICE_DATE>
+        <INVOICE_TYPE>invoice</INVOICE_TYPE>
+        <DELIVERY_DATE type="optional">
+          <DELIVERY_START_DATE>2023-03-15T00:00:00</DELIVERY_START_DATE>
+          <DELIVERY_END_DATE>2023-03-16T00:00:00</DELIVERY_END_DATE>
+        </DELIVERY_DATE>
+        <PARTIES>
+          <PARTY>
+            <ns2:PARTY_ID type="supplier_specific">666666</ns2:PARTY_ID>
+            <PARTY_ROLE>supplier</PARTY_ROLE>
+            <ADDRESS>
+              <ns2:NAME>BRACK.CH AG</ns2:NAME>
+              <ns2:STREET>Hintermättlistr. 3</ns2:STREET>
+              <ns2:ZIP>5506</ns2:ZIP>
+              <ns2:CITY>Mägenwil</ns2:CITY>
+              <ns2:COUNTRY>Schweiz</ns2:COUNTRY>
+              <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+              <ns2:VAT_ID>CHE-191.398.369 MWST</ns2:VAT_ID>
+              <ns2:PHONE type="office">062 889 80 80</ns2:PHONE>
+            </ADDRESS>
+          </PARTY>
+          <PARTY>
+            <ns2:PARTY_ID type="supplier_specific">444444</ns2:PARTY_ID>
+            <PARTY_ROLE>invoice_recipient</PARTY_ROLE>
+            <ADDRESS>
+              <ns2:NAME>Sample AG</ns2:NAME>
+              <CONTACT_DETAILS>
+                <ns2:CONTACT_NAME>M. Muster</ns2:CONTACT_NAME>
+              </CONTACT_DETAILS>
+              <ns2:STREET>Mustergasse 1</ns2:STREET>
+              <ns2:ZIP>8000</ns2:ZIP>
+              <ns2:CITY>Zürich</ns2:CITY>
+              <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+            </ADDRESS>
+          </PARTY>
+        </PARTIES>
+        <INVOICE_ISSUER_IDREF type="supplier_specific">666666</INVOICE_ISSUER_IDREF>
+        <INVOICE_RECIPIENT_IDREF type="supplier_specific">444444</INVOICE_RECIPIENT_IDREF>
+        <ns2:CURRENCY>CHF</ns2:CURRENCY>
+        <PAYMENT>
+          <PAYMENT_TERMS>
+            <TIME_FOR_PAYMENT>
+              <DAYS>30</DAYS>
+            </TIME_FOR_PAYMENT>
+            <VALUE_DATE>15.03.23</VALUE_DATE>
+          </PAYMENT_TERMS>
+        </PAYMENT>
+        <REMARKS type="OrderReference">12345678</REMARKS>
+        <REMARKS type="qrIban">CH7030000001500494724</REMARKS>
+        <REMARKS type="qrRef">000000000001111111305351562</REMARKS>
+      </INVOICE_INFO>
+    </INVOICE_HEADER>
+    <INVOICE_ITEM_LIST>
+      <INVOICE_ITEM>
+        <LINE_ITEM_ID>SMA MIDIC BE CMD DC-1</LINE_ITEM_ID>
+        <PRODUCT_ID>
+          <ns2:SUPPLIER_PID>250035</ns2:SUPPLIER_PID>
+          <ns2:INTERNATIONAL_PID>4033653140379</ns2:INTERNATIONAL_PID>
+          <ns2:BUYER_PID/>
+          <ns2:DESCRIPTION_SHORT>Caran d'Ache Druckbleistift Fixpencil</ns2:DESCRIPTION_SHORT>
+        </PRODUCT_ID>
+        <QUANTITY>10</QUANTITY>
+        <ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
+        <PRODUCT_PRICE_FIX>
+          <ns2:PRICE_AMOUNT>10.31</ns2:PRICE_AMOUNT>
+          <TAX_DETAILS_FIX>
+            <ns2:TAX_TYPE>VAT</ns2:TAX_TYPE>
+            <ns2:TAX>0.077</ns2:TAX>
+            <TAX_AMOUNT>7.94</TAX_AMOUNT>
+          </TAX_DETAILS_FIX>
+        </PRODUCT_PRICE_FIX>
+        <PRICE_LINE_AMOUNT>103.10</PRICE_LINE_AMOUNT>
+        <ORDER_REFERENCE>
+          <ORDER_ID>4800070257</ORDER_ID>
+          <LINE_ITEM_ID>1</LINE_ITEM_ID>
+        </ORDER_REFERENCE>
+        <SUPPLIER_ORDER_REFERENCE>
+          <SUPPLIER_ORDER_ID>31413172</SUPPLIER_ORDER_ID>
+          <SUPPLIER_ORDER_ITEM_ID>10000</SUPPLIER_ORDER_ITEM_ID>
+        </SUPPLIER_ORDER_REFERENCE>
+      </INVOICE_ITEM>
+
+      ... more items ...
+
+    </INVOICE_ITEM_LIST>
+    <INVOICE_SUMMARY>
+      <TOTAL_ITEM_NUM>9</TOTAL_ITEM_NUM>
+      <NET_VALUE_GOODS>287.56</NET_VALUE_GOODS>
+      <TOTAL_AMOUNT>309.7</TOTAL_AMOUNT>
+      <TOTAL_TAX>
+        <TAX_DETAILS_FIX>
+          <ns2:TAX_TYPE>VAT</ns2:TAX_TYPE>
+          <ns2:TAX>7.7</ns2:TAX>
+          <TAX_AMOUNT>22.14</TAX_AMOUNT>
+          <TAX_BASE>287.55</TAX_BASE>
+        </TAX_DETAILS_FIX>
+      </TOTAL_TAX>
+    </INVOICE_SUMMARY>
+  </INVOICE>
+</OPENTRANS>
+
+----
+
+[glossary]
+Glossary
+--------
+
+[glossary]
+[[GlossSku]]
+sku::
+  Stock Keeping Unit, product id by competec.
+
+[[GlossEan]]
+ean::
+  European Article Number.

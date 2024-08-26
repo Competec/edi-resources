@@ -1,0 +1,431 @@
+= Opentrans V2.1 OrderResponse
+Competec Service AG
+:doctype: book
+v1.1, 13-07-2023
+
+
+[preface]
+Preface
+-------
+This document describes the implementation of Opentrans V2.1 for customer order response.
+
+All currencies are CHF.
+All product units are C62 (piece)
+
+
+Order Response Header
+---------------------
+
+[[ControlInfo]]
+Control Info
+~~~~~~~~~~~~
+.Control info elements
+[width="100%",options="header", cols="1,2"]
+|=======================================================================
+| Element name       | Description
+| GENERATION_DATE    | Date and Time of Document generation 
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<CONTROL_INFO>
+  <GENERATOR_INFO>Competec EDI</GENERATOR_INFO>
+  <GENERATION_DATE>2023-04-23T09:48:11</GENERATION_DATE>
+</CONTROL_INFO>
+----
+
+[[OrderResponseInfo]]
+Order Response Info
+~~~~~~~~~~~~~~~~~~~
+
+.Order response info elements
+[width="100%",options="header", cols="3,2,2"]
+|=====================================================================
+| Element name         | Description         | Example             
+| ORDER_ID             | Customers Order ID  | 1112223334          
+| ORDER_RESPONSE_DATE  | Date Time           | 2023-04-22T09:48:11 
+| ORDER_DATE           | Date Time           | 2023-04-23T00:00:00  
+| SUPPLIER_ORDER_ID    | Order Number        | 33344455            
+| DELIVERY_DATE        | <<DeliveryDate>>    |                      
+| PARTIES              | Parties             | <<Parties>>         
+| ORDER_PARTIES_REFERENCES | References      | <<OrderPartiesRef>> 
+| CURRENCY             | Currency            | CHF                 
+|=====================================================================
+
+[[DeliveryDate]]
+Delivery Date
+~~~~~~~~~~~~~
+The delivery dates are just an estimate, they are not guaranteed.
+
+.DeliveryDate Elements
+[width="100%",options="header", cols="3,2,2"]
+|============================================================
+| Element name         | Description   | Example             
+| DELIVERY_START_DATE  | Date Time     | 2023-02-07T00:00:00 
+| DELIVERY_END_DATE    | Date Time     | 2023-02-08T00:00:00  
+|============================================================
+
+.Example:
+[source, xml]
+----
+<DELIVERY_DATE>
+  <DELIVERY_START_DATE>2023-02-07T00:00:00</DELIVERY_START_DATE>
+  <DELIVERY_END_DATE>2023-02-08T00:00:00</DELIVERY_END_DATE>
+</DELIVERY_DATE>
+----
+            
+[[Parties]]
+Parties
+^^^^^^^
+ 
+If delivery is omitted, delivery will go to buyers address.
+
+.Party Elements
+[width="100%",options="header", cols="3,2,2"]
+|=======================================================================
+| Element name   | Description                       | Example     
+| PARTY_ID       | ID, GLN, DUNS...                  | A1234       
+| PARTY_ROLE     | Identifies the role of this party | buyer        
+| ADDRESS        | Address data                      |  <<Address>>
+|=======================================================================
+
+Values for Attribute type and their interpretation:
+
+[width="100%",options="header"]
+|===========================================================
+| PARTY_ID type =      | Description
+| supplier_specific    | ID given by supplier
+| buyer_specific       | ID given by buyer
+|===========================================================
+
+Supported codes for PARTY_ROLE and their interpretation:
+[width="100%",options="header"]
+|========================================================================
+| Code              | Description                     
+| buyer             | Address ordering               
+| supplier          | Address supplier (Brack, Alltron)
+| invoice_recipient | Address for invoice to send to 
+| delivery          | Address to receive goods      
+|========================================================================
+
+[[Address]]
+Address
+^^^^^^^
+Addresses for all parties are always provided.
+
+.Address Elements
+[width="100%",options="header", cols="3,2,2"]
+|=======================================================================
+| Element name    | Description         | Example      
+| NAME            | Company Name        | Sample AG     
+| NAME2           | Additional Line     | Department X  
+| NAME3           | Additional Line     | CHN 34.5     
+| CONTACT_DETAILS | Contact block       | <<ContactDetails>>
+| STREET          | Street              | Mustergasse 1 
+| ZIP             | ZIP                 | 8000          
+| CITY            | City                | Zürich        
+| STATE           | Canton              | ZH            
+| COUNTRY_CODED   | Country code        | CH            
+|=======================================================================
+
+[[ContactDetails]]
+Contact details
+^^^^^^^^^^^^^^^
+
+.Contact details
+[width="100%",options="header", cols="3,2,2"]
+|=======================================================================
+| Element name    | Description      | Example
+| CONTACT_NAME    | Contacts name    | M. Muster
+|=======================================================================
+
+.Example Party Block with contact details:
+[source, xml]
+----
+<PARTY>
+  <ns2:PARTY_ID type="supplier_specific">444444</ns2:PARTY_ID>
+  <PARTY_ROLE>delivery</PARTY_ROLE>
+    <ADDRESS>
+      <ns2:NAME>Sample AG</ns2:NAME>
+      <ns2:NAME2>Department X</ns2:NAME2>
+      <ns2:NAME3>CHN 34.5</ns2:NAME3>
+      <CONTACT_DETAILS>
+        <ns2:CONTACT_NAME>M. Muster</ns2:CONTACT_NAME>
+      </CONTACT_DETAILS>
+      <ns2:STREET>Mustergasse 1</ns2:STREET>
+      <ns2:ZIP>8000</ns2:ZIP>
+      <ns2:CITY>Zürich</ns2:CITY>
+      <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+    </ADDRESS>
+  </PARTY>
+----
+
+[[OrderPartiesRef]]
+Order Response Parties References
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.Order parties references
+[width="100%",options="header", cols="3,2,2"]
+|=======================================================================
+| Element name     | Description                          | Example 
+| BUYER_IDREF      | defines buyer party id with type     | 444444  
+| SUPPLIER_IDREF   | defines supplier party id with type  | 666666  
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<ORDER_PARTIES_REFERENCE>
+	<bmecat:BUYER_IDREF type="supplier_specific">444444</bmecat:BUYER_IDREF>
+	<bmecat:SUPPLIER_IDREF type="supplier_specific">666666</bmecat:SUPPLIER_IDREF>
+</ORDER_PARTIES_REFERENCE>
+----
+
+Order Response Item List
+------------------------
+
+At least one item is provided.
+
+[[OrderResponseItems]]
+Order Response Items
+~~~~~~~~~~~~~~~~~~~
+.Order item element
+[width="100%", options="header", cols="3,2,2"]
+|===================================================================================
+| Element name              | Description             | Example  
+| ORDERRESPONSE_ITEM_LIST   | contains all line items | <<OrderResponseItem>>
+|===================================================================================
+
+[[OrderResponseItem]]
+Order Item
+^^^^^^^^^^^
+
+.Order Response Item Elements
+[width="100%", options="header", cols="3,2,2"]
+|=======================================================================
+| Element name      | Description         | Example
+| LINE_ITEM_ID      | Line number         | 10 
+| PRODUCT_ID        | Product IDs         | <<ProductID>>
+| QUANTITY          | Amount ordered      | 1
+| ORDER_UNIT        | Unit                | C62
+| PRODUCT_PRICE_FIX |                     | <<ProductPriceFix>>
+| PRICE_LINE_AMOUNT | Net total price     | 2.76
+| DELIVERY_DATE     | Delivery Date range | <<DeliveryDate>>
+|=======================================================================
+
+
+[[ProductID]]
+Product ID
+^^^^^^^^^^^
+.Product Id elements
+[width="100%" ,options="header", cols="3,2,2"]
+|=======================================================================
+| Element name      | Description                      | Example
+| SUPPLIER_PID      | Product id by supplier, <<GlossSku, sku>> | 1513 
+| INTERNATIONAL_PID | <<GlossEan, ean>> code           | 7613081045766
+| DESCRIPTION_SHORT | Product name, always german     | Sample Product
+| MANUFACTURER_INFO | Manufacturer ID                  | <<ManufacturerInfo>>
+|=======================================================================
+
+
+[[ManufacturerInfo]]
+Manufacturer Info
+^^^^^^^^^^^^^^^^^
+.Manufacturer elements
+[width="100%", options="header"]
+|=======================================================================
+| Element name      | Description      | Example   | Remarks
+| MANUFACTURER_PID  | Manufacturers ID | F00354    | may be omitted
+|=======================================================================
+
+
+.Example PRODUCT_ID:
+[source, xml]
+----
+<PRODUCT_ID>
+  <ns2:SUPPLIER_PID type="supplier_specific">1513</ns2:SUPPLIER_PID>
+  <ns2:INTERNATIONAL_PID type="ean">7613081045766</ns2:INTERNATIONAL_PID>
+  <ns2:DESCRIPTION_SHORT lang="ger">TestArtikel</ns2:DESCRIPTION_SHORT>
+  <MANUFACTURER_INFO>
+    <ns2:MANUFACTURER_PID>F00354</ns2:MANUFACTURER_PID>
+  </MANUFACTURER_INFO>
+</PRODUCT_ID>
+----
+
+
+[[ProductPriceFix]]
+Product price fixed
+^^^^^^^^^^^^^^^^^^
+.Product price fixed elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name      | Description     | Example 
+| PRICE_AMOUNT      | amount per unit | 2.76     
+|=======================================================================
+
+
+.Example PRODUCT_PRICE_FIX:
+[source, xml]
+----
+<PRODUCT_PRICE_FIX>
+	<bmecat:PRICE_AMOUNT>2.76</bmecat:PRICE_AMOUNT>
+</PRODUCT_PRICE_FIX>
+----
+
+[[OrderSummary]]
+Order Summary
+^^^^^^^^^^^^^
+.Order summary Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name      | Description         | Status | Example
+| TOTAL_ITEM_NUM    | Count of line items | M      | 1             
+| TOTAL_AMOUNT      | Net amount          | M      | 502.00        
+|=======================================================================
+
+.Example:
+[source, xml]
+----
+<ORDERRESPONSE_SUMMARY>
+  <TOTAL_ITEM_NUM>1</TOTAL_ITEM_NUM>
+  <TOTAL_AMOUNT>2.76</TOTAL_AMOUNT>
+</ORDERRESPONSE_SUMMARY>
+----
+
+Appendix
+--------
+
+Sample Orderresponse
+~~~~~~~~~~~~~~~~~~~~
+[source, xml]
+----
+
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OPENTRANS xmlns="http://www.opentrans.org/XMLSchema/2.1" xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+  xmlns:ns2="http://www.bmecat.org/bmecat/2005" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#">
+  <ORDERRESPONSE version="2.1">
+    <ORDERRESPONSE_HEADER>
+      <CONTROL_INFO>
+        <GENERATOR_INFO>Competec EDI</GENERATOR_INFO>
+        <GENERATION_DATE>2023-04-23T09:48:11</GENERATION_DATE>
+      </CONTROL_INFO>
+      <ORDERRESPONSE_INFO>
+        <ORDER_ID>1112223334</ORDER_ID>
+        <ORDERRESPONSE_DATE>2023-04-22T09:48:11</ORDERRESPONSE_DATE>
+        <ORDER_DATE>2023-04-23T00:00:00</ORDER_DATE>
+        <SUPPLIER_ORDER_ID>33344455</SUPPLIER_ORDER_ID>
+        <DELIVERY_DATE>
+          <DELIVERY_START_DATE>2023-02-07T00:00:00</DELIVERY_START_DATE>
+          <DELIVERY_END_DATE>2023-02-08T00:00:00</DELIVERY_END_DATE>
+        </DELIVERY_DATE>
+        <PARTIES>
+          <PARTY>
+            <ns2:PARTY_ID type="buyer_specific">AN123456789</ns2:PARTY_ID>
+            <ns2:PARTY_ID type="supplier_specific">444444</ns2:PARTY_ID>
+            <PARTY_ROLE>buyer</PARTY_ROLE>
+            <ADDRESS>
+              <ns2:NAME>Sample AG</ns2:NAME>
+              <ns2:NAME2>Department X</ns2:NAME2>
+              <ns2:NAME3>CHN 34.5</ns2:NAME3>
+              <CONTACT_DETAILS>
+                <ns2:CONTACT_NAME>M. Muster</ns2:CONTACT_NAME>
+              </CONTACT_DETAILS>
+              <ns2:STREET>Mustergasse 1</ns2:STREET>
+              <ns2:ZIP>8000</ns2:ZIP>
+              <ns2:CITY>Zürich</ns2:CITY>
+              <ns2:COUNTRY>CH</ns2:COUNTRY>
+            </ADDRESS>
+          </PARTY>
+          <PARTY>
+            <ns2:PARTY_ID type="supplier_specific">444444</ns2:PARTY_ID>
+            <PARTY_ROLE>invoice_recipient</PARTY_ROLE>
+            <ADDRESS>
+              <ns2:NAME>Sample AG</ns2:NAME>
+              <ns2:STREET>Mustergasse 1</ns2:STREET>
+              <ns2:ZIP>8000</ns2:ZIP>
+              <ns2:CITY>Zürich</ns2:CITY>
+              <ns2:COUNTRY>CH</ns2:COUNTRY>
+            </ADDRESS>
+          </PARTY>
+          <PARTY>
+            <ns2:PARTY_ID type="supplier_specific">444444</ns2:PARTY_ID>
+            <PARTY_ROLE>delivery</PARTY_ROLE>
+            <ADDRESS>
+              <ns2:NAME>Sample AG</ns2:NAME>
+              <ns2:NAME2>Department X</ns2:NAME2>
+              <ns2:NAME3>CHN 34.5</ns2:NAME3>
+              <CONTACT_DETAILS>
+                <ns2:CONTACT_NAME>M. Muster</ns2:CONTACT_NAME>
+              </CONTACT_DETAILS>
+              <ns2:STREET>Mustergasse 1</ns2:STREET>
+              <ns2:ZIP>8000</ns2:ZIP>
+              <ns2:CITY>Zürich</ns2:CITY>
+              <ns2:COUNTRY>CH</ns2:COUNTRY>
+            </ADDRESS>
+          </PARTY>
+          <PARTY>
+            <ns2:PARTY_ID type="supplier_specific">666666</ns2:PARTY_ID>
+            <PARTY_ROLE>supplier</PARTY_ROLE>
+            <ADDRESS>
+              <ns2:NAME>BRACK.CH AG</ns2:NAME>
+              <ns2:STREET>Hintermättlistr. 3</ns2:STREET>
+              <ns2:ZIP>5506</ns2:ZIP>
+              <ns2:CITY>Mägenwil</ns2:CITY>
+              <ns2:COUNTRY>CH</ns2:COUNTRY>
+              <ns2:VAT_ID>CHE-191.398.369 MWST</ns2:VAT_ID>
+              <ns2:PHONE type="office">062 889 80 80</ns2:PHONE>
+            </ADDRESS>
+          </PARTY>
+        </PARTIES>
+        <ORDER_PARTIES_REFERENCE>
+          <ns2:BUYER_IDREF type="supplier_specific">444444</ns2:BUYER_IDREF>
+          <ns2:SUPPLIER_IDREF type="supplier_specific">666666</ns2:SUPPLIER_IDREF>
+        </ORDER_PARTIES_REFERENCE>
+        <ns2:CURRENCY>CHF</ns2:CURRENCY>
+      </ORDERRESPONSE_INFO>
+    </ORDERRESPONSE_HEADER>
+    <ORDERRESPONSE_ITEM_LIST>
+      <ORDERRESPONSE_ITEM>
+        <LINE_ITEM_ID>10</LINE_ITEM_ID>
+        <PRODUCT_ID>
+          <ns2:SUPPLIER_PID type="supplier_specific">1513</ns2:SUPPLIER_PID>
+          <ns2:INTERNATIONAL_PID type="ean">7613081045766</ns2:INTERNATIONAL_PID>
+          <ns2:DESCRIPTION_SHORT lang="ger">TestArtikel</ns2:DESCRIPTION_SHORT>
+          <MANUFACTURER_INFO>
+            <ns2:MANUFACTURER_PID>F00354</ns2:MANUFACTURER_PID>
+          </MANUFACTURER_INFO>
+        </PRODUCT_ID>
+        <QUANTITY>1</QUANTITY>
+        <ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
+        <PRODUCT_PRICE_FIX>
+          <ns2:PRICE_AMOUNT>2.76</ns2:PRICE_AMOUNT>
+        </PRODUCT_PRICE_FIX>
+        <PRICE_LINE_AMOUNT>2.76</PRICE_LINE_AMOUNT>
+        <DELIVERY_DATE type="fixed">
+          <DELIVERY_START_DATE>2023-02-08T00:00:00</DELIVERY_START_DATE>
+          <DELIVERY_END_DATE>2023-02-09T00:00:00</DELIVERY_END_DATE>
+        </DELIVERY_DATE>
+      </ORDERRESPONSE_ITEM>
+    </ORDERRESPONSE_ITEM_LIST>
+    <ORDERRESPONSE_SUMMARY>
+      <TOTAL_ITEM_NUM>1</TOTAL_ITEM_NUM>
+      <TOTAL_AMOUNT>2.76</TOTAL_AMOUNT>
+    </ORDERRESPONSE_SUMMARY>
+  </ORDERRESPONSE>
+</OPENTRANS>
+
+----
+
+[glossary]
+Glossary
+--------
+
+[glossary]
+[[GlossSku]]
+sku::
+  Stock Keeping Unit, product id by competec.
+
+[[GlossEan]]
+ean::
+  European Article Number.
