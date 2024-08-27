@@ -329,10 +329,10 @@ The delivery date is provided with start and end date, both are set to the same 
                     <ns2:PARTY_ID type="gln">767</ns2:PARTY_ID>
                     <PARTY_ROLE>supplier</PARTY_ROLE>
                     <ADDRESS>
-                        <ns2:NAME>Hama Technics AG</ns2:NAME>
-                        <ns2:STREET>Brunnenstrasse 1</ns2:STREET>
-                        <ns2:ZIP>8604</ns2:ZIP>
-                        <ns2:CITY>Volketswil</ns2:CITY>
+                        <ns2:NAME>Muster AG</ns2:NAME>
+                        <ns2:STREET>Beispielstrasse 1</ns2:STREET>
+                        <ns2:ZIP>8000</ns2:ZIP>
+                        <ns2:CITY>Zürich</ns2:CITY>
                         <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
                     </ADDRESS>
                 </PARTY>
