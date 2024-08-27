@@ -1,0 +1,401 @@
+= Opentrans V2.1 Order
+Competec Service AG
+:doctype: book
+v1.1, 26.08.2024
+
+[preface]
+== Preface
+
+This document describes the implementation of Opentrans V2.1 for supplier order.
+
+<<<
+
+== Order Header
+
+=== Order Info
+
+.order info elements
+[width="100%",options="header",cols="3,2,2"]
+|====================================================================================
+| Element name               | Description         | Example
+| ORDER_ID                   | Order ID            | 1112223334
+| ORDER_DATE                 | Date Time           | 2023-04-22T09:48:11
+| PARTIES                    | Parties             | <<Parties>>
+| CURRENCY                   | Currency            | CHF
+| ORDER_PARTIES_REFERENCE    | Supplier's ID       | <<OrderPartiesRef>>
+|====================================================================================
+
+<<<
+[[Parties]]
+Parties
+^^^^^^
+Provided parties are BUYER, SUPPLIER and DELIVERY.
+
+.Party Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name   | Description                | Example      | Remarks
+| PARTY_ID       | identification             | A1234        | identifier to a party, may be gln also
+| PARTY_ROLE     | Identifies the role of this party | buyer |
+| ADDRESS        | Address data               |  <<Address>> | Buyer, supplier and delivery are provided.
+|=======================================================================
+
+Provided types for PARTY_ID and their interpretation:
+
+[width="100%",options="header"]
+|========================================================================
+| Type              | Description                        | Remarks
+| supplier_specific | identifier given by supplier       | for delivery and buyer party
+| customer_specific | identifier given by Brack/Alltron  | for supplier party
+| gln               | gln                                | optional
+|========================================================================
+
+Provided codes for PARTY_ROLE and their interpretation:
+
+[width="100%",options="header"]
+|========================================================================
+| Code              | Description       | Remarks
+| supplier          | Suppliers Address | with customer_specific id
+| buyer             | Buyers Address    | with supplier_specific id
+| delivery          | Delivery Address  | with supplier_specific id
+|========================================================================
+
+[[Address]]
+Address
+^^^^^^
+All three addresses are provided.
+
+.Address Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name    | Description         | Example             | Remarks
+| NAME            | Company Name        | Sample AG           |
+| CONTACT_DETAILS | Contact information | <<ContactDetails>>  |
+| STREET          | Street              | Mustergasse 1       |
+| ZIP             | ZIP                 | 8000                |
+| BOXNO           | Delivery Ramp       | Ramps 5-8           | Only on delivery party
+| CITY            | City                | Zürich              |
+| COUNTRY_CODED   | Country code        | CH                  |
+| VAT_ID          | VAT information     | CHE-000.999.111     | Only on buyer party
+| PHONE           | Phone number        | 062 123 12 12       | Only on buyer party
+|=======================================================================
+
+[[ContactDetails]]
+ContactDetails
+^^^^^^
+Contact details are only provided for party buyer.
+
+.Address Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name  | Description         | Example
+| CONTACT_NAME  | Contact Person Name | Anna Muster
+| PHONE         | Phone               | +41 64 123 12 12
+| EMAILS        | List of Emails      | <ns2:EMAIL>anna.muster@alltron.ch</ns2:EMAIL>
+|=======================================================================
+
+<<<
+
+.Example Parties Block:
+[source,xml]
+----
+<PARTIES>
+    <PARTY>
+        <ns2:PARTY_ID type="supplier_specific">0930688</ns2:PARTY_ID>
+        <ns2:PARTY_ID type="gln">897</ns2:PARTY_ID>
+        <PARTY_ROLE>buyer</PARTY_ROLE>
+        <ADDRESS>
+            <ns2:NAME>Alltron AG</ns2:NAME>
+            <CONTACT_DETAILS>
+                <ns2:CONTACT_NAME>Nadine Fuchs</ns2:CONTACT_NAME>
+                <ns2:PHONE>+41 62 889 60 56</ns2:PHONE>
+                <ns2:EMAILS>
+                    <ns2:EMAIL>
+                        nadine.fuchs@alltron.ch
+                    </ns2:EMAIL>
+                </ns2:EMAILS>
+            </CONTACT_DETAILS>
+            <ns2:STREET>Hintermättlistr. 3</ns2:STREET>
+            <ns2:ZIP>5506</ns2:ZIP>
+            <ns2:CITY>Mägenwil</ns2:CITY>
+            <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+            <ns2:VAT_ID>CHE-105.990.179 MWST</ns2:VAT_ID>
+            <ns2:PHONE>062 889 88 88</ns2:PHONE>
+        </ADDRESS>
+    </PARTY>
+    <PARTY>
+        <ns2:PARTY_ID type="supplier_specific">0930688</ns2:PARTY_ID>
+        <ns2:PARTY_ID type="gln">12345677890</ns2:PARTY_ID>
+        <PARTY_ROLE>delivery</PARTY_ROLE>
+            <ADDRESS>
+                <ns2:NAME>Alltron AG</ns2:NAME>
+                <ns2:STREET>Rossgassmoos 10</ns2:STREET>
+                <ns2:ZIP>6130</ns2:ZIP>
+                <ns2:BOXNO>Ramps 5-8</ns2:BOXNO>
+                <ns2:CITY>Willisau</ns2:CITY>
+            </ADDRESS>
+    </PARTY>
+    <PARTY>
+        <ns2:PARTY_ID type="customer_specific">A1234</ns2:PARTY_ID>
+        <ns2:PARTY_ID type="gln">1234567890</ns2:PARTY_ID>
+        <PARTY_ROLE>supplier</PARTY_ROLE>
+        <ADDRESS>
+            <ns2:NAME>Muster AG</ns2:NAME>
+            <ns2:STREET>Beispielgasse 1</ns2:STREET>
+            <ns2:ZIP>8000</ns2:ZIP>
+            <ns2:CITY>Zürich</ns2:CITY>
+            <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+        </ADDRESS>
+    </PARTY>
+</PARTIES>
+----
+
+<<<
+
+[[OrderPartiesRef]]
+Parties References
+^^^^^^^^^^^^^^^^^^
+The type for each reference is supplier_specific.
+
+.Parties references
+[width="100%",options="header",cols="3,2,2"]
+|=======================================================================
+| Element name     | Description                          | Example
+| BUYER_IDREF      | defines buyer party id with type     | 444444
+| SUPPLIER_IDREF   | defines supplier party id with type  | 666666
+|=======================================================================
+
+.Example:
+[source,xml]
+----
+<DISPATCHNOTIFICATION_INFO>
+<!-- more elements here -->
+<ORDER_PARTIES_REFERENCE>
+    <ns2:BUYER_IDREF type="supplier_specific">0123456789</ns2:BUYER_IDREF>
+    <ns2:SUPPLIER_IDREF type="customer_specific">A123456</ns2:SUPPLIER_IDREF>
+</ORDER_PARTIES_REFERENCE>
+<!-- more elements here -->
+</DISPATCHNOTIFICATION_INFO>
+----
+
+<<<
+
+== Order Item List
+
+[[OrderItemList]]
+Dispatch Notification Items
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.Order item list element
+[width="100%",options="header"]
+|===================================================================================
+| Element name         | Description             | Example       | Remarks
+| ORDER_ITEM_LIST      | contains all line items | <<OrderItem>> | at least one line is provided
+|===================================================================================
+
+[[OrderItem]]
+=== Order Item
+
+.Order Item Elements
+[width="100%",options="header",cols="3,2,2"]
+|=======================================================================
+| Element name             | Description           | Example
+| LINE_ITEM_ID             | Line number           | 10000
+| PRODUCT_ID               | Product IDs           | <<ProductID>>
+| QUANTITY                 | Amount ordered        | 5
+| ORDER_UNIT               | Unit, always p. piece | C62
+| PRODUCT_PRICE_FIX        | List of Price Amounts | <ns2:PRICE_AMOUNT>41.06</ns2:PRICE_AMOUNT>
+| PRICE_LINE_AMOUNT        | Line price            | 205.3
+| DELIVERY_DATE            | requested delivery date    | <<DeliveryDate>>
+|=======================================================================
+
+<<<
+
+[[ProductID]]
+==== Product ID
+
+.Product Id elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name      | Description               | Example        | type
+| SUPPLIER_PID      | Product id by supplier    | abc1234        | supplier_specific
+| BUYER_PID         | Product id by buyer       | abc1234        | buyer_specific, <<GlossSku, sku>>
+| INTERNATIONAL_PID | EAN Code, only if present | 7109806181210  | ean
+|=======================================================================
+
+.Example:
+[source,xml]
+----
+<PRODUCT_ID>
+    <ns2:SUPPLIER_PID type="supplier_specific">AA123456</ns2:SUPPLIER_PID>
+    <ns2:INTERNATIONAL_PID type="ean">7109806181210</ns2:INTERNATIONAL_PID>
+    <ns2:BUYER_PID type="buyer_specific">123456</ns2:BUYER_PID>
+</PRODUCT_ID>
+----
+
+[[DeliveryDate]]
+==== Delivery Date
+The delivery date is provided with start and end date, both are set to the same value and at start of Day.
+
+.Delivery Date elements
+[width="90%",options="header"]
+|=======================================================
+| Element name         | Description              | Example
+| DELIVERY_START_DATE  | requested delivery date  | 2021-10-28T00:00:00
+| DELIVERY_END_DATE    | requested delivery date  | 2021-10-28T00:00:00
+|=======================================================
+
+.Example:
+[source,xml]
+----
+<DELIVERY_DATE type="fixed">
+    <DELIVERY_START_DATE>2021-10-28T00:00:00</DELIVERY_START_DATE>
+    <DELIVERY_END_DATE>2021-10-28T00:00:00</DELIVERY_END_DATE>
+</DELIVERY_DATE>
+----
+
+<<<
+
+[[OrderSummary]]
+== Order Summary
+
+.Order summary Elements
+[width="90%",options="header"]
+|=====================================================
+| Element name      | Description              | Example
+| TOTAL_ITEM_NUM    | Count of line items      | 1
+| TOTAL_AMOUNT      | Sum of all line amounts  | 3205.56
+|=====================================================
+
+.Example:
+[source,xml]
+----
+<ORDER_SUMMARY>
+    <TOTAL_ITEM_NUM>2</TOTAL_ITEM_NUM>
+    <TOTAL_AMOUNT>3206.56</TOTAL_AMOUNT>
+</ORDER_SUMMARY>
+----
+
+<<<
+
+== Appendix
+
+=== Sample Order
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ORDER version="2.1" type="standard" xmlns="http://www.opentrans.org/XMLSchema/2.1" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://www.bmecat.org/bmecat/2005" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#">
+    <ORDER_HEADER>
+        <ORDER_INFO>
+            <ORDER_ID>1990785210</ORDER_ID>
+            <ORDER_DATE>2021-10-27T00:00:00</ORDER_DATE>
+            <PARTIES>
+                <PARTY>
+                    <ns2:PARTY_ID type="supplier_specific">0930688</ns2:PARTY_ID>
+                    <ns2:PARTY_ID type="gln">897</ns2:PARTY_ID>
+                    <PARTY_ROLE>buyer</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>Alltron AG</ns2:NAME>
+                        <CONTACT_DETAILS>
+                            <ns2:CONTACT_NAME>Nadine Fuchs</ns2:CONTACT_NAME>
+                            <ns2:PHONE>+41 62 889 60 56</ns2:PHONE>
+                            <ns2:EMAILS>
+                                <ns2:EMAIL>nadine.fuchs@alltron.ch</ns2:EMAIL>
+                            </ns2:EMAILS>
+                        </CONTACT_DETAILS>
+                        <ns2:STREET>Hintermättlistr. 3</ns2:STREET>
+                        <ns2:ZIP>5506</ns2:ZIP>
+                        <ns2:CITY>Mägenwil</ns2:CITY>
+                        <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+                        <ns2:VAT_ID>CHE-105.990.179 MWST</ns2:VAT_ID>
+                        <ns2:PHONE>062 889 88 88</ns2:PHONE>
+                    </ADDRESS>
+                </PARTY>
+                <PARTY>
+                    <ns2:PARTY_ID type="supplier_specific">0930688</ns2:PARTY_ID>
+                    <ns2:PARTY_ID type="gln">987</ns2:PARTY_ID>
+                    <PARTY_ROLE>delivery</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>Alltron AG</ns2:NAME>
+                        <ns2:STREET>Rossgassmoos 10</ns2:STREET>
+                        <ns2:ZIP>6130</ns2:ZIP>
+                        <ns2:BOXNO>Ramps 5-8</ns2:BOXNO>
+                        <ns2:CITY>Willisau</ns2:CITY>
+                    </ADDRESS>
+                </PARTY>
+                <PARTY>
+                    <ns2:PARTY_ID type="customer_specific">A3520</ns2:PARTY_ID>
+                    <ns2:PARTY_ID type="gln">767</ns2:PARTY_ID>
+                    <PARTY_ROLE>supplier</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>Hama Technics AG</ns2:NAME>
+                        <ns2:STREET>Brunnenstrasse 1</ns2:STREET>
+                        <ns2:ZIP>8604</ns2:ZIP>
+                        <ns2:CITY>Volketswil</ns2:CITY>
+                        <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+                    </ADDRESS>
+                </PARTY>
+            </PARTIES>
+            <ORDER_PARTIES_REFERENCE>
+                <ns2:BUYER_IDREF type="supplier_specific">0930688</ns2:BUYER_IDREF>
+                <ns2:SUPPLIER_IDREF type="customer_specific">A3520</ns2:SUPPLIER_IDREF>
+            </ORDER_PARTIES_REFERENCE>
+            <ns2:CURRENCY>CHF</ns2:CURRENCY>
+        </ORDER_INFO>
+    </ORDER_HEADER>
+    <ORDER_ITEM_LIST>
+        <ORDER_ITEM>
+            <LINE_ITEM_ID>10000</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <ns2:SUPPLIER_PID type="supplier_specific">111363</ns2:SUPPLIER_PID>
+                <ns2:INTERNATIONAL_PID type="ean">7109806181210</ns2:INTERNATIONAL_PID>
+                <ns2:BUYER_PID type="buyer_specific">345087</ns2:BUYER_PID>
+            </PRODUCT_ID>
+            <QUANTITY>5</QUANTITY>
+            <ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <ns2:PRICE_AMOUNT>41.06</ns2:PRICE_AMOUNT>
+            </PRODUCT_PRICE_FIX>
+            <PRICE_LINE_AMOUNT>205.3</PRICE_LINE_AMOUNT>
+            <DELIVERY_DATE type="fixed">
+                <DELIVERY_START_DATE>2021-10-28T00:00:00</DELIVERY_START_DATE>
+                <DELIVERY_END_DATE>2021-10-28T00:00:00</DELIVERY_END_DATE>
+            </DELIVERY_DATE>
+        </ORDER_ITEM>
+        <ORDER_ITEM>
+            <LINE_ITEM_ID>20000</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <ns2:SUPPLIER_PID type="supplier_specific">175892</ns2:SUPPLIER_PID>
+                <ns2:BUYER_PID type="buyer_specific">1210754</ns2:BUYER_PID>
+            </PRODUCT_ID>
+            <QUANTITY>30</QUANTITY>
+            <ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <ns2:PRICE_AMOUNT>7.1</ns2:PRICE_AMOUNT>
+            </PRODUCT_PRICE_FIX>
+            <PRICE_LINE_AMOUNT>213</PRICE_LINE_AMOUNT>
+            <DELIVERY_DATE type="fixed">
+                <DELIVERY_START_DATE>2021-10-28T00:00:00</DELIVERY_START_DATE>
+                <DELIVERY_END_DATE>2021-10-28T00:00:00</DELIVERY_END_DATE>
+            </DELIVERY_DATE>
+        </ORDER_ITEM>
+    </ORDER_ITEM_LIST>
+    <ORDER_SUMMARY>
+        <TOTAL_ITEM_NUM>2</TOTAL_ITEM_NUM>
+        <TOTAL_AMOUNT>3206.56</TOTAL_AMOUNT>
+    </ORDER_SUMMARY>
+</ORDER>
+
+
+----
+
+<<<
+
+[glossary]
+== Glossary
+
+[glossary]
+[[GlossSku]]
+sku::
+Stock Keeping Unit, product id by competec.
