@@ -1,0 +1,47 @@
+@startuml
+
+skinparam ParticipantPadding 10
+
+participant "main" as main #lightgreen
+participant "IN-123" as s4 #lightblue
+participant "EDI-453" as s5 #lightblue
+participant "Emergency-Bugfix" as s6 #orange
+
+activate main #lightgreen
+main -[#green]> main : Create new Release
+
+hnote over main : tag: 1.16.0
+
+main -[#blue]> s4 : IN-123: Add new Mapping for customer
+activate s4 #lightblue
+hnote over s4 : commit 1
+hnote over s4 : commit 2
+hnote over s4 : commit 3
+
+main -[#blue]> s5 : EDI-453: new internal object
+activate s5 #lightblue
+hnote over s5 : commit 1
+hnote over s5 : commit 2
+s5 -[#blue]> main: EDI-453 Merge to main
+destroy s5
+hnote over main : tag: 202409091228_ebb5d4b
+
+main -[#orange]> s6 : <font color=red>Prod Bugfix for ...</font>
+activate s6 #orange
+hnote over s6 : Commit fix for issue
+s6 -[#orange]> s6 : Create new Release
+hnote over s6 : tag: 1.16.1
+note right of s6 #lightgreen: Release to Test/Prod
+s6 -[#orange]> main : <font color=red>Merge Bugfix to main</font>
+destroy s6
+hnote over main : tag: 202409091345_ebf3d4b
+
+hnote over s4 : commit 4
+s4 -[#blue]> main: EDI-123 Merge to main
+
+destroy s4
+hnote over main : tag: 202409101228_efaad4b
+main -[#green]> main : Create new Release
+hnote over main : tag: 1.17.0
+
+@enduml

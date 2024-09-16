@@ -1,0 +1,12 @@
+= EDI Documentation
+:doctype: book
+:sectnums:
+:revnumber: {project-version}
+:example-caption!:
+ifndef::imagesdir[:imagesdir: images]
+ifndef::sourcedir[:sourcedir: ../../main/java]
+
+:leveloffset: +1
+
+include::process/_index.adoc[]
+

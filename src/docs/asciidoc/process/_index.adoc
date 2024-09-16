@@ -1,0 +1,5 @@
+[#processes]
+= EDI Processes
+
+include::_git-workflow.adoc[leveloffset=+1]
+
