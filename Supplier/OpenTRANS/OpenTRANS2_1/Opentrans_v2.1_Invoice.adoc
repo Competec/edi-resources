@@ -45,36 +45,44 @@ This document describes the implementation of Opentrans V2.1 for supplier invoic
 [[Parties]]
 Parties
 ^^^^^^
-Required parties are SUPPLIER and PAYER.
+Required parties are SUPPLIER and BUYER.
 
 .Party Elements
 [width="100%",options="header"]
 |=======================================================================
 | Element name   | Description                         | Example
 | PARTY_ID       | buyer_specific ID                   | <<PartyId>>
-| PARTY_ROLE     | Identifies the role of this party   | payer
+| PARTY_ROLE     | Identifies the role of this party   | buyer
 | ADDRESS        | Address data                        |  <<Address>>
 |=======================================================================
 
 <<<
 
-[[PartyId]] Party Identifiers
+[[PartyId]]
+Party Identifiers
+^^^^^^^^^^^^^^^^^^
+All parties should be identified by their gln. If this is not possible, the supplier/invoice issuing party must be identified by competec internal ID.
 
 [width="100%",options="header"]
 |========================================================================
 | type                 | Description          | Remarks
-| gln                  | optional             | preferred for payer
-| supplier_specific    | ID of payer party    | mandatory for payer
+| gln                  | optional             | preferred
+| supplier_specific    | ID of buying party   | only for buyer if no gln
 | buyer_specific       | ID of supplier party | mandatory for supplier
 |========================================================================
 
+[[PARTY_ROLE]]
+Party Role
+^^^^^^^^^^
 Supported codes for PARTY_ROLE and their interpretation:
 
 [width="100%",options="header"]
 |========================================================================
 | Code              | Description       | Remarks
-| payer             | Buyers Address    | mandatory
-| supplier          | Suppliers Address | mandatory
+| buyer             | Buyers Address    | preferred
+| supplier          | Suppliers Address | preferred
+| invoice_issuer    | Suppliers Address | Alternative to buyer
+| invoice_recipient | Buyer Address     | Alternative to supplier
 |========================================================================
 
 [[Address]]
@@ -101,7 +109,7 @@ Address
     <PARTY>
         <bmecat:PARTY_ID type="gln">760000000000</bmecat:PARTY_ID>
         <bmecat:PARTY_ID type="supplier_specific">K1234567</bmecat:PARTY_ID>
-        <PARTY_ROLE>payer</PARTY_ROLE>
+        <PARTY_ROLE>buyer</PARTY_ROLE>
         <ADDRESS>
             <bmecat:NAME>BRACK.CH AG</bmecat:NAME>
             <bmecat:STREET>Hintermättlistr. 3</bmecat:STREET>
@@ -252,7 +260,7 @@ Invoice Items
 |=======================================================================
 | Element name    | Description         | Example
 | PRICE_AMOUNT    | price per piece     | 10.31
-| TAX_DETAILS_FIX | Product name        | <<TaxDetailsFix>>
+| TAX_DETAILS_FIX | Tax details         | <<TaxDetailsFix>>
 |=======================================================================
 
 
@@ -327,9 +335,9 @@ Invoice Items
 |=====================================================
 | Element name      | Description          | Example
 | TOTAL_ITEM_NUM    | Count of line items  | 3
-| NET_VALUE_GOODS   | Count of line items  | 287.56
-| TOTAL_AMOUNT      | Count of line items  | 309.7
-| TOTAL_TAX         | Count of line items  | <<TotalTax>>
+| NET_VALUE_GOODS   | Total NET Value      | 287.56
+| TOTAL_AMOUNT      | Total incl Tax       | 309.7
+| TOTAL_TAX         | List of taxes        | <<TotalTax>>
 |=====================================================
 
 [[TotalTax]]
@@ -391,7 +399,7 @@ Total Tax may contain multiple tax details fix.
                         760000000000</bmecat:PARTY_ID>
                     <bmecat:PARTY_ID type="supplier_specific">
                         K1234567</bmecat:PARTY_ID>
-                    <PARTY_ROLE>payer</PARTY_ROLE>
+                    <PARTY_ROLE>Buyer</PARTY_ROLE>
                     <ADDRESS>
                         <bmecat:NAME>BRACK.CH AG</bmecat:NAME>
                         <bmecat:STREET>Hintermättlistr. 3</bmecat:STREET>
