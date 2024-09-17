@@ -61,14 +61,12 @@ Required parties are SUPPLIER and BUYER.
 [[PartyId]]
 Party Identifiers
 ^^^^^^^^^^^^^^^^^^
-All parties should be identified by their gln. If this is not possible, the supplier/invoice issuing party must be identified by competec internal ID.
-
 [width="100%",options="header"]
 |========================================================================
-| type                 | Description          | Remarks
-| gln                  | optional             | preferred
-| supplier_specific    | ID of buying party   | only for buyer if no gln
-| buyer_specific       | ID of supplier party | mandatory for supplier
+| type                 | Description               | Remarks
+| gln                  | gln                       | for all parties, optional
+| supplier_specific    | ID given by supplier      | mandatory for buyer/invoice receiver party
+| buyer_specific       | ID given by buying party  | mandatory for supplier/invoice issuer party
 |========================================================================
 
 [[PARTY_ROLE]]
