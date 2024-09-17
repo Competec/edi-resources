@@ -1,0 +1,549 @@
+= Opentrans V2.1 Invoice
+Competec Service AG
+:doctype: book
+v1.1, 12-07-2024
+
+[preface]
+== Preface
+
+This document describes the implementation of Opentrans V2.1 for supplier invoice.
+
+<<<
+
+== Invoice Header
+
+=== Control Info
+
+.Control info elements
+[width="100%",options="header",cols="3,2,2,1"]
+|====================================================================================
+| Element name               | Description         | Example                | Required
+| GENERATION_DATE            | Date Time           | 2023-04-22T09:48:11    | YES
+|====================================================================================
+
+<<<
+
+=== Invoice Info
+
+.dispatch notification info elements
+[width="100%",options="header",cols="3,2,2, 1"]
+|====================================================================================
+| Element name            | Description         | Example                    | Required
+| INVOICE_ID              | Invoice ID          | 1112223334                 | YES
+| INVOICE_DATE            | Date Time           | 2023-04-22T09:48:11        | YES
+| INVOICE_TYPE            | Document type       | only invoice is supported  | YES
+| DELIVERYNOTE_ID         | Delivery Note ID    | 778899445566               |
+| PARTIES                 | Parties             | <<Parties>>                | YES
+| INVOICE_ISSUER_IDREF    | References          | <<References>>             | YES
+| INVOICE_RECIPIENT_IDREF | References          | <<References>>             | YES
+| CURRENCY                | Currency            | CHF                        | YES
+| PAYMENT                 | Tracking URL        | <<Payment>>                |
+|====================================================================================
+
+<<<
+
+[[Parties]]
+Parties
+^^^^^^
+Required parties are SUPPLIER and BUYER.
+
+.Party Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name   | Description                         | Example
+| PARTY_ID       | buyer_specific ID                   | <<PartyId>>
+| PARTY_ROLE     | Identifies the role of this party   | buyer
+| ADDRESS        | Address data                        |  <<Address>>
+|=======================================================================
+
+<<<
+
+[[PartyId]]
+Party Identifiers
+^^^^^^^^^^^^^^^^^^
+[width="100%",options="header"]
+|========================================================================
+| type                 | Description               | Remarks
+| gln                  | gln                       | for all parties, optional
+| supplier_specific    | ID given by supplier      | mandatory for buyer/invoice receiver party
+| buyer_specific       | ID given by buying party  | mandatory for supplier/invoice issuer party
+|========================================================================
+
+[[PARTY_ROLE]]
+Party Role
+^^^^^^^^^^
+Supported codes for PARTY_ROLE and their interpretation:
+
+[width="100%",options="header"]
+|========================================================================
+| Code              | Description       | Remarks
+| buyer             | Buyers Address    | preferred
+| supplier          | Suppliers Address | preferred
+| invoice_issuer    | Suppliers Address | Alternative to buyer
+| invoice_recipient | Buyer Address     | Alternative to supplier
+|========================================================================
+
+[[Address]]
+Address
+^^^^^^
+.Address Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name    | Description         | Example        | Required
+| NAME            | Company Name        | Sample AG      | YES
+| STREET          | Street              | Mustergasse 1  | YES
+| ZIP             | ZIP                 | 8000           | YES
+| CITY            | City                | Zürich         | YES
+| COUNTRY_CODED   | Country code        | CH             |
+| VAT_ID          | Vat number          | CH...          | supplier: YES
+|=======================================================================
+
+<<<
+
+.Example Parties Block:
+[source,xml]
+----
+<PARTIES>
+    <PARTY>
+        <bmecat:PARTY_ID type="gln">760000000000</bmecat:PARTY_ID>
+        <bmecat:PARTY_ID type="supplier_specific">K1234567</bmecat:PARTY_ID>
+        <PARTY_ROLE>buyer</PARTY_ROLE>
+        <ADDRESS>
+            <bmecat:NAME>BRACK.CH AG</bmecat:NAME>
+            <bmecat:STREET>Hintermättlistr. 3</bmecat:STREET>
+            <bmecat:ZIP>5506</bmecat:ZIP>
+            <bmecat:CITY>Mägenwil</bmecat:CITY>
+            <bmecat:COUNTRY>Switzerland</bmecat:COUNTRY>
+            <bmecat:COUNTRY_CODED>CH</bmecat:COUNTRY_CODED>
+            </ADDRESS>
+        </PARTY>
+        <PARTY>
+            <bmecat:PARTY_ID type="buyer_specific">L12345678</bmecat:PARTY_ID>
+            <bmecat:PARTY_ID type="gln">760000000001</bmecat:PARTY_ID>
+            <PARTY_ROLE>supplier</PARTY_ROLE>
+            <ADDRESS>
+                <bmecat:NAME>Supplier Name AG</bmecat:NAME>
+                <bmecat:STREET>Hauptstrasse 2</bmecat:STREET>
+                <bmecat:ZIP>3000</bmecat:ZIP>
+                <bmecat:CITY>Bern</bmecat:CITY>
+                <bmecat:COUNTRY_CODED>CH</bmecat:COUNTRY_CODED>
+                <bmecat:VAT_ID>CHE-111.222.333 MWST</bmecat:VAT_ID>
+            </ADDRESS>
+        </PARTY>
+</PARTIES>
+----
+
+<<<
+
+[[References]]
+Address referencing
+^^^^^^^^^^^^^^^^^^^^
+.Address references
+[width="100%",options="header",cols="3,2,2"]
+|=======================================================================
+| Element name              | Description                             | allowed Type
+| INVOICE_ISSUER_IDREF      | defines supplier party id with type     | gln, buyer_specific
+| INVOICE_RECIPIENT_IDREF   | defines payer party id with type        | gln, buyer_specific
+|=======================================================================
+
+.Example:
+[source,xml]
+----
+<INVOICE_INFO>
+<!-- more elements here -->
+    <INVOICE_ISSUER_IDREF type="buyer_specific">L12345678</INVOICE_ISSUER_IDREF>
+    <INVOICE_RECIPIENT_IDREF type="gln">760000000000</INVOICE_RECIPIENT_IDREF>
+<!-- more elements here -->
+</INVOICE_INFO>
+----
+
+<<<
+
+[[Payment]]
+Payment
+^^^^^^^^
+.Payment Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name    | Description                   |                   | Required
+| ACCOUNT         | Account holder and IBAN       | <<Account>>       | YES
+| PAYMENT_TERMS   | Payment terms and value date  | <<PaymentTerms>>  |
+|=======================================================================
+
+<<<
+[[Account]]
+Account
+^^^^^^^^
+
+.Account Elements
+[width="100%",options="header"]
+|=======================================================================
+| Element name   | Description               |             | Required
+| HOLDER         | Account holder and IBAN   | Muster AG   |
+| BANK_ACCOUNT   | type = iban               | iban        | preferred
+|=======================================================================
+
+<<<
+[[PaymentTerms]]
+Payment Terms
+^^^^^^^^^^^^^^
+
+.Payment Terms Elements
+[width="100%",options="header"]
+|===================================================
+| Element name      | Description     |
+| TIME_FOR_PAYMENT  | allowed: DAYS   | 30
+| VALUE_DATE        | date            | 2026-06-15
+|===================================================
+
+
+<<<
+== Invoice Item List
+
+[[IVItemList]]
+Invoice Items
+~~~~~~~~~~~~~~
+
+.Invoice item list element
+[width="100%",options="header"]
+|===================================================================================
+| Element name         | Description             | Example       | Remarks
+| INVOICE_ITEM_LIST    | contains all line items | <<IVItem>>    | at least one valid line is required
+|===================================================================================
+
+[[IVItem]]
+=== Invoice Item
+
+.Invoice Item Elements
+[width="100%",options="header",cols="3,2,2"]
+|=======================================================================
+| Element name          | Description           | Example
+| LINE_ITEM_ID          | Line number           | 1
+| PRODUCT_ID            | Product IDs           | <<ProductID>>
+| QUANTITY              | Amount ordered        | 10
+| ORDER_UNIT            | Unit, always p. piece | C62
+| PRODUCT_PRICE_FIX     | Reference to Order by buyer    | <<ProductPrice>>
+| PRICE_LINE_AMOUNT     | ID to delivery address         | 103.10
+| ORDER_REFERENCE       | reference to original Order    | <<OrderReference>>
+|=======================================================================
+
+<<<
+
+[[ProductID]]
+==== Product ID
+
+.Product Id elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name      | Description            | Example        | type
+| BUYER_PID         | Product id by buyer    | abc1234        | <<GlossSku, sku>>
+| DESCRIPTION_SHORT | Product name           | Sample Product |
+|=======================================================================
+
+.Example:
+[source,xml]
+----
+<PRODUCT_ID>
+    <bmecat:BUYER_PID>1567326</bmecat:BUYER_PID>
+    <bmecat:DESCRIPTION_SHORT>Some product text</bmecat:DESCRIPTION_SHORT>
+</PRODUCT_ID>
+----
+
+<<<
+[[ProductPrice]]
+==== Product Price Fix
+
+.Product Price Fix elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name    | Description         | Example
+| PRICE_AMOUNT    | price per piece     | 10.31
+| TAX_DETAILS_FIX | Tax details         | <<TaxDetailsFix>>
+|=======================================================================
+
+
+[[TaxDetailsFix]]
+==== Tax Details Fix
+.Tax Details Fix elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name  | Description           | Example
+| TAX_TYPE      | tax type              | VAT
+| TAX           | Percentage            | 0.077
+| TAX_AMOUNT    | amount in currency    | 7.94
+|=======================================================================
+
+.Example:
+[source,xml]
+----
+<TAX_DETAILS_FIX>
+    <bmecat:TAX_TYPE>VAT</bmecat:TAX_TYPE>
+    <bmecat:TAX>0.077</bmecat:TAX>
+    <TAX_AMOUNT>7.94</TAX_AMOUNT>
+</TAX_DETAILS_FIX>
+----
+
+[[OrderReference]]
+==== Order Reference
+
+.Order Reference elements
+[width="90%",options="header"]
+|=======================================================
+| Element name  | Description              | Example
+| ORDER_ID      | original order id        | 4559022201
+| LINE_ITEM_ID  | original order line id   | 10
+|=======================================================
+
+
+.Example Invoice Line Item:
+[source,xml]
+----
+<INVOICE_ITEM>
+    <LINE_ITEM_ID>1</LINE_ITEM_ID>
+    <PRODUCT_ID>
+        <bmecat:BUYER_PID>250035</bmecat:BUYER_PID>
+        <bmecat:DESCRIPTION_SHORT>
+            Caran d'Ache Druckbleistift Fixpencil</bmecat:DESCRIPTION_SHORT>
+    </PRODUCT_ID>
+    <QUANTITY>10</QUANTITY>
+    <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+    <PRODUCT_PRICE_FIX>
+        <bmecat:PRICE_AMOUNT>10.31</bmecat:PRICE_AMOUNT>
+        <TAX_DETAILS_FIX>
+            <bmecat:TAX_TYPE>VAT</bmecat:TAX_TYPE>
+            <bmecat:TAX>0.077</bmecat:TAX>
+            <TAX_AMOUNT>7.94</TAX_AMOUNT>
+        </TAX_DETAILS_FIX>
+    </PRODUCT_PRICE_FIX>
+    <PRICE_LINE_AMOUNT>103.10</PRICE_LINE_AMOUNT>
+    <ORDER_REFERENCE>
+        <ORDER_ID>4800070257</ORDER_ID>
+        <LINE_ITEM_ID>1</LINE_ITEM_ID>
+    </ORDER_REFERENCE>
+</INVOICE_ITEM>
+----
+
+<<<
+
+[[IVSummary]]
+== Invoice Summary
+
+.Invoice summary Elements
+[width="90%",options="header"]
+|=====================================================
+| Element name      | Description          | Example
+| TOTAL_ITEM_NUM    | Count of line items  | 3
+| NET_VALUE_GOODS   | Total NET Value      | 287.56
+| TOTAL_AMOUNT      | Total incl Tax       | 309.7
+| TOTAL_TAX         | List of taxes        | <<TotalTax>>
+|=====================================================
+
+[[TotalTax]]
+== Total Tax / Tax details fix
+Total Tax may contain multiple tax details fix.
+
+.Total Tax Elements
+[width="90%",options="header"]
+|=====================================================
+| Element name  | Description            | Example
+| TAX_TYPE      | Tax type               | VAT
+| TAX           | Percentage             | 0.077
+| TAX_AMOUNT    | Tax amount in currency | 22.14
+| TAX_BASE      | Total without tax      | 287.55
+|=====================================================
+
+.Example:
+[source,xml]
+----
+<INVOICE_SUMMARY>
+    <TOTAL_ITEM_NUM>3</TOTAL_ITEM_NUM>
+    <NET_VALUE_GOODS>287.56</NET_VALUE_GOODS>
+    <TOTAL_AMOUNT>309.7</TOTAL_AMOUNT>
+        <TOTAL_TAX>
+            <TAX_DETAILS_FIX>
+                <bmecat:TAX_TYPE>VAT</bmecat:TAX_TYPE>
+                <bmecat:TAX>0.077</bmecat:TAX>
+                <TAX_AMOUNT>22.14</TAX_AMOUNT>
+                <TAX_BASE>287.55</TAX_BASE>
+            </TAX_DETAILS_FIX>
+        </TOTAL_TAX>
+</INVOICE_SUMMARY>
+----
+
+<<<
+
+== Appendix
+
+=== Sample Invoice
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<INVOICE xmlns="http://www.opentrans.org/XMLSchema/2.1" version="2.1"
+         xmlns:bmecat="http://www.bmecat.org/bmecat/2005">
+    <INVOICE_HEADER>
+        <CONTROL_INFO>
+            <GENERATOR_INFO>EDI</GENERATOR_INFO>
+            <GENERATION_DATE>2022-04-22T09:48:11</GENERATION_DATE>
+        </CONTROL_INFO>
+        <INVOICE_INFO>
+            <INVOICE_ID>30535156</INVOICE_ID>
+            <INVOICE_DATE>2023-04-22T09:48:11</INVOICE_DATE>
+            <INVOICE_TYPE>invoice</INVOICE_TYPE>
+            <DELIVERYNOTE_ID>12345678</DELIVERYNOTE_ID>
+            <PARTIES>
+                <PARTY>
+                    <bmecat:PARTY_ID type="gln">
+                        760000000000</bmecat:PARTY_ID>
+                    <bmecat:PARTY_ID type="supplier_specific">
+                        K1234567</bmecat:PARTY_ID>
+                    <PARTY_ROLE>Buyer</PARTY_ROLE>
+                    <ADDRESS>
+                        <bmecat:NAME>BRACK.CH AG</bmecat:NAME>
+                        <bmecat:STREET>Hintermättlistr. 3</bmecat:STREET>
+                        <bmecat:ZIP>5506</bmecat:ZIP>
+                        <bmecat:CITY>Mägenwil</bmecat:CITY>
+                        <bmecat:COUNTRY>Switzerland</bmecat:COUNTRY>
+                        <bmecat:COUNTRY_CODED>CH</bmecat:COUNTRY_CODED>
+                    </ADDRESS>
+                </PARTY>
+                <PARTY>
+                    <bmecat:PARTY_ID type="buyer_specific">
+                        L12345678</bmecat:PARTY_ID>
+                    <bmecat:PARTY_ID type="gln">
+                        760000999999</bmecat:PARTY_ID>
+                    <PARTY_ROLE>supplier</PARTY_ROLE>
+                    <ADDRESS>
+                        <bmecat:NAME>Supplier Name AG</bmecat:NAME>
+                        <bmecat:STREET>Hauptstrasse 2</bmecat:STREET>
+                        <bmecat:ZIP>3000</bmecat:ZIP>
+                        <bmecat:CITY>Bern</bmecat:CITY>
+                        <bmecat:COUNTRY_CODED>CH</bmecat:COUNTRY_CODED>
+                        <bmecat:VAT_ID>CHE-111.222.333 MWST</bmecat:VAT_ID>
+                    </ADDRESS>
+                </PARTY>
+            </PARTIES>
+            <INVOICE_ISSUER_IDREF type="buyer_specific">
+                L12345678</INVOICE_ISSUER_IDREF>
+            <INVOICE_RECIPIENT_IDREF type="gln">
+                760000000000</INVOICE_RECIPIENT_IDREF>
+            <bmecat:CURRENCY>CHF</bmecat:CURRENCY>
+            <PAYMENT>
+                <ACCOUNT>
+                    <HOLDER>SUPPLIER NAME AG</HOLDER>
+                    <BANK_ACCOUNT type="iban">
+                        IBAN-CODE-1234-1234-12345</BANK_ACCOUNT>
+                </ACCOUNT>
+                <PAYMENT_TERMS>
+                    <TIME_FOR_PAYMENT>
+                        <DAYS>30</DAYS>
+                    </TIME_FOR_PAYMENT>
+                    <VALUE_DATE>2023-06-15</VALUE_DATE>
+                </PAYMENT_TERMS>
+            </PAYMENT>
+        </INVOICE_INFO>
+    </INVOICE_HEADER>
+
+    <INVOICE_ITEM_LIST>
+        <INVOICE_ITEM>
+            <LINE_ITEM_ID>1</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <bmecat:BUYER_PID>250035</bmecat:BUYER_PID>
+                <bmecat:DESCRIPTION_SHORT>
+                    Caran d'Ache Druckbleistift Fixpencil
+                </bmecat:DESCRIPTION_SHORT>
+            </PRODUCT_ID>
+            <QUANTITY>10</QUANTITY>
+            <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <bmecat:PRICE_AMOUNT>10.31</bmecat:PRICE_AMOUNT>
+                <TAX_DETAILS_FIX>
+                    <bmecat:TAX_TYPE>VAT</bmecat:TAX_TYPE>
+                    <bmecat:TAX>0.077</bmecat:TAX>
+                    <TAX_AMOUNT>7.94</TAX_AMOUNT>
+                </TAX_DETAILS_FIX>
+            </PRODUCT_PRICE_FIX>
+            <PRICE_LINE_AMOUNT>103.10</PRICE_LINE_AMOUNT>
+            <ORDER_REFERENCE>
+                <ORDER_ID>4800070257</ORDER_ID>
+                <LINE_ITEM_ID>1</LINE_ITEM_ID>
+            </ORDER_REFERENCE>
+        </INVOICE_ITEM>
+
+        <INVOICE_ITEM>
+            <LINE_ITEM_ID>2</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <bmecat:BUYER_PID>249172</bmecat:BUYER_PID>
+                <bmecat:DESCRIPTION_SHORT>
+                    Staedtler OHP-Marker Lumocolor permanent F
+                </bmecat:DESCRIPTION_SHORT>
+            </PRODUCT_ID>
+            <QUANTITY>10</QUANTITY>
+            <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <bmecat:PRICE_AMOUNT>1.98</bmecat:PRICE_AMOUNT>
+                <TAX_DETAILS_FIX>
+                    <bmecat:TAX_TYPE>VAT</bmecat:TAX_TYPE>
+                    <bmecat:TAX>0.077</bmecat:TAX>
+                    <TAX_AMOUNT>1.52</TAX_AMOUNT>
+                </TAX_DETAILS_FIX>
+            </PRODUCT_PRICE_FIX>
+            <PRICE_LINE_AMOUNT>19.80</PRICE_LINE_AMOUNT>
+            <ORDER_REFERENCE>
+                <ORDER_ID>4800070257</ORDER_ID>
+                <LINE_ITEM_ID>2</LINE_ITEM_ID>
+            </ORDER_REFERENCE>
+        </INVOICE_ITEM>
+
+        <INVOICE_ITEM>
+            <LINE_ITEM_ID>3</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <bmecat:BUYER_PID>335127</bmecat:BUYER_PID>
+                <bmecat:DESCRIPTION_SHORT>
+                    Edding Boardmarker 29 EcoLine
+                </bmecat:DESCRIPTION_SHORT>
+            </PRODUCT_ID>
+            <QUANTITY>10</QUANTITY>
+            <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <bmecat:PRICE_AMOUNT>2.58</bmecat:PRICE_AMOUNT>
+                <TAX_DETAILS_FIX>
+                    <bmecat:TAX_TYPE>VAT</bmecat:TAX_TYPE>
+                    <bmecat:TAX>0.077</bmecat:TAX>
+                    <TAX_AMOUNT>1.99</TAX_AMOUNT>
+                </TAX_DETAILS_FIX>
+            </PRODUCT_PRICE_FIX>
+            <PRICE_LINE_AMOUNT>25.80</PRICE_LINE_AMOUNT>
+            <ORDER_REFERENCE>
+                <ORDER_ID>4800070257</ORDER_ID>
+                <LINE_ITEM_ID>3</LINE_ITEM_ID>
+            </ORDER_REFERENCE>
+        </INVOICE_ITEM>
+
+    </INVOICE_ITEM_LIST>
+
+    <INVOICE_SUMMARY>
+        <TOTAL_ITEM_NUM>9</TOTAL_ITEM_NUM>
+        <NET_VALUE_GOODS>148.7</NET_VALUE_GOODS>
+        <TOTAL_AMOUNT>160.15</TOTAL_AMOUNT>
+        <TOTAL_TAX>
+            <TAX_DETAILS_FIX>
+                <bmecat:TAX_TYPE>VAT</bmecat:TAX_TYPE>
+                <bmecat:TAX>0.077</bmecat:TAX>
+                <TAX_AMOUNT>11.45</TAX_AMOUNT>
+                <TAX_BASE>148.7</TAX_BASE>
+            </TAX_DETAILS_FIX>
+        </TOTAL_TAX>
+    </INVOICE_SUMMARY>
+</INVOICE>
+----
+
+<<<
+
+[glossary]
+== Glossary
+
+[glossary]
+[[GlossSku]]
+sku::
+Stock Keeping Unit, product id by competec.
