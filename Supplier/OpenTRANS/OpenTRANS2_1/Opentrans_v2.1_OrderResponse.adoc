@@ -13,8 +13,11 @@ This document describes the implementation of Opentrans V2.1 for supplier OrderR
 == Order Response Header
 
 === Control Info
+Control Info may be omitted.
+GENERATION_DATE is used for document date. If not provided, ORDERRESPONSE_DATE will be used instead.
+
 .control info elements
-[width="100%",options="header",cols="3,2,2"]
+[width="100%",options="header",cols="3,2,2,1"]
 |====================================================================================
 | Element name          | Description    | Example             | Required
 | GENERATOR_INFO        | Generator      | EDI                 |
@@ -24,14 +27,13 @@ This document describes the implementation of Opentrans V2.1 for supplier OrderR
 
 === Order Response Info
 .order response info elements
-[width="100%",options="header",cols="3,2,2"]
+[width="100%",options="header",cols="3,2,2,1"]
 |====================================================================================
-| Element name               | Description         | Example
-| ORDER_ID                   | Order ID            | 1112223334
-| ORDERRESPONSE_DATE         | Date Time           | 2023-04-22T09:48:11
-| PARTIES                    | Parties             | <<Parties>>
-| CURRENCY                   | Currency            | CHF
-| ORDER_PARTIES_REFERENCE    | Supplier's ID       | <<OrderPartiesRef>>
+| Element name               | Description         | Example                | Required
+| ORDER_ID                   | Order ID            | 1112223334             | Y
+| ORDERRESPONSE_DATE         | Date Time           | 2023-04-22T09:48:11    | Y
+| PARTIES                    | Parties             | <<Parties>>            | Y
+| ORDER_PARTIES_REFERENCE    | Supplier's ID       | <<OrderPartiesRef>>    | Y
 |====================================================================================
 
 <<<
@@ -39,7 +41,7 @@ This document describes the implementation of Opentrans V2.1 for supplier OrderR
 Parties
 ^^^^^^
 Expected parties are BUYER and SUPPLIER.
-All parties are identified by either gln or buyer specific id as provided in the order.
+Party addresses may be reduced to contain the company's name only.
 
 .Party Elements
 [width="100%",options="header"]
@@ -54,7 +56,8 @@ Allowed types for PARTY_ID and their interpretation:
 [width="100%",options="header"]
 |========================================================================
 | Type              | Description                        | Remarks
-| buyer_specific    | identifier given by Brack/Alltron  |
+| customer_specific | identifier given by Brack/Alltron  |
+| supplier_specific | identifier given by Supplier       |
 | gln               | gln                                | preferred
 |========================================================================
 
@@ -62,8 +65,8 @@ Provided codes for PARTY_ROLE and their interpretation:
 [width="100%",options="header"]
 |========================================================================
 | Code              | Description       | Remarks
-| supplier          | Suppliers Address | with buyer_specific id or gln
-| buyer             | Buyers Address    | with buyer_specific id or gln
+| supplier          | Suppliers Address | with customer_specific id and/or gln
+| buyer             | Buyers Address    | with supplier_specific id and/or gln
 |========================================================================
 
 
@@ -75,13 +78,15 @@ Provided codes for PARTY_ROLE and their interpretation:
 <PARTIES>
     <PARTY>
         <ns2:PARTY_ID type="gln">7609999129308</ns2:PARTY_ID>
+        <ns2:PARTY_ID type="supplier_specific">123456</ns2:PARTY_ID>
         <PARTY_ROLE>buyer</PARTY_ROLE>
         <ADDRESS>
             <ns2:NAME>BRACK.CH AG</ns2:NAME>
         </ADDRESS>
     </PARTY>
     <PARTY>
-        <ns2:PARTY_ID type="gln">7640999990000</ns2:PARTY_ID>
+        <ns2:PARTY_ID type="gln">7660000000000</ns2:PARTY_ID>
+        <ns2:PARTY_ID type="customer_specific">L123456</ns2:PARTY_ID>
         <PARTY_ROLE>supplier</PARTY_ROLE>
         <ADDRESS>
             <ns2:NAME>SUPPLIER NAME AG</ns2:NAME>
@@ -101,57 +106,58 @@ The type for each reference is supplier_specific.
 [width="100%",options="header",cols="3,2,2"]
 |=======================================================================
 | Element name     | Description                          | Example
-| BUYER_IDREF      | defines buyer party id with type     | 444444
-| SUPPLIER_IDREF   | defines supplier party id with type  | 666666
-| SHIPMENT_PARTIES_REFERENCE | defines the shipment references | see example below
+| BUYER_IDREF      | defines buyer party id with type     | 7609999129308
+| SUPPLIER_IDREF   | defines supplier party id with type  | 7660000000000
 |=======================================================================
 
 .Example:
 [source,xml]
 ----
-<DISPATCHNOTIFICATION_INFO>
-<!-- more elements here -->
+<ORDERRESPONSE_INFO>
+<!-- ... -->
 <ORDER_PARTIES_REFERENCE>
-    <ns2:BUYER_IDREF type="supplier_specific">0930688</ns2:BUYER_IDREF>
-    <ns2:SUPPLIER_IDREF type="customer_specific">A3520</ns2:SUPPLIER_IDREF>
-    <SHIPMENT_PARTIES_REFERENCE>
-        <DELIVERY_IDREF type="gln">7613081000000</DELIVERY_IDREF>
-    </SHIPMENT_PARTIES_REFERENCE>
+    <ns2:BUYER_IDREF type="supplier_specific">7609999129308</ns2:BUYER_IDREF>
+    <ns2:SUPPLIER_IDREF type="customer_specific">7660000000000</ns2:SUPPLIER_IDREF>
 </ORDER_PARTIES_REFERENCE>
-<!-- more elements here -->
-</DISPATCHNOTIFICATION_INFO>
+<!-- ... -->
+</ORDERRESPONSE_INFO>
 ----
 
 <<<
 
-== Order Item List
+== Order Response Item List
 
-[[OrderItemList]]
-Dispatch Notification Items
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+[[OrderResponseItemList]]
+Order Response Items
+~~~~~~~~~~~~~~~~~~~~
+An Order Response must at least contain one valid line item.
 
-.Order item list element
+.OrderResponse item list element
 [width="100%",options="header"]
 |===================================================================================
-| Element name         | Description             | Example       | Remarks
-| ORDER_ITEM_LIST      | contains all line items | <<OrderItem>> | at least one line is provided
+| Element name         | Description             | Example               | Remarks
+| ORDERRESPONSE_ITEM   | contains all line items | <<OrderResponseItem>> | at least one line must be present.
 |===================================================================================
 
-[[OrderItem]]
-=== Order Item
+[[OrderResponseItem]]
+=== Order Response Item
+
+If the line quantity is set to zero or less, the line is considered canceled.
 
 .Order Item Elements
-[width="100%",options="header",cols="3,2,2"]
+[width="100%",options="header",cols="3,2,2,1"]
 |=======================================================================
-| Element name             | Description           | Example
-| LINE_ITEM_ID             | Line number           | 10000
-| PRODUCT_ID               | Product IDs           | <<ProductID>>
-| QUANTITY                 | Amount ordered        | 5
-| ORDER_UNIT               | Unit, always p. piece | C62 (fix)
-| PRODUCT_PRICE_FIX        | Price without VAT     |  <<ProductPriceFix>>
-| PRICE_LINE_AMOUNT        | total of line, without VAT | 88
-| DELIVERY_DATE            | requested delivery date    | <<DeliveryDate>>
+| Element name             | Description            | Example             | Mandatory
+| LINE_ITEM_ID             | Line number from Order | 10                  | Y
+| PRODUCT_ID               | Product IDs            | <<ProductID>>       | Y
+| QUANTITY                 | Amount ordered         | 5                   | Y
+| ORDER_UNIT               | Unit, always p. piece  | C62 (fix)           |
+| PRODUCT_PRICE_FIX        | Price without VAT      | <<ProductPriceFix>> |
+| PRICE_LINE_AMOUNT        | total of line, without VAT | 88              |
+| DELIVERY_DATE            | delivery dates         | <<DeliveryDate>>    |
 |=======================================================================
+
+
 
 <<<
 
@@ -161,10 +167,10 @@ Dispatch Notification Items
 .Product Id elements
 [width="90%",options="header"]
 |=======================================================================
-| Element name      | Description               | Example        | type
-| SUPPLIER_PID      | Product id by supplier    | abc1234        | supplier_specific
-| BUYER_PID         | Product id by buyer       | abc1234        | buyer_specific, <<GlossSku, sku>>
-| INTERNATIONAL_PID | EAN Code, only if present | 7109806181210  | ean, if present
+| Element name      | Description               | Example        | Remarks
+| SUPPLIER_PID      | Product id by supplier    | abc1234        |
+| BUYER_PID         | Product id by buyer       | abc1234        | Expected <<GlossSku, sku>>
+| INTERNATIONAL_PID | EAN Code, only if present | 7109806181210  | ean
 |=======================================================================
 
 .Example:
@@ -180,33 +186,33 @@ Dispatch Notification Items
 <<<
 [[ProductPriceFix]]
 ==== Product Price fix
-Product prices are always provided without vat.
+Product prices are always without vat.
 
 .Product price fix elemet
 [width="90%",options="header"]
 |=======================================================
-| Element name  | Description        | Example
-| PRICE_AMOUNT  | Price without VAT  | 8.8
+| Element name  | Description     | Example
+| PRICE_AMOUNT  | Price per unit  | 80.85
 |=======================================================
 
 .Example:
 [source,xml]
 ----
 <PRODUCT_PRICE_FIX>
-    <ns2:PRICE_AMOUNT>8.8</ns2:PRICE_AMOUNT>
+    <ns2:PRICE_AMOUNT>80.85</ns2:PRICE_AMOUNT>
 </PRODUCT_PRICE_FIX>
 ----
 
 <<<
 [[DeliveryDate]]
 ==== Delivery Date
-The delivery date is provided with start and end date, both are set to the same value and at start of Day.
+The delivery end date will be considered as delivery date.
 
 .Delivery Date elements
 [width="90%",options="header"]
 |=======================================================
 | Element name         | Description              | Example
-| DELIVERY_START_DATE  | requested delivery date  | 2021-10-28T00:00:00
+| DELIVERY_START_DATE  | requested delivery date  | 2021-10-27T00:00:00
 | DELIVERY_END_DATE    | requested delivery date  | 2021-10-28T00:00:00
 |=======================================================
 
@@ -221,15 +227,14 @@ The delivery date is provided with start and end date, both are set to the same 
 
 <<<
 
-[[OrderSummary]]
-== Order Summary
+[[OrderResponseSummary]]
+== Order Response Summary
 
 .Order summary Elements
 [width="90%",options="header"]
 |=====================================================
 | Element name      | Description              | Example
 | TOTAL_ITEM_NUM    | Count of line items      | 1
-| TOTAL_AMOUNT      | Sum of all line amounts  | 3205.56
 |=====================================================
 
 .Example:
@@ -237,7 +242,6 @@ The delivery date is provided with start and end date, both are set to the same 
 ----
 <ORDER_SUMMARY>
     <TOTAL_ITEM_NUM>2</TOTAL_ITEM_NUM>
-    <TOTAL_AMOUNT>3206.56</TOTAL_AMOUNT>
 </ORDER_SUMMARY>
 ----
 
@@ -245,115 +249,61 @@ The delivery date is provided with start and end date, both are set to the same 
 
 == Appendix
 
-=== Sample Order
+=== Sample Order Response
 
 [source,xml]
 ----
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ORDER version="2.1" type="standard" xmlns="http://www.opentrans.org/XMLSchema/2.1" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://www.bmecat.org/bmecat/2005" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#">
-	<ORDER_HEADER>
-		<ORDER_INFO>
-			<ORDER_ID>1990785210</ORDER_ID>
-			<ORDER_DATE>2021-10-27T00:00:00</ORDER_DATE>
-			<PARTIES>
-				<PARTY>
-					<ns2:PARTY_ID type="supplier_specific">0930688</ns2:PARTY_ID>
-					<ns2:PARTY_ID type="gln">897</ns2:PARTY_ID>
-					<PARTY_ROLE>buyer</PARTY_ROLE>
-					<ADDRESS>
-						<ns2:NAME>Alltron AG</ns2:NAME>
-						<CONTACT_DETAILS>
-							<ns2:CONTACT_NAME>Nadine Fuchs</ns2:CONTACT_NAME>
-							<ns2:PHONE>+41 62 889 60 56</ns2:PHONE>
-							<ns2:EMAILS>
-								<ns2:EMAIL>nadine.fuchs@alltron.ch</ns2:EMAIL>
-							</ns2:EMAILS>
-						</CONTACT_DETAILS>
-						<ns2:STREET>Hintermättlistr. 3</ns2:STREET>
-						<ns2:ZIP>5506</ns2:ZIP>
-						<ns2:CITY>Mägenwil</ns2:CITY>
-						<ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
-						<ns2:VAT_ID>CHE-105.990.179 MWST</ns2:VAT_ID>
-						<ns2:PHONE>062 889 88 88</ns2:PHONE>
-					</ADDRESS>
-				</PARTY>
-				<PARTY>
-					<ns2:PARTY_ID type="supplier_specific">0930688</ns2:PARTY_ID>
-					<ns2:PARTY_ID type="gln">987</ns2:PARTY_ID>
-					<PARTY_ROLE>delivery</PARTY_ROLE>
-					<ADDRESS>
-						<ns2:NAME>Alltron AG</ns2:NAME>
-						<ns2:STREET>Rossgassmoos 10</ns2:STREET>
-						<ns2:ZIP>6130</ns2:ZIP>
-						<ns2:BOXNO>Ramps 5-8</ns2:BOXNO>
-						<ns2:CITY>Willisau</ns2:CITY>
-					</ADDRESS>
-				</PARTY>
-				<PARTY>
-					<ns2:PARTY_ID type="customer_specific">A3520</ns2:PARTY_ID>
-					<PARTY_ROLE>supplier</PARTY_ROLE>
-					<ADDRESS>
-						<ns2:NAME>Muster AG</ns2:NAME>
-						<ns2:STREET>Samplestreet 1</ns2:STREET>
-						<ns2:ZIP>8000</ns2:ZIP>
-						<ns2:CITY>Zürich</ns2:CITY>
-						<ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
-					</ADDRESS>
-				</PARTY>
-			</PARTIES>
-			<ORDER_PARTIES_REFERENCE>
-				<ns2:BUYER_IDREF type="supplier_specific">0930688</ns2:BUYER_IDREF>
-				<ns2:SUPPLIER_IDREF type="customer_specific">A3520</ns2:SUPPLIER_IDREF>
-				<SHIPMENT_PARTIES_REFERENCE>
-					<DELIVERY_IDREF type="gln">987</DELIVERY_IDREF>
-				</SHIPMENT_PARTIES_REFERENCE>
-			</ORDER_PARTIES_REFERENCE>
-			<ns2:CURRENCY>CHF</ns2:CURRENCY>
-		</ORDER_INFO>
-	</ORDER_HEADER>
-	<ORDER_ITEM_LIST>
-		<ORDER_ITEM>
-			<LINE_ITEM_ID>10000</LINE_ITEM_ID>
-			<PRODUCT_ID>
-				<ns2:SUPPLIER_PID type="supplier_specific">111363</ns2:SUPPLIER_PID>
-				<ns2:INTERNATIONAL_PID type="ean">7109806181210</ns2:INTERNATIONAL_PID>
-				<ns2:BUYER_PID type="buyer_specific">345087</ns2:BUYER_PID>
-			</PRODUCT_ID>
-			<QUANTITY>5</QUANTITY>
-			<ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
-			<PRODUCT_PRICE_FIX>
-				<ns2:PRICE_AMOUNT>41.06</ns2:PRICE_AMOUNT>
-			</PRODUCT_PRICE_FIX>
-			<PRICE_LINE_AMOUNT>205.3</PRICE_LINE_AMOUNT>
-			<DELIVERY_DATE type="fixed">
-				<DELIVERY_START_DATE>2021-10-28T00:00:00</DELIVERY_START_DATE>
-				<DELIVERY_END_DATE>2021-10-28T00:00:00</DELIVERY_END_DATE>
-			</DELIVERY_DATE>
-		</ORDER_ITEM>
-		<ORDER_ITEM>
-			<LINE_ITEM_ID>20000</LINE_ITEM_ID>
-			<PRODUCT_ID>
-				<ns2:SUPPLIER_PID type="supplier_specific">175892</ns2:SUPPLIER_PID>
-				<ns2:BUYER_PID type="buyer_specific">1210754</ns2:BUYER_PID>
-			</PRODUCT_ID>
-			<QUANTITY>30</QUANTITY>
-			<ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
-			<PRODUCT_PRICE_FIX>
-				<ns2:PRICE_AMOUNT>7.1</ns2:PRICE_AMOUNT>
-			</PRODUCT_PRICE_FIX>
-			<PRICE_LINE_AMOUNT>213</PRICE_LINE_AMOUNT>
-			<DELIVERY_DATE type="fixed">
-				<DELIVERY_START_DATE>2021-10-28T00:00:00</DELIVERY_START_DATE>
-				<DELIVERY_END_DATE>2021-10-28T00:00:00</DELIVERY_END_DATE>
-			</DELIVERY_DATE>
-		</ORDER_ITEM>
-	</ORDER_ITEM_LIST>
-	<ORDER_SUMMARY>
-		<TOTAL_ITEM_NUM>2</TOTAL_ITEM_NUM>
-		<TOTAL_AMOUNT>3206.56</TOTAL_AMOUNT>
-	</ORDER_SUMMARY>
-</ORDER>
-
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<ORDERRESPONSE xmlns:ns2="http://www.bmecat.org/bmecat/2005"
+               xmlns="http://www.opentrans.org/XMLSchema/2.1"
+               version="2.1">
+    <ORDERRESPONSE_HEADER>
+        <ORDERRESPONSE_INFO>
+            <ORDER_ID>1991072172</ORDER_ID>
+            <ORDERRESPONSE_DATE>2024-06-28T00:00:00</ORDERRESPONSE_DATE>
+            <PARTIES>
+                <PARTY>
+                    <ns2:PARTY_ID type="gln">7609999129308</ns2:PARTY_ID>
+                    <PARTY_ROLE>buyer</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>BRACK.CH AG</ns2:NAME>
+                    </ADDRESS>
+                </PARTY>
+                <PARTY>
+                    <ns2:PARTY_ID type="gln">7990000000009</ns2:PARTY_ID>
+                    <PARTY_ROLE>supplier</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>Partner AG</ns2:NAME>
+                    </ADDRESS>
+                </PARTY>
+            </PARTIES>
+            <ORDER_PARTIES_REFERENCE>
+                <ns2:BUYER_IDREF type="supplier_specific">7609999129308</ns2:BUYER_IDREF>
+                <ns2:SUPPLIER_IDREF type="customer_specific">7990000000009</ns2:SUPPLIER_IDREF>
+            </ORDER_PARTIES_REFERENCE>
+        </ORDERRESPONSE_INFO>
+    </ORDERRESPONSE_HEADER>
+    <ORDERRESPONSE_ITEM_LIST>
+        <ORDERRESPONSE_ITEM>
+            <LINE_ITEM_ID>10000</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <ns2:SUPPLIER_PID type="supplier_specific">73.83587</ns2:SUPPLIER_PID>
+            </PRODUCT_ID>
+            <QUANTITY>70</QUANTITY>
+            <ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <ns2:PRICE_AMOUNT>5.34</ns2:PRICE_AMOUNT>
+            </PRODUCT_PRICE_FIX>
+            <DELIVERY_DATE type="optional">
+                <DELIVERY_START_DATE>2024-07-01</DELIVERY_START_DATE>
+                <DELIVERY_END_DATE>2024-07-01</DELIVERY_END_DATE>
+            </DELIVERY_DATE>
+        </ORDERRESPONSE_ITEM>
+    </ORDERRESPONSE_ITEM_LIST>
+    <ORDERRESPONSE_SUMMARY>
+        <TOTAL_ITEM_NUM>70</TOTAL_ITEM_NUM>
+    </ORDERRESPONSE_SUMMARY>
+</ORDERRESPONSE>
 ----
 
 <<<
