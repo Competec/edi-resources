@@ -24,6 +24,7 @@ GENERATION_DATE is used for document date. If not provided, ORDERRESPONSE_DATE w
 | GENERATION_DATE       | Date Time      | 2023-04-22T09:48:11 | preferred
 |====================================================================================
 
+<<<
 
 === Order Response Info
 .order response info elements
@@ -36,7 +37,6 @@ GENERATION_DATE is used for document date. If not provided, ORDERRESPONSE_DATE w
 | ORDER_PARTIES_REFERENCE    | Supplier's ID       | <<OrderPartiesRef>>    | Y
 |====================================================================================
 
-<<<
 [[Parties]]
 Parties
 ^^^^^^
@@ -69,7 +69,6 @@ Provided codes for PARTY_ROLE and their interpretation:
 | buyer             | Buyers Address    | with supplier_specific id and/or gln
 |========================================================================
 
-
 <<<
 [[ExampleParties]]
 .Example Parties Block
@@ -94,8 +93,6 @@ Provided codes for PARTY_ROLE and their interpretation:
     </PARTY>
 </PARTIES>
 ----
-
-<<<
 
 [[OrderPartiesRef]]
 Parties References
@@ -124,7 +121,6 @@ The type for each reference is supplier_specific.
 ----
 
 <<<
-
 == Order Response Item List
 
 [[OrderResponseItemList]]
@@ -157,10 +153,7 @@ If the line quantity is set to zero or less, the line is considered canceled.
 | DELIVERY_DATE            | delivery dates         | <<DeliveryDate>>    |
 |=======================================================================
 
-
-
 <<<
-
 [[ProductID]]
 ==== Product ID
 
@@ -183,7 +176,6 @@ If the line quantity is set to zero or less, the line is considered canceled.
 </PRODUCT_ID>
 ----
 
-<<<
 [[ProductPriceFix]]
 ==== Product Price fix
 Product prices are always without vat.
@@ -226,7 +218,6 @@ The delivery end date will be considered as delivery date.
 ----
 
 <<<
-
 [[OrderResponseSummary]]
 == Order Response Summary
 

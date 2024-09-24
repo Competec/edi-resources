@@ -29,8 +29,6 @@ This document describes the implementation of Opentrans V2.1 for supplier dropsh
 | TRACKING_TRACING_URL       | Tracking URL        | <<TrackAndTrace>>
 |====================================================================================
 
-<<<
-
 [[DeliveryDate]]
 Delivery Date
 ~~~~~~~~~~~~
@@ -210,8 +208,6 @@ Dispatch Notification Items
 | SHIPMENT_PARTIES_REFERENCE | ID to delivery address         | <<ShipRef>>
 |=======================================================================
 
-<<<
-
 [[ProductID]]
 ==== Product ID
 
@@ -232,6 +228,7 @@ Dispatch Notification Items
 </PRODUCT_ID>
 ----
 
+<<<
 [[OrderRef]]
 ==== Order Reference
 
