@@ -25,7 +25,6 @@ This document describes the implementation of Opentrans V2.1 for supplier order.
 | ORDER_PARTIES_REFERENCE    | Supplier's ID       | <<OrderPartiesRef>>
 |====================================================================================
 
-<<<
 [[Parties]]
 Parties
 ^^^^^^
@@ -60,6 +59,8 @@ Provided codes for PARTY_ROLE and their interpretation:
 | buyer             | Buyers Address    | with supplier_specific id and gln
 | delivery          | Delivery Address  | with supplier_specific id and gln
 |========================================================================
+
+<<<
 
 [[Address]]
 Address
@@ -213,8 +214,6 @@ Dispatch Notification Items
 | DELIVERY_DATE            | requested delivery date    | <<DeliveryDate>>
 |=======================================================================
 
-<<<
-
 [[ProductID]]
 ==== Product ID
 
@@ -237,7 +236,6 @@ Dispatch Notification Items
 </PRODUCT_ID>
 ----
 
-<<<
 [[ProductPriceFix]]
 ==== Product Price fix
 Product prices are always provided without vat.
@@ -257,7 +255,6 @@ Product prices are always provided without vat.
 </PRODUCT_PRICE_FIX>
 ----
 
-<<<
 [[DeliveryDate]]
 ==== Delivery Date
 The delivery date is provided with start and end date, both are set to the same value and at start of Day.
