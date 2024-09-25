@@ -1,0 +1,771 @@
+image:extracted-media/media/image1.jpeg[Ein Bild, das Logo enthält. Automatisch generierte Beschreibung,width=604,height=96]
+
+*Supplier Order Message*
+
+EDIFACT D01B ORDERS
+
+*Version: 1.0*
+
+Author: Competec Service AG
+
+Created: 18.12.2023** +
+**
+
+Changelog
+
+[width="100%",cols="12%,14%,65%,9%",options="header",]
+|===
+|*Version* |*Date* |*Change* |*Author*
+|1.0 |18.12.2023 |Initial definition |SEBR
+| | | |
+|===
+
+Status Codes
+
+[width="100%",cols="^46%,54%",options="header",]
+|===
+|*Code* |*Description*
+|M |Mandatory D01B Field
+|C |Conditional D01B Field
+|===
+
+== 
+
+References
+
+https://unece.org/trade/uncefact/introducing-unedifact
+
+https://www.stylusstudio.com/edifact/D01B/ORDERS.htm
+
+Head Section
+
+[width="100%",cols="9%,21%,26%,9%,19%,16%",options="header",]
+|===
+|*UNB \| Interchange Header* | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |S001 |SYNTAX IDENTIFIER |M | |
+| |0001 |Syntax identifier |M |+UNOC |
+| |0002 |Syntax version number |M |:3 |
+|020 |S002 |INTERCHANGE SENDER |M | |
+| |0004 |Interchange sender identification |M |+7900000000001 |Sender Party GLN
+| |0007 |Identification code qualifier |C |:14 |14 = EAN International
+|030 |S003 |INTERCHANGE RECIPIENT |M | |
+| |0010 |Interchange recipient identification |M |+7900000000003 |Receiver Party GLN
+| |0007 |Identification code qualifier |C |:14 |14 = EAN International
+|040 |S004 |DATE AND TIME OF PREPARATION |M | |
+| |0017 |Date |M |+230504 |yyMMdd
+| |0019 |Time |M |:1358 |HHmm
+|050 |0020 |Interchange control reference |M |+1122334455 |As defined
+|060 |S005 |RECIPIENT'S REFERENCE/PASSWORD DETAILS |C | |Not used
+|070 |0026 |Application reference |C | |Not used
+|080 |0029 |Processing priority code |C | |Not used
+|090 |0031 |Acknowledgement request |C | |Not used
+|100 |0032 |Interchange agreement identifier |C | |Not used
+|110 |0035 |Test indicator |C |+1 |1 = Test
+|===
+
+*Example:*
+
+UNA:+.? '
+
+UNB+UNOC:3+7900000000001:14+7900000000003:14+230504:1358+1122334455++++++1'
+
+[width="100%",cols="9%,28%,24%,8%,16%,15%",options="header",]
+|===
+|*0010 \| Segment \| UNH \| Message Header* | | | | |
+|A service segment starting and uniquely identifying a message. The message type code for the Purchase order message is ORDERS. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |0062 |MESSAGE REFERENCE NUMBER |M |+1122334455 |
+|020 |S009 |MESSAGE IDENTIFIER |M | |
+| |0065 |Message type |M |+ORDERS |
+| |0052 |Message version number |M |:D |
+| |0054 |Message release number |M |:01B |
+| |0051 |Controlling agency, coded |M |:UN |
+|===
+
+*Example:*
+
+UNH+1122334455+ORDERS:D:01B:UN'
+
+[width="100%",cols="8%,25%,23%,8%,16%,20%",options="header",]
+|===
+|*0020 \| Segment \| BGM \| Beginning of message* | | | | |
+|A segment by which the sender must uniquely identify the order by means of its name and number and when necessary its function. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |C002 |DOCUMENT/MESSAGE NAME |C | |
+| |1001 |Document/message name, coded |C |+220 a|
+*_Supported codes:_*
+
+220 = Order
+
+|020 |1004 |Document/message number |C |+1122334455 |Order Id
+|030 |1225 |Message function, coded |C |+9 a|
+*_Supported codes:_*
+
+9 = Original
+
+|040 |4343 |Response type, coded |C | |Not used
+|===
+
+*Example:*
+
+BGM+220+1122334455+9'
+
+[width="100%",cols="9%,23%,22%,8%,16%,22%",options="header",]
+|===
+|*0030 \| Segment \| DTM \| Date/time/period* | | | | |
+|A segment specifying general dates and, when relevant, times related to the whole message. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |C507 |DATE/TIME/PERIOD |M | |
+| |2005 |Date/time/period qualifier |M |+137 a|
+*_Supported codes:_*
+
+137 = Document/message date/time
+
+2 = Delivery date/time, requested
+
+| |2380 |Date/time/period |C |:20220217 |
+| |2379 |Date/time/period format qualifier |C |:102 a|
+*_Supported codes:_*
+
+102 = CCYYMMDD
+
+|===
+
+*Example*:
+
+DTM+137:20220217:102'
+
+DTM+2:20220218:102'
+
+[width="100%",cols="100%",options="header",]
+|===
+|*0090 \| Segment Group 1 \| Reference and Date*
+|A group of segments for giving references and where necessary, their dates, relating to the whole message e.g. contract number, import/export license number, reservation number.
+|===
+
+[width="100%",cols="26%,25%,25%,24%",options="header",]
+|===
+|*SG1 Segment List* | | |
+|*Pos* |*Tag* |*Name* |*Usage*
+|0100 |RFF |Reference |Order Reference
+|===
+
+[width="100%",cols="9%,25%,18%,9%,18%,21%",options="header",]
+|===
+|*0100 \| Segment \| RFF \| Reference* | | | | |
+|A segment identifying the reference by its number and where appropriate a line number within a document.. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |C506 |REFERENCE |M | |
+| |1153 | | |+ABO a|
+*_Supported codes:_*
+
+ABO = Originator's reference
+
+| |1154 |Reference Identifier | |:Testbestellung1 |Order reference by competec
+| |1156 |Document line identifier | | |
+| |4000 |Reference Version Identifier | | |
+| |1060 |Revision identifier | | |
+|===
+
+*Example:*
+
+RFF+ABO:Testbestellung1'
+
+[width="100%",cols="100%",options="header",]
+|===
+|*0120 \| Segment Group 2 \| Parties*
+|A group of segments identifying the parties with associated information.
+|===
+
+[width="100%",cols="26%,25%,25%,24%",options="header",]
+|===
+|*SG2 Segment List* | | |
+|*Pos* |*Tag* |*Name* |*Usage*
+|0130 |NAD |Name and address |At least buyer NAD
+|===
+
+[width="100%",cols="10%,23%,18%,9%,19%,21%",options="header",]
+|===
+|*0120 \| Segment \| NAD \| Name and address* | | | | |
+|A segment identifying names and addresses of the parties and their functions relevant to the order. Identification of the supplier and buyer parties is mandatory for the order message. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |3035 |Party qualifier |M |+BY a|
+*_Supported codes:_*
+
+BY = Buyer
+
+SU = Supplier
+
+DP = Delivery Party
+
+IV = Invoice Party
+
+|020 |C082 |PARTY IDENTIFICATION DETAILS |C | |
+| |3039 |Party id. identification |M |+7900000000001 |GLN
+|030 |C058 |NAME AND ADDRESS |C | |
+|040 |C080 |PARTY NAME |C | |
+| |3036 |Party name |M |+BRACK.CH AG |Company
+| |3036 |Party name |C |:Abt. S?+I |
+|050 |C059 |STREET |C | |
+| |3042 |Street and number/p.o. box |M |+Hintermättlistr. 3 |Street
+| |3042 |Street and number/p.o. box |C |:Rampe 1 |
+|060 |3164 |City name |C |+Mägenwil |City
+|070 |3229 |Country sub-entity identification |C | |
+|080 |3251 |Postcode identification |C |+5506 |PLZ
+|090 |3207 |Country, coded |C |+CH |
+|===
+
+*Example:*
+
+NAD+BY+7900000000001++BRACK.CH AG:Abt. S?+I+Hintermättlistr. 3:Rampe 1+Mägenwil++5506+CH'
+
+NAD+DP+7900000000002++BRACK.CH AG:Abt. Logistik+Teststrasse 17:Ramps 12+Willisau++6130+CH'
+
+NAD+IV+7900000000001++BRACK.CH AG:Abt. S?+I+Hintermättlistr. 3:Rampe 1+Mägenwil++5506+CH'
+
+NAD+SU+7000000000001++Kreditor 9001:EDI-Division+Teststrasse 2:Rampe 2+Aarau++5000+CH'
+
+[width="100%",cols="100%",options="header",]
+|===
+|*0160 \| Segment Group 3 \| References*
+|A group of segments specifying the currencies and related dates/periods valid for the whole order.
+|===
+
+[width="100%",cols="26%,25%,25%,24%",options="header",]
+|===
+|*SG3 Segment List* | | |
+|*Pos* |*Tag* |*Name* |*Usage*
+|0170 |RFF |Reference |VAT number
+|===
+
+[width="99%",cols="11%,23%,21%,8%,16%,21%",options="header",]
+|===
+|*0170 \| Segment \| RFF \| References* | | | | |
+|A group of segments giving references only relevant to the specified party rather than the whole order. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |C506 |REFERENCE |M | |
+| |1153 |Reference Code Qualifier |M |+VA a|
+*_Supported codes:_*
+
+VA = Vat registration number
+
+| |1154 |Reference Identifier |C |:CHE… |Vat Number or Internal customer Number
+| |1156 |Document line identifier |C | |Not used
+| |4000 |Reference version identifier |C | |Not used
+| |1060 |Revision identifier |C | |Not used
+|===
+
+*Example*:
+
+RFF+VA:CHE-000.100.001 MWST'
+
+RFF+IT:009002'
+
+[width="100%",cols="100%",options="header",]
+|===
+|*0220 \| Segment Group 5 \| Contact Details*
+|A group of segments giving contact details of the specific person or department within the party identified in the NAD segment.
+|===
+
+[width="100%",cols="26%,25%,25%,24%",options="header",]
+|===
+|*SG5 Segment List* | | |
+|*Pos* |*Tag* |*Name* |*Usage*
+|0230 |CTA |Contact Information |
+|0240 |COM |Comm. contact |
+|===
+
+[width="99%",cols="11%,23%,21%,8%,16%,21%",options="header",]
+|===
+|*0230 \| Segment \| CTA \| Contact information* | | | | |
+|A segment to identify a person or department, and their function, to whom communications should be directed. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |3139 |Contact function code |C |+PD a|
+*_Supported codes:_*
+
+PD = Purchasing contact
+
+OC = Order contact
+
+SU = Supplier Contact
+
+|020 |C056 |DEPARTMENT OR EMPLOYEE DETAILS |C | |
+| |3413 |Department or employee name code |C |+ |empty
+| |3412 |Department or employee name |C |:BRACK.CH AG |Name
+|===
+
+[width="99%",cols="11%,23%,21%,8%,16%,21%",options="header",]
+|===
+|*0240 \| Segment \| COM \| Contact information* | | | | |
+|A segment to identify a communications type and number for the contact specified in the https://www.stylusstudio.com/edifact/D01B/CTA_.htm[CTA] segment. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |C076 |COMMUNICATION CONTACT |M | |
+| |3148 |Communication adress identifier |M |+062 000 00 01 |
+| |3155 |Communication address code qualifier |M |:TE a|
+*_Supported codes:_*
+
+TE = Telephone
+
+EM = Email
+
+|===
+
+*Example*:
+
+CTA+PD+:BRACK.CH AG'
+
+COM+062 000 00 01:TE'
+
+CTA+OC+:Paul Meier'
+
+COM+paul.meier999@brack.ch:EM'
+
+COM+?+41 62 000 00 01:TE'
+
+[width="100%",cols="100%",options="header",]
+|===
+|*0290 \| Segment Group 7 \| Currencies*
+|A group of segments specifying the currencies and related dates/periods valid for the whole order.
+|===
+
+[width="100%",cols="26%,25%,25%,24%",options="header",]
+|===
+|*SG7 Segment List* | | |
+|*Pos* |*Tag* |*Name* |*Usage*
+|0300 |CUX |Currencies |Must be CHF
+|===
+
+[width="99%",cols="11%,23%,21%,8%,16%,21%",options="header",]
+|===
+|*0300 \| Segment \| CUX \| Currencies* | | | | |
+|A segment identifying the order currency. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |C504 |CURRENCY DETAILS |C | |
+| |6347 |Currency details qualifier |M |+2 a|
+*_Supported codes:_*
+
+2 = Reference currency
+
+| |6345 |Currency, coded |C |:CHF a|
+*_Supported codes:_*
+
+CHF
+
+| |6343 |Currency qualifier |C | |Not used
+|020 |C504 |CURRENCY DETAILS |C | |Not used
+|030 |5402 |Rate of exchange |C | |Not used
+| |6341 |Currency market exchange, coded |C | |Not used
+|===
+
+*Example*:
+
+CUX+2:CHF:9'
+
+[width="100%",cols="100%",options="header",]
+|===
+|*0330 \| Segment Group 8 \| Terms of Payment*
+|A segment group specifying the terms of payment and accounting classifications applicable to the entire message.
+|===
+
+[width="100%",cols="26%,25%,25%,24%",options="header",]
+|===
+|*SG8 Segment List* | | |
+|*Pos* |*Tag* |*Name* |*Usage*
+|0340 |PAT |Payment terms basis |
+|===
+
+[width="100%",cols="9%,23%,30%,8%,10%,20%",options="header",]
+|===
+|*0340 \| Segment \| PAT \| Pament terms basis* | | | | |
+|A segment identifying the payment terms and date/time basis. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |4279 |Payment terms type code qualifier |M |1 |
+|020 |C110 |PAYMENT TERMS |C |+ |Not used
+| |4277 |Payment terms description identifier |C | |Not used
+| |1131 |Code list identification code |C | |Not used
+| |3055 |Code list responsible agency code |C | |Not used
+| |4276 |Payment terms description |C | |Not used
+|030 |C112 |TERMS/TIME INFORMATION |C | |
+| |4275 |Time reference code |M |+5 |Date of Invioce
+| |2009 |Terms time relation code |C |:3 |After Reference
+| |2151 |Period type code |C |:D |Days
+| |2152 |Period count quantity |C |:30 |Number of Days
+|===
+
+*Example*:
+
+PAT+1++5:3:D:30'
+
+[width="100%",cols="100%",options="header",]
+|===
+|*0920 \| Segment Group 25 \| Rules, Law, Regulation*
+|A group of segments identifying any rules, laws or regulations with which the supplier must comply to meet requirements e.g. building regulations, safety requirements, etc.
+|===
+
+[width="100%",cols="26%,25%,25%,24%",options="header",]
+|===
+|*SG15 Segment List* | | |
+|*Pos* |*Tag* |*Name* |*Usage*
+|0930 |RCS |Requirements and Conditions |Conditional, only if value for field 7294 is given.
+|===
+
+[width="100%",cols="9%,20%,26%,10%,10%,25%",options="header",]
+|===
+|*0930 \| Segment \| RCS \| Requirements and Conditions* | | | | |
+|A segment to enable industry or national requirements to be specified. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |7293 |Sector area identification code qualifier |M |+26 |Purchasing conditions
+|020 |C550 |REQUIREMENT/ CONDITION IDENTIFICATION |C | |
+| |7295 |Requirement or condition description identifier |M |+11 |Separate procedure
+| |1131 |Code list identification code |C | |Not used
+| |3055 |Code list responsible agency code |C | |Not used
+| |7294 |Requirement or condition description |C |:OPG |As defined in backend
+|030 |1229 |Action request/notification description code |C | |Not used
+|040 |2307 |Country name code |C | |Not used
+|===
+
+*Example*:
+
+RCS+26+11:::OPG'
+
+Detail Section
+
+[width="100%",cols="100%",options="header",]
+|===
+|*1030 \| Segment Group 28 \| Lines*
+|A group of segments providing details of the individual ordered items.
+|===
+
+[width="100%",cols="26%,25%,25%,24%",options="header",]
+|===
+|*SG28 Segment List* | | |
+|*Pos* |*Tag* |*Name* |*Usage*
+|1040 |LIN |Line item |EAN conditional
+|1050 |PIA |Additional product id |
+|1080 |QTY |Quantity |
+|1110 |DTM |Date |Delivery requested
+|1320 |SG32 |Price details |
+|===
+
+[width="100%",cols="10%,20%,22%,8%,19%,21%",options="header",]
+|===
+|*1040 \| Segment \| LIN \| Line item* | | | | |
+|A segment identifying the line item by the line number and configuration level, and additionally, identifying the product or service ordered. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |1082 |Line item number |C |+10000 |
+|020 |1229 |Action request/notification, coded |C | |Not used
+|030 |C212 |ITEM NUMBER IDENTIFICATION |C | |
+| |7140 |Item number |C |+7612532010634 |EAN
+| |7143 |Item number type, coded |C |:SRV a|
+*_Supported codes:_*
+
+SRV = EAN.UCC Global Trade Item Number
+
+|040 |C829 |SUB-LINE INFORMATION |C | |Not used
+|050 |1222 |Configuration level |C | |Not used
+|060 |7083 |Configuration, coded |C | |Not used
+|===
+
+*Example*:
+
+LIN+10000++7612532010634:SRV'
+
+[width="99%",cols="11%,23%,21%,8%,16%,21%",options="header",]
+|===
+|*1050 \| Segment \| PIA \| Additional product id* | | | | |
+|A segment providing additional identification to the product specified in the LIN segment. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |4347 |Product id. function qualifier |M |+5 a|
+*_Supported codes:_*
+
+5 = Product identification
+
+|020 |C212 |ITEM NUMBER IDENTIFICATION |M | |
+| |7140 |Item number |C |+7741600 |Product number
+| |7143 |Item number type, coded |C |:SA a|
+*_Supported codes:_*
+
+SA = Supplier's item nr
+
+BP = Buyer's item nr +
+MF = Manufacturer's item nr
+
+SRV = EAN.UCC Global Trade Item Number
+
+|030 |C212 |ITEM NUMBER IDENTIFICATION |C | |Not used
+|040 |C212 |ITEM NUMBER IDENTIFICATION |C | |Not used
+|050 |C212 |ITEM NUMBER IDENTIFICATION |C | |Not used
+|060 |C212 |ITEM NUMBER IDENTIFICATION |C | |Not used
+|===
+
+*Example:*
+
+PIA+5+7741600:MF'
+
+PIA+5+7612532010634:SRV'
+
+PIA+5+7741553:SA'
+
+PIA+5+400001:BP'
+
+[width="100%",cols="10%,23%,19%,8%,19%,21%",options="header",]
+|===
+|*1080 \| Segment \| QTY \| Quantity* | | | | |
+|A segment identifying the ordered quantity. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |C186 |QUANTITY DETAILS |M | |
+| |6063 |Quantity qualifier |M |+21 a|
+*_Supported codes:_*
+
+21 = Ordered quantity
+
+| |6060 |Quantity |M |:21 |
+| |6411 |Measure unit qualifier |C |:PCE a|
+*_Supported codes:_*
+
+PCE = Piece
+
+|===
+
+*Example*:
+
+QTY+21:7:PCE'
+
+[width="100%",cols="9%,22%,21%,8%,19%,21%",options="header",]
+|===
+|*1110 \| Segment \| DTM \| Date & Time* | | | | |
+|A segment specifying date/time/period details relating to the line item only. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |C507 |DATE/TIME/PERIOD |M | |
+| |2005 |Date or time or period function code qualifier |M |+2 a|
+*_Provided code:_*
+
+2 = Delivery date/time, requested
+
+| |2380 |Date or time or period value |C |:20220218 |Date value
+| |2379 |Date or time or period format code |C |:102 a|
+*_Provided code:_*
+
+102 = CCYYMMDD
+
+|===
+
+*Example*:
+
+DTM+2:20220218:102'
+
+[width="100%",cols="100%",options="header",]
+|===
+|*1320 \| Segment Group 32 \| Price*
+|A group of segments identifying the relevant pricing information for the goods or services ordered.
+|===
+
+[width="100%",cols="26%,24%,25%,25%",options="header",]
+|===
+|*SG32 Segment List* | | |
+|*Pos* |*Tag* |*Name* |*Status*
+|1330 |PRI |Price details |3 lines of PRI are provided
+|===
+
+[width="100%",cols="10%,23%,19%,8%,19%,21%",options="header",]
+|===
+|*1330 \| Segment \| PRI \| Price details* | | | | |
+|A segment to specify the price type and amount. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |C509 |PRICE INFORMATION |C | |
+| |5125 |Price qualifier |M |+AAA a|
+*_Supported codes:_*
+
+AAA = Calculation net
+
+AAB = Calculation gross
+
+| |5118 |Price |C |:6.45 |
+| |5375 |Price type code |C |:PE a|
+*_Provided codes:_*
+
+PE = Per Each
+
+AQ = As is quantity
+
+| |5387 |Price specification code |C |:AAB a|
+*_Provided codes:_*
+
+AAB = Price includes tax
+
+|020 |5213 |Sub-line price change, coded |C | |Not used
+|===
+
+*Example*:
+
+PRI+AAA:6.45:PE'
+
+PRI+AAB:46.28:AQ:AAB'
+
+PRI+AAA:45.15:AQ'
+
+Summary section
+
+[width="100%",cols="10%,23%,19%,8%,19%,21%",options="header",]
+|===
+|*2330 \| Segment \| UNS \| Section control* | | | | |
+|A service segment placed at the start of the summary section to avoid segment collision. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |0081 |Section identification |M |+S a|
+*_Provided codes:_*
+
+S = Detail/summary section separation
+
+|===
+
+*Example*:
+
+UNS+S'
+
+[width="100%",cols="10%,23%,19%,8%,19%,21%",options="header",]
+|===
+|*2330 \| Segment \| MOA \| Monetary Amount* | | | | |
+|A segment specifying the summary amount for the allowance or charge. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |C516 |MONETARY AMOUNT |M | |
+| |5025 |Monetary amount type code qualifier |C |+79 a|
+*_Provided codes:_*
+
+77 = Invoice amount (incl Vat) +
+79 = Total line items amount
+
+| |5004 |Monetary amount |C |21115.59 |
+| |6345 |Currency identification code |C | |Not in use
+| |6343 |Currency type code qualifier |C | |Not in use
+| |4405 |Status description code |C | |Not in use
+|===
+
+*Example*:
+
+MOA+77:22739.14'
+
+MOA+79:21115.59'
+
+[width="100%",cols="10%,23%,19%,8%,19%,21%",options="header",]
+|===
+|*2400 \| Segment \| UNT \| Message trailer* | | | | |
+|A service segment ending a message, giving the total number of segments in the message and the control reference number of the message. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |0074 |Number of segments in a message |M |+45 |
+|020 |0062 |Message reference number |M |+1122334455' |Order Id
+|===
+
+*Example*:
+
+UNT+45+1122334455'
+
+[width="100%",cols="10%,23%,19%,8%,19%,21%",options="header",]
+|===
+|*UNZ \| Interchange trailer* | | | | |
+|To end and check the completeness of an interchange. | | | | |
+|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|010 |0036 |Interchange control count |M |+1 |
+|020 |0020 |Interchange control reference |M |+1122334455' |
+|===
+
+*Example*:
+
+UNZ+1+1122334455'
+
+Structure overview
+
+[width="100%",cols="^7%,84%,^6%,^1%,^2%",options="header",]
+|===
+| |UNA:+.? ' | | |
+| |UNB+UNOC:3+7900000000001:14+7900000000003:14+230504:1358+1122334455++++++1' | | |
+a|
+____
+HEAD
+____
+
+|UNH+1122334455+ORDERS:D:01B:UN' | | |
+| |BGM+220+1122334455+9' | | |
+| a|
+DTM+137:20220217:102'
+
+DTM+2:20220218:102'
+
+IMD+++:::::de'
+
+| | |
+| |RFF+ABO:Testbestellung1' |SG1 | |
+| |NAD+BY+7900000000001++BRACK.CH AG+Hintermättlistr. 3+Mägenwil++5506+CH' |SG2 | |
+| a|
+RFF+VA:CHE-000.100.001 MWST'
+
+RFF+IT:009002'
+
+|SG3 | |
+| a|
+CTA+PD+:BRACK.CH AG'
+
+COM+062 000 00 01:TE'
+
+CTA+OC+:Paul Meier'
+
+COM+paul.meier999@brack.ch:EM'
+
+COM+?+41 62 000 00 01:TE'
+
+|SG5 | |
+| a|
+NAD+DP+7900000000002++BRACK.CH AG+Teststrasse 17:Ramps 12+Willisau++6130+CH'
+
+NAD+IV+7900000000001++BRACK.CH AG:Abt.xy+Hintermättlistr. 3+Mägenwil++5506+CH'
+
+NAD+SU+7000000000001++Kreditor 9001:EDI-Division+Teststrasse 2+Aarau++5000+CH'
+
+| | |
+| |CUX+2:CHF' |SG7 | |
+| |PAT+1++5:3:D:30' |SG8 | |
+| |RCS+26+11:::OPG' |SG25 | |
+a|
+____
+DETAIL
+____
+
+a|
+LIN+10000++7612532010634:SRV'
+
+PIA+5+7741600:MF'
+
+PIA+5+7612532010634:SRV'
+
+PIA+5+7741553:SA'
+
+PIA+5+400001:BP'
+
+QTY+21:7:PCE'
+
+DTM+2:20220218:102'
+
+|SG28 | |
+| a|
+PRI+AAA:6.45:PE'
+
+PRI+AAB:46.28:AQ:AAB'
+
+PRI+AAA:45.15:AQ'
+
+|SG32 | |
+a|
+____
+SUMMARY
+____
+
+|UNS+S' | | |
+| a|
+MOA+77:22739.14'
+
+MOA+79:21115.59'
+
+| | |
+| |UNT+44+1' | | |
+| |UNZ+1+123456' | | |
+|===
