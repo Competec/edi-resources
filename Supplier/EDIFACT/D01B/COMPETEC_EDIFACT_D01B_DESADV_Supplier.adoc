@@ -76,7 +76,8 @@ UNB+UNOC:3+7630000000000:14+7630000000001:14+240313:2214+123++DESADV++++1'
 |===
 6+|*0010 \| Segment \| UNH \| Message Header*
 6+|A service segment starting and uniquely identifying a message. The message type code for the Despatch advice message is DESADV.
-|*Pos* |*Segment/Element* |*Description*              |*Status* |*Example* |*Remarks*
+|*Pos* |*Segment/
+Element* |*Description*              |*Status* |*Example* |*Remarks*
 |010  ^|0062              |MESSAGE REFERENCE NUMBER   |M       m|+1        |
 |020   |S009              |MESSAGE IDENTIFIER         |M       m|          |
 |     ^|0065              |Message type               |M       m|+DESADV   |
@@ -97,7 +98,8 @@ UNH+1+ORDRSP:D:01B:UN'
 |===
 6+|*0020 \| Segment \| BGM \| Beginning of message*
 6+|A segment for unique identification of the Despatch Advice document, by means of its name and its number.
-|*Pos* |*Segment/Element* |*Description*    |*Status* |*Example* |*Remarks*
+|*Pos* |*Segment/
+Element* |*Description*    |*Status* |*Example* |*Remarks*
 |010    |C002     |DOCUMENT/MESSAGE NAME    |C         m|BGM       |
 |      ^|1001     |Document name code       |C         m|+351     a|*_Supported:_* +
 351 = Despatch advice
@@ -118,7 +120,8 @@ BGM+231+123456+9'
 |===
 6+|*0030 \| DTM \| Date/time/period*
 6+|A segment specifying general dates and, when relevant, times related to the whole message.
-|*Pos* |*Segment/Element* |*Description*           |*Status*  |*Example* |*Remarks*
+|*Pos* |*Segment/
+Element* |*Description*           |*Status*  |*Example* |*Remarks*
 |010 |C507 |DATE/TIME/PERIOD                       |M        m|DTM       |
 .2+|    .2+^|2005 |Date/time/period qualifier      |M        m|+17       |
                4+a| Supported codes: +
@@ -140,7 +143,8 @@ DTM+17:20240229:102
 |===
 6+|*0040 \| ALI \| Additional information*
 6+|A segment indicating that the message is subject to special conditions due to origin, customs preference or commercial factors.
-|*Pos* |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|*Pos* |*Segment/
+Element* |*Description* |*Status* |*Example* |*Remarks*
 |010 ^|3239 |Country of origin name code |C       m|ALI       |
 |    ^|9213 |Duty regime type code       |C       m|          |
 .2+|    .2+^|4183 |Special condition code      |C       m|+148     a|
@@ -175,7 +179,8 @@ ALI+++148'
 |===
 6+|*0090 \| Segment \| RFF \| Reference*
 6+|A segment to specify a reference by its number.
-|*Pos*    |*Segment/Element* |*Description*        |*Status* |*Example*    |*Remarks*
+|*Pos*    |*Segment/
+Element* |*Description*        |*Status* |*Example*    |*Remarks*
 |010      |C506 |REFERENCE                         |M       m|RFF          |
 .2+|  .2+^|1153 |Reference qualifier               |M       m|+ON          |
              4+a| *_Supported codes:_* +
@@ -199,7 +204,8 @@ RFF+CN:99.9999.9999.99'
 |===
 6+|*0100 \| Segment \| DTM \| Date/time/period*
 6+|A segment specifying the date/time related to the reference.
-|*Pos*   |*Segment/Element* |*Description*   |*Status* |*Example*    |*Remarks*
+|*Pos*   |*Segment/
+Element* |*Description*   |*Status* |*Example*    |*Remarks*
 |010     |C507 |DATE/TIME/PERIOD             |M        m|DTM         |
 |       ^|2005 |Date/time/period qualifier   |M        m|+171       a| *_Supported:_* +
                171 = Reference date/time
@@ -235,7 +241,8 @@ DTM+171:20240228:102'
 |===
 6+|*0120 \| Segment \| NAD \| Name and address*
 6+|A segment identifying names and addresses of the parties and their functions relevant to the despatch advice.
-|*Pos*     |*Segment/Element* |*Description*       |*Status* m|*Example*        | *Remarks*
+|*Pos*     |*Segment/
+Element* |*Description*       |*Status* m|*Example*        | *Remarks*
 .2+|010   .2+^|3035 |Party qualifier               |M, B     m|+UC              |
            4+a| *_Supported codes:_* +
           BY = Buyer (mandatory)+
@@ -292,29 +299,30 @@ NAD+DP+7609999129308::9++Alltron AG+Street 10+Willisau Competec++6131+CH'
 |===
 6+|*0250 \| Segment \| TDT \| Details of transport*
 6+|A segment specifying the carriage, and the mode and means of transport of the goods being despatched.
-|*Pos* |*Segment/Element* |*Description*               |*Status* |*Example* |*Remarks*
-|010   ^|8051 |Transport stage code qualifier          |M       m|+20 |20 = Main-carriage transport
-|020   ^|8028 |Means of transport journey identifier   |C       m| |Not in use
-|030    |C220 |MODE OF TRANSPORT                       |C       m| |
-.2+|      .2+^|8067 |Transport mode name code          |C       m|+50 |
+|*Pos* |*Segment/
+Element* |*Description*               |*Status* |*Example* |*Remarks*
+.2+|010 .2+^|8051 |Transport stage code qualifier          |M       m|+20       |
+4+|*_Supported:_* 20 = Main-carriage transport
+|020       ^|8028 |Means of transport journey identifier   |C       m|          |Not in use
+|030        |C220 |MODE OF TRANSPORT                       |C       m|          |
+.2+|    .2+^|8067 |Transport mode name code          |C       m|+50       |
 4+a|
 *_Supported:_* +
 30 = Road transport +
 50 = Mail +
 100 = Courier service
 
-|040    |C228 |TRANSPORT MEANS                         |C       m| |Not in use
-|050    |C040 |CARRIER                                 |C       m| |
-|      ^|3127 |Carrier identifier                      |M       m|+7611550000001 |GLN of Carrier/Forwarding Agent
-|      ^|1131 |Code list identification code           |C       m|: |Street name 2
-.2+| .2+^|3055 |Code list responsible agency code      |C       m|:9 |
-4+|*_Supported:_* +
-9 = EAN (International Article Numbering association)
+|040     |C228 |TRANSPORT MEANS                         |C       m|            |Not in use
+|050     |C040 |CARRIER                                 |C       m|            |
+|       ^|3127 |Carrier identifier                      |M       m|+7611550000001 |GLN
+|       ^|1131 |Identification code                     |C       m|:14         |
+.2+| .2+^|3055 |Responsible agency code                 |C       m|:9          |
+4+|*_Supported:_* 9 = EAN (International Article Numbering association)
 |      ^|3128 |Carrier name                            |C       m|:Post CH AG |
 |      ^|… | | | |
-|080    |C222 |TRANSPORT IDENTIFICATION                |C       m| |
+|080    |C222 |TRANSPORT IDENTIFICATION                |C       m|            |
 |      ^|… | | | |
-|      ^|8212 |Transport means identification name     |C       m|:BL 123456 |Vehicle licence plate
+|      ^|8212 |Transport means identification name     |C       m|:BL 123456  |Vehicle licence plate
 |===
 
 .Example (dropshipment):
@@ -348,7 +356,8 @@ TDT+20++30++7611550000002::9:Müller Transport+++:::BL 123456'
 |===
 6+|*0400 \| Segment \| CPS \| Consignment packing sequence*
 6+|A segment identifying the sequence in which packing of the consignment occurs, e.g. boxes loaded onto a pallet.
-|*Pos*  |*Segment/Element* |*Description*             |*Status* |*Example* |*Remarks*
+|*Pos*  |*Segment/
+Element* |*Description*             |*Status* |*Example* |*Remarks*
 |010   ^|7164 |Hirarchical Structure level ident.     |M       m|1 |
 |020   ^|7166 |Hirarchical Structure parent ident.    |C       m|  |
 |030   ^|7075 |Packaging level code                   |C       m|  |
@@ -382,7 +391,8 @@ CPS+1'
 |===
 6+|*0660 \| Segment \| LIN \| Line item*
 6+|A segment identifying the product being despatched
-|*Pos*    |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|*Pos*    |*Segment/
+Element* |*Description* |*Status* |*Example* |*Remarks*
 |010     ^|1082 |Line item number                     |C         m|+1 |
 |020     ^|1229 |Action request/notification, coded   |C         m| |Not used
 |030      |C212 |ITEM NUMBER IDENTIFICATION           |C         m| |
@@ -407,7 +417,8 @@ LIN+1++0197497400854:SRV'
 |===
 6+|*0670 \| Segment \| PIA \| Additional product id*
 6+|A segment providing either additional identification to the product specified in the LIN segment.
-|*Pos*       |*Segment/Element* |*Description*        |*Status*  |*Example* |*Remarks*
+|*Pos*       |*Segment/
+Element* |*Description*        |*Status*  |*Example* |*Remarks*
 .2+|010  .2+^|4347 |Product id. function qualifier    |M        m| +1  |
 4+a|*_Supported:_* +
 1 = Additional identification +
@@ -434,7 +445,8 @@ PIA+5+1567285:IN'
 |===
 6+|*0680 \| Segment \| IMD \| Item description*
 6+|A segment for describing the product or service being ordered.
-|*Pos*       |*Segment/Element* |*Description*            |*Status* |*Example* |*Remarks*
+|*Pos*       |*Segment/
+Element* |*Description*            |*Status* |*Example* |*Remarks*
 .2+|010  .2+^|7077 |Item description type, coded          |C       m| +F |
 4+a| *_Supported:_* +
 A = Free-form long description +
@@ -455,11 +467,13 @@ IMD+F++:::ELITEBOOK 845 G10 R5-7540U'
 IMD+F++:::PRO X360 435 G10 R3-7330U:Second Line Text'
 ----
 
+<<<
 [width="100%",cols="1,2,4,1,2,2",options="header"]
 |===
 6+|*700 \| Segment \| QTY \| Quantity*
 6+|A segment identifying the despatched quantity.
-|*Pos*    |*Segment/Element* |*Description*   |*Status* |*Example* |*Remarks*
+|*Pos*    |*Segment/
+Element* |*Description*   |*Status* |*Example* |*Remarks*
 |010      |C186 |QUANTITY DETAILS             |M       m| |
 |        ^|6063 |Quantity qualifier           |M       m|+12 a|*_Supported:_* +
 12 = dispatched quantity
@@ -494,7 +508,8 @@ QTY+12:2:PCE'
 |===
 6+|*0830 \| Segment \| RFF \| Reference*
 6+|A segment identifying documents related to the line item.
-|*Pos*  |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|*Pos*  |*Segment/
+Element* |*Description* |*Status* |*Example* |*Remarks*
 |010    |C506 |REFERENCE                |M       m| |
 |      ^|1153 |Reference qualifier      |M, B    m|+LI a|*_Supported codes:_* +
 LI = Line item reference number
@@ -515,7 +530,8 @@ RFF+LI:1000'
 |===
 6+|*1150 \| Segment \| UNT \| Message trailer*
 6+|A service segment ending a message, giving the total number of segments in the message and the control reference number of the message.
-|*Pos*  |*Segment/Element* |*Description*       |*Status* |*Example* |*Remarks*
+|*Pos*  |*Segment/
+Element* |*Description*       |*Status* |*Example* |*Remarks*
 |010   ^|0074 |Number of segments in a message  |M       m|+21       |
 |020   ^|0062 |Message reference number         |M       m|+1        |Message reference number from UNH segment
 |===
@@ -529,7 +545,8 @@ UNT+21+1
 |===
 6+|*UNZ \| Interchange trailer*
 6+|To end and check the completeness of an interchange.
-|*Pos*  |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
+|*Pos*  |*Segment/
+Element* |*Description* |*Status* |*Example* |*Remarks*
 |010   ^|0036 |Interchange control count     |M     m|+1   |
 |020   ^|0020 |Interchange control reference |M     m|+123 |Interchange control reference from UNB segment
 |===
