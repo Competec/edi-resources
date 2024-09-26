@@ -6,7 +6,7 @@ v1.1, 25-09-2024
 [preface]
 == Preface
 
-This document describes the implementation of Opentrans V2.1 for supplier delivery notes / dispatch notification.
+This document describes the implementation of Edifact D01B for supplier delivery notes / dispatch notification.
 
 
 === Changelog
