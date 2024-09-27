@@ -1,12 +1,12 @@
 = EDIFACT D01B INVOIC
-Competec Service AG
+Brack Alltron AG
 :doctype: book
-v1.1, 26-09-2024
+v1.2, 27-09-2024
 
 [preface]
 == Preface
 
-This document describes the implementation of EDIFACT D01B for supplier invoice.
+This document describes the implementation of EDIFACT D01B for supplier invoices.
 
 
 === Changelog
@@ -16,6 +16,7 @@ This document describes the implementation of EDIFACT D01B for supplier invoice.
 |*Version* |*Date* |*Change* |*Author*
 |1.0 |01.05.2023 |Initial definition |SEBR
 |1.1 |25.07.2023 |Corrections |DAO
+|1.2 |27.09.2024 |Conversion to Adoc, small corrections |SEBR, DAO
 |===
 
 == Supplier Invoice Message
@@ -27,13 +28,14 @@ This document describes the implementation of EDIFACT D01B for supplier invoice.
 |*Code* |*Description*
 |M |Mandatory D01B Field
 |C |Conditional D01B Field
-|B |Mandatory by Competec
+|#M# |Mandatory by Brack Alltron AG
 |===
 
 === References
 
 https://unece.org/trade/uncefact/introducing-unedifact
-https://www.stylusstudio.com/edifact/D96A/INVOIC.htm
+
+https://www.stylusstudio.com/edifact/D01B/INVOIC.htm
 
 <<<
 === Head Section
@@ -47,10 +49,10 @@ https://www.stylusstudio.com/edifact/D96A/INVOIC.htm
 .2+|   .2+^|0002 |Syntax version number                 |M      m|:3        |
 4+| *_Supported codes:_* 3, 4
 |020       |S002 |INTERCHANGE SENDER                    |M      m|          |
-|         ^|0004 |Interchange sender identification     |M      m|+7609999… |Sender Party GLN
+|         ^|0004 |Interchange sender identification     |M      m|+7609999999999 |Sender Party GLN
 |         ^|0007 |Identification code qualifier         |C      m|:14       |14 = EAN International
 |030       |S003 |INTERCHANGE RECIPIENT                 |M      m|          |
-|         ^|0010 |Interchange recipient identification  |M      m|+762440…  |Receiver Party GLN
+|         ^|0010 |Interchange recipient identification  |M      m|+7601111111111  |Receiver Party GLN
 .2+|   .2+^|0007 |Identification code qualifier         |C      m|:14       |
 4+| *_Supported codes:_* +
 14 = EAN International +
@@ -81,7 +83,7 @@ UNB+UNOC:4+7609999999999:14+7601111111111:14+20240707:1155+123++++++1'
 |       ^|0052 |Message version number          |M       m|:D |
 |       ^|0054 |Message release number          |M       m|:01B |
 |       ^|0051 |Controlling agency, coded       |M       m|:UN |
-|       ^|0057 |Association assigned code       |C       m|:EAN010 |
+|       ^|0057 |Association assigned code       |C       m|:EAN010 |optional
 |       ^|… | |C | |Not in use
 |===
 
@@ -99,7 +101,7 @@ UNH+11+INVOIC:D:01B:UN:EAN010'
 .2+| .2+^|1001 |Document name code           |C       m|+380 |
 4+|*_Supported code:_* 380 = Invoice
 |       ^|… |                                |C       m| |Not in use
-|020    ^|1004 |Document identifier          |C       m|+22095031075 |Invoice nbr.
+|020    ^|1004 |Document identifier          |#C#       m|+22095031075 |Invoice nbr.
 .2+|030 .2+^|1225 |Message function, coded  |C       m|+9      |
 4+|*_Supported code:_* 9 = Original
 |040    ^|4343 |Response type, coded         |C       m| |Not in use
@@ -159,7 +161,7 @@ DTM+35:20220705:102'
 |010      |C506 |REFERENCE                  |M       m| |
 .2+|  .2+^|1153 |Reference qualifier        |M       m|+ON   |
 4+|*_Supported codes:_* +
-ON = Order nr. (buyer) +
+#ON = Order nr. (buyer)# +
 VN = Order nr. (supplier) +
 IV = Invoice nr. +
 AAK = Despatch advice nr. +
@@ -214,14 +216,14 @@ DTM+171:20230419:102'
 6+|*0230 \| Segment \| NAD \| Name and address* 
 6+|A segment identifying names and addresses of the parties and their functions relevant to the invoice. 
 |*Pos*      |*Segment/Element* |*Description*        |*Status* |*Example* |*Remarks*
-.2+|010 .2+^|3035 |Party qualifier                   |M, B    m|+SU |
+.2+|010 .2+^|3035 |Party qualifier                   |#M#    m|+SU |
 4+|*_Supported codes:_* +
-SU = Supplier (mandatory) +
-BY = Buyer (mandatory) +
+#SU = Supplier# +
+#BY = Buyer# +
 DP = Delivery Party
 
 |020       |C082 |PARTY IDENTIFICATION DETAILS      |C       m| |
-|         ^|3039 |Party id. identification          |M       m|+760999… |
+|         ^|3039 |Party id. identification          |M       m|+7609999111111 |
 |030       |C058 |NAME AND ADDRESS                  |C       m| |Not in use
 |040       |C080 |PARTY NAME                        |C       m| |
 |         ^|3036 |Party name                        |M       m|+Sample Company |Address name 1
@@ -235,7 +237,7 @@ DP = Delivery Party
 |090      ^|3207 |Country, coded                    |C       m|+CH |
 |===
 
-.Exampe:
+.Example:
 ----
 NAD+SU+7609999111111::9++Company AG+Musterstrasse 11+Musterhausen++1234+CH'
 ----
@@ -253,7 +255,7 @@ NAD+SU+7609999111111::9++Company AG+Musterstrasse 11+Musterhausen++1234+CH'
 |040        ^|3207 |Country, coded                   |C       m| |Not used
 |===
 
-.Exampe:
+.Example:
 ----
 FII+RB+CH9430761016097605323'
 ----
@@ -283,10 +285,10 @@ FII+RB+CH9430761016097605323'
 .2+| .2+^|1153 |Reference qualifier         |M       m|+VA    |
 4+|*_Supported code:_* VA = VAT registration number
 .2+| .2+^|1154 |Reference number            |C       m|:CHE191398369 |
-4+|The declaration of the VAT number of the invoicing party/renderer of service (code II from NAD) is mandatory. The UID number has to be submitted in the format CHE999999999
+4+|#The declaration of the VAT number of the invoicing party/renderer of service is mandatory. The UID number has to be submitted in the format CHE999999999.#
 |===
 
-.Exampe:
+.Example:
 ----
 RFF+VA:CHE191398369'
 ----
@@ -326,7 +328,7 @@ RFF+VA:CHE191398369'
 |070        ^|3446 |Party tax identification number    |C       m| |Not used
 |===
 
-.Exampe:
+.Example:
 ----
 TAX+7+VAT+++:::8.1+S'
 ----
@@ -346,7 +348,7 @@ TAX+7+VAT+++:::8.1+S'
 |        ^|… | | | |
 |===
 
-.Exampe:
+.Example:
 ----
 MOA+1:0.62:CHF'
 ----
@@ -490,7 +492,7 @@ IN = Buyer's item nr.
 |060          |C212 |ITEM NUMBER IDENTIFICATION          |C       m| |Not used
 |===
 
-.Exampe:
+.Example:
 ----
 PIA+1+1451693:SA'
 PIA+1+18906117:IN'
@@ -695,7 +697,7 @@ RFF+LI:10000'
 |070         ^|3446 |Party tax identification number      |C        m| |Not used
 |===
 
-.Exampe:
+.Example:
 ----
 TAX+7+VAT+++:::2.6+S'
 ----
@@ -715,7 +717,7 @@ TAX+7+VAT+++:::2.6+S'
 |         ^|6345 |Currency, coded                  |C       m|:CHF |
 |===
 
-.Exampe:
+.Example:
 ----
 MOA+125:410.6:CHF'
 MOA+124:31.62:CHF'
@@ -810,7 +812,7 @@ MOA+86:500.91'
 |070        ^|3446 |Party tax identification number      |C       m| |Not used
 |===
 
-.Exampe:
+.Example:
 ----
 TAX+7+VAT+++:::8.1+S'
 ----
