@@ -1,7 +1,7 @@
 = EDIFACT D01B DESADV
-Competec Service AG
+Brack Alltron AG
 :doctype: book
-v1.1, 25-09-2024
+v1.2, 27-09-2024
 
 [preface]
 == Preface
@@ -16,6 +16,7 @@ This document describes the implementation of Edifact D01B for supplier delivery
 |*Version* |*Date*     |*Change*           |*Author*
 | 1.0      |11.07.2024 |Initial definition |SEBR
 | 1.1      |24.07.2024 |Corrections        |DAO
+| 1.2      |27.09.2024 |Conversion to Adoc, small corrections |SEBR, DAO
 |===
 
 
@@ -28,7 +29,7 @@ This document describes the implementation of Edifact D01B for supplier delivery
 |*Code* |*Description*
 | M     | Mandatory D01B Field
 | C     | Conditional D01B Field
-| B     | Mandatory by Competec
+| #M#   | Mandatory by Brack Alltron AG
 |===
 
 === References
@@ -49,15 +50,15 @@ Element* |*Description* |*Status* |*Example* |*Remarks*
 |    ^|0001 |Syntax identifier                      |M m|+UNOC   |
 |    ^|0002 |Syntax version number                  |M m|:3      |Supported codes: 3, 4
 |020  |S002 |INTERCHANGE SENDER                     |M m|        |
-|    ^|0004 |Interchange sender identification      |M, B m|+7600000… |Sender Party GLN
+|    ^|0004 |Interchange sender identification      |#M# m|+7630000000000 |Sender Party GLN
 |    ^|0007 |Identification code qualifier          |C m|:14     |14 = EAN International
 |030  |S003 |INTERCHANGE RECIPIENT                  |M m|        |
-|    ^|0010 |Interchange recipient identification   |M m|+7600000… |Receiver Party GLN
+|    ^|0010 |Interchange recipient identification   |M m|+7630000000001 |Receiver Party GLN
 |    ^|0007 |Identification code qualifier          |C m|:14     |14 = EAN International
 |040  |S004 |DATE AND TIME OF PREPARATION           |M m|        |
 |    ^|0017 |Date                                   |M m|+240313 |yyMMdd
 |    ^|0019 |Time                                   |M m|:2214   |HHmm
-|050 ^|0020 |Interchange control reference          |M m|+123'   |
+|050 ^|0020 |Interchange control reference          |M m|+123   |
 |060  |S005 |RECIPIENT'S REFERENCE/PASSWORD DETAILS |C m|        |Not in use
 |070 ^|0026 |Application reference                  |C m|        |Not in use
 |080 ^|0029 |Processing priority code               |C m|        |Not in use
@@ -91,7 +92,7 @@ Element* |*Description*              |*Status* |*Example* |*Remarks*
 .Example
 [source]
 ----
-UNH+1+ORDRSP:D:01B:UN'
+UNH+1+DESADV:D:01B:UN'
 ----
 
 [width="100%",cols="1,2,4,1,2,2",options="header"]
@@ -104,7 +105,7 @@ Element* |*Description*    |*Status* |*Example* |*Remarks*
 |      ^|1001     |Document name code       |C         m|+351     a|*_Supported:_* +
 351 = Despatch advice
 |      ^|…        |                         |C         m|          |Not in use
-|020   ^|1004     |Document identifier      |C         m|+DN123456 |Despatch advice nbr.
+|020   ^|1004     |Document identifier      |#C#       m|+DN123456 |Despatch advice nbr.
 |030   ^|1225     |Message function, coded  |C         m|+9       a| *_Supported:_* +
 9 = Original
 |040  ^|4343 |Response type, coded          |C         m|          |Not in use
@@ -113,7 +114,7 @@ Element* |*Description*    |*Status* |*Example* |*Remarks*
 .Example
 [source]
 ----
-BGM+231+123456+9'
+BGM+351+DN123456+9'
 ----
 
 [width="100%",cols="1,2,4,1,2,2",options="header"]
@@ -135,8 +136,8 @@ Element* |*Description*           |*Status*  |*Example* |*Remarks*
 
 .Example:
 ----
-DTM+137:20240313:102
-DTM+17:20240229:102
+DTM+137:20240313:102'
+DTM+17:20240229:102'
 ----
 
 [width="100%",cols="1,2,4,1,2,2",options="header"]
@@ -149,7 +150,7 @@ Element* |*Description* |*Status* |*Example* |*Remarks*
 |    ^|9213 |Duty regime type code       |C       m|          |
 .2+|    .2+^|4183 |Special condition code      |C       m|+148     a|
                    4+a|*_Supported code:_* +
-148 = Supply direct delivery (marks direct deliveries, not required for warehouse deliveries)
+148 = Supply direct delivery (marks dropshipment deliveries, not required for warehouse deliveries)
 
 |===
 
@@ -184,11 +185,11 @@ Element* |*Description*        |*Status* |*Example*    |*Remarks*
 |010      |C506 |REFERENCE                         |M       m|RFF          |
 .2+|  .2+^|1153 |Reference qualifier               |M       m|+ON          |
              4+a| *_Supported codes:_* +
-ON = Order number +
+#ON = Order number# +
 CN = Carrier's reference number (dropshipment)
 
-.2+|  .2+^|1154 |Reference number                  |C       m|:1990845089' |
-                4+|Competec Order number (ON), Consignment/package number for tracking purposes (CN)
+.2+|  .2+^|1154 |Reference number                  |#C#       m|:1990845089' |
+                4+|Brack Alltron Order number (ON), Consignment/package number for tracking purposes (CN)
 
 |        ^|… | | | |Not in use
 |===
@@ -243,22 +244,22 @@ DTM+171:20240228:102'
 6+|A segment identifying names and addresses of the parties and their functions relevant to the despatch advice.
 |*Pos*     |*Segment/
 Element* |*Description*       |*Status* m|*Example*        | *Remarks*
-.2+|010   .2+^|3035 |Party qualifier               |M, B     m|+UC              |
+.2+|010   .2+^|3035 |Party qualifier               |#M#     m|+UC              |
            4+a| *_Supported codes:_* +
-          BY = Buyer (mandatory)+
-          SU = Supplier (mandatory) +
-          DP = Delivery party (warehouse deliveries) +
-          UC = Ultimate consignee (dropshipment deliveries) +
+          #BY = Buyer# +
+          #SU = Supplier# +
+          DP = Delivery party (for warehouse deliveries) +
+          UC = Ultimate consignee (for dropshipment deliveries) +
 
 |020   |C082 |PARTY IDENTIFICATION DETAILS        |C         m|                 |
 |     ^|3039 |Party identification                |M         m|+760999…         |Not required for UC party
 |030   |C058 |NAME AND ADDRESS                    |C         m|                 |Not in use
 |040   |C080 |PARTY NAME                          |C         m|                 |
-|     ^|3036 |Party name                          |M         m|+Frau            |Address name 1
-|     ^|3036 |Party name                          |C         m|:Cornelia Muster |Address name 2
+|     ^|3036 |Party name                          |M         m|+Cornelia Muster |Address name 1
+|     ^|3036 |Party name                          |C         m|                 |Address name 2
 |050   |C059 |STREET                              |C         m|                 |
-|     ^|3042 |Street and number/p.o. box          |M         m|+Streetname 1    |Street name 1
-|     ^|3042 |Street and number/p.o. box          |C         m|:Building 10b    |Street name 2
+|     ^|3042 |Street and number/p.o. box          |M         m|+Streetname 1    |Street street 1
+|     ^|3042 |Street and number/p.o. box          |C         m|:Building 10b    |Street street 2
 |060  ^|3164 |City name                           |C         m|+Zürich          |
 |070  ^|3229 |Country sub-entity identification   |C         m|                 |Not in use
 |080  ^|3251 |Postcode identification             |C         m|+8005            |PLZ
@@ -269,7 +270,7 @@ Element* |*Description*       |*Status* m|*Example*        | *Remarks*
 ----
 NAD+BY+7630000000001::9'
 NAD+SU+7630000000000::9'
-NAD+UC+++Cornelia Muster+ Streetname 1:Building 10b+Zürich++8005+CH'
+NAD+UC+++Cornelia Muster+Streetname 1:Building 10b+Zürich++8005+CH'
 ----
 
 .Example (warehouse):
@@ -425,9 +426,9 @@ Element* |*Description*        |*Status*  |*Example* |*Remarks*
 5 = Product identification
 
 |020  |C212 |ITEM NUMBER IDENTIFICATION                |M        m| |
-|    ^|7140 |Item number                               |B, C     m|+1567285 |Competec item number
+|    ^|7140 |Item number                               |#C#      m|+1567285 |Brack Alltron item number
 |    ^|7143 |Item number type, coded                   |C        m|:IN a|*_Supported:_* +
-IN = Buyer's item number
+#IN = Buyer's item number#
 
 |030  |C212 |ITEM NUMBER IDENTIFICATION                |C        m| |Not used
 |040  |C212 |ITEM NUMBER IDENTIFICATION                |C        m| |Not used
@@ -476,9 +477,9 @@ IMD+F++:::PRO X360 435 G10 R3-7330U:Second Line Text'
 Element* |*Description*   |*Status* |*Example* |*Remarks*
 |010      |C186 |QUANTITY DETAILS             |M       m| |
 |        ^|6063 |Quantity qualifier           |M       m|+12 a|*_Supported:_* +
-12 = dispatched quantity
+#12 = Dispatched quantity#
 
-|        ^|6060 |Quantity                     |M, B    m|:2 |Only integer values supported
+|        ^|6060 |Quantity                     |#M#     m|:2 |Only integer values supported
 |        ^|6411 |Measure unit qualifier       |C       m|:PCE a|*_Supported:_* +
 PCE = Piece
 
@@ -488,6 +489,7 @@ PCE = Piece
 ----
 QTY+12:2:PCE'
 ----
+
 <<<
 ==== Segment Group 18
 [width="100%",cols="100%",options="header",]
@@ -511,10 +513,10 @@ QTY+12:2:PCE'
 |*Pos*  |*Segment/
 Element* |*Description* |*Status* |*Example* |*Remarks*
 |010    |C506 |REFERENCE                |M       m| |
-|      ^|1153 |Reference qualifier      |M, B    m|+LI a|*_Supported codes:_* +
-LI = Line item reference number
+|      ^|1153 |Reference qualifier      |M     m|+LI a|*_Supported codes:_* +
+#LI = Line item reference number#
 
-|      ^|1154 |Reference number         |B, C    m|:1000 |Competec order line number
+|      ^|1154 |Reference number         |#C#     m|:1000 |Brack Alltron order line number
 |      ^|… | | | |Not in use
 |===
 
@@ -538,7 +540,7 @@ Element* |*Description*       |*Status* |*Example* |*Remarks*
 
 .Example:
 ----
-UNT+21+1
+UNT+21+1'
 ----
 
 [width="100%",cols="1,2,4,1,2,2",options="header"]
@@ -553,7 +555,7 @@ Element* |*Description* |*Status* |*Example* |*Remarks*
 
 .Example:
 ----
-UNZ+1+10
+UNZ+1+123'
 ----
 
 <<<
@@ -645,7 +647,7 @@ Y
 a|
 ----
 UNT+24+1'
-UNZ+1+123
+UNZ+1+123'
 ----
 |
 |===
@@ -743,7 +745,7 @@ Y
 a|
 ----
 UNT+24+1'
-UNZ+1+123
+UNZ+1+123'
 ----
 |
 |===
