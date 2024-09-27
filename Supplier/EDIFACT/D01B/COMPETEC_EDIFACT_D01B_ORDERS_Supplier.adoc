@@ -1,7 +1,7 @@
 = EDIFACT D01B ORDERS
-Competec Service AG
+Brack Alltron AG
 :doctype: book
-v1.0, 27-09-2024
+v1.1, 27-09-2024
 
 [preface]
 == Preface
@@ -14,6 +14,7 @@ This document describes the implementation of Edifact D01B for supplier orders.
 |===
 |*Version* |*Date* |*Change* |*Author*
 |1.0 |18.12.2023 |Initial definition |SEBR
+|1.1 |27.09.2024 |Conversion to Adoc, small corrections |SEBR, DAO
 |===
 
 == Supplier Order Message
@@ -25,7 +26,6 @@ This document describes the implementation of Edifact D01B for supplier orders.
 |*Code* |*Description*
 |M      |Mandatory D01B Field
 |C      |Conditional D01B Field
-|#M#     | Mandatory by Competec
 |===
 
 === References
@@ -162,7 +162,7 @@ Element* |*Description*                            |*Status* |*Example*         
 |010      |C506 |REFERENCE                         |M       m|RFF               |
 .2+|  .2+^|1153 |Reference qualifier               |M       m|+ABO              |
 4+a| *_Supported codes:_* ABO = = Originator's reference
-|        ^|1154 |Reference number                  |C       m|:Testbestellung1' |Order reference by competec
+|        ^|1154 |Reference number                  |C       m|:Testbestellung1' |Order reference by Brack Alltron
 |        ^|… | | | |Not in use
 |===
 
@@ -194,7 +194,7 @@ RFF+ABO:Testbestellung1'
 |*Pos*       |*Segment/Element* |*Description*               |*Status*   |*Example* |*Remarks*
 .2+|010  .2+^|3035 |Party qualifier                          |M         m|+BY       |
 4+|*_Supported codes:_* +
-BY = Buyer #M# +
+BY = Buyer +
 SU = Supplier +
 DP = Delivery Party +
 IV = Invoice Party
@@ -452,7 +452,7 @@ RCS+26+11:::OPG'
 6+|*1040 \| Segment \| LIN \| Line item*
 6+|A segment identifying the line item by the line number and configuration level, and additionally, identifying the product or service ordered.
 |*Pos*        |*Segment/Element* |*Description*         |*Status* |*Example* |*Remarks*
-|010         ^|1082 |Line item number                   |#M#     m|+10000 |
+|010         ^|1082 |Line item number                   |M     m|+10000 |
 |020         ^|1229 |Action request/notification, coded |C       m| |Not used
 .4+|030      ^|C212 |ITEM NUMBER IDENTIFICATION         |C       m| |
 ^|             7140 |Item number                        |C       m|+7612532010634 |EAN

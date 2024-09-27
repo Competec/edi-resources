@@ -1,12 +1,14 @@
 = EDIFACT D01B OSTRPT
-Competec Service AG
+Brack Alltron AG
 :doctype: book
-v1.1, 26-09-2024
+v1.0, 27-09-2024
 
 [preface]
 == Preface
 
-This document describes the implementation of EDIFACT D01B for Order Status Report.
+This document describes the implementation of EDIFACT D01B for Order Status Report. This message may only be used by
+selected partners to create new purchase orders in the Brack Alltron ERP. To communicate changes on orders, please use
+the ORDRSP message.
 
 Changelog
 .Changelog
@@ -25,7 +27,7 @@ Changelog
 |*Code* |*Description*
 |M |Mandatory D01B Field
 |C |Conditional D01B Field
-|B |Mandatory by competed
+|#M# |Mandatory by Brack Alltron AG
 |===
 
 === References
@@ -161,13 +163,13 @@ RFF+ON:1990845089'
 6+|*0080 \| Segment \| NAD \| Name and address*
 6+|A segment identifying names and addresses of the parties and their functions relevant to the invoice.
 |*Pos*      |*Segment/Element* |*Description*        |*Status* |*Example* |*Remarks*
-.2+|010 .2+^|3035 |Party qualifier                   |M, B    m|+SE |
+.2+|010 .2+^|3035 |Party qualifier                   |#M#    m|+SE |
 4+|*_Supported codes:_* +
-SE = Seller (mandatory) +
+#SE = Seller# +
 BY = Buyer (optional, defaults to Brack AG)
 |020       |C082 |PARTY IDENTIFICATION              |C       m| |
 .2+|   .2+^|3039 |Party id. identification          |M       m|+K1234|
-4+| competec id, mandatory for SU
+4+| #Must provide a valid Brack Alltron Supplier Id#
 |030       |C058 |NAME AND ADDRESS                  |C       m| |Not in use
 |040       |C080 |PARTY NAME                        |C       m| |
 |         ^|3036 |Party name                        |M       m|+Musterfirma AG |
@@ -220,7 +222,7 @@ NAD+SE+K1234+Musterfirma AG++Geisterstrasse 123+Zürich++8000+CH'
 
 .Example:
 ----
-DOC+220+2403356-1'
+DOC+220+2403356'
 ----
 
 <<<
@@ -271,12 +273,12 @@ LIN+1++1410248:SRV'
 4+|*_Supported codes:_* +
 1 = Additional identification +
 5 = Product identification
-|020         ^|C212 |ITEM NUMBER ID.                     |M       m| |
+|020         ^|C212 |ITEM NUMBER ID.                     |#M#       m| |
 |            ^|7140 |Item number                         |C       m|+032015 |
 .2+|      .2+^|7143 |Item number type, coded             |C       m|:SA |
 4+|*_Supported codes:_* +
 SA = Supplier article nr. +
-BP = Buyer's product nr.
+#BP = Buyer's product nr (Brack Alltron product id)#
 |030          |C212 |ITEM NUMBER ID.                     |C       m| |Not used
 |040          |C212 |ITEM NUMBER ID.                     |C       m| |Not used
 |050          |C212 |ITEM NUMBER ID.                     |C       m| |Not used
@@ -367,7 +369,7 @@ DTM+4:20240925:102'
 |010       |C186 |QUANTITY DETAILS              |M        m| |
 .2+|   .2+^|6063 |Quantity qualifier            |M        m|+21 |
 4+|*_Supported code:_* 21 = Ordered quantity
-|         ^|6060 |Quantity                      |M        m|:5 |Only integer values supported
+|         ^|6060 |Quantity                      |#M#        m|:5 |Only integer values supported
 .2+|   .2+^|6411 |Measure unit qualifier        |C        m|:PCE a|
 4+|*_Supported code:_* PCE = Piece
 |===
