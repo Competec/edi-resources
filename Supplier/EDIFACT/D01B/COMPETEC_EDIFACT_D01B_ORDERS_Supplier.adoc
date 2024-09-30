@@ -1,0 +1,783 @@
+= EDIFACT D01B ORDERS
+Brack Alltron AG
+:doctype: book
+:toc:
+v1.1, 27-09-2024
+
+== Supplier Order Message
+
+[preface]
+== Preface
+
+This document describes the implementation of Edifact D01B for supplier orders.
+
+=== Changelog
+.Changelog
+[width="100%",cols="1,1,1,1",options="header",]
+|===
+|*Version* |*Date* |*Change* |*Author*
+|1.0 |18.12.2023 |Initial definition |SEBR
+|1.1 |27.09.2024 |Conversion to Adoc, small corrections |SEBR, DAO
+|===
+
+=== Status Codes
+
+[width="100%",cols="1, 4",options="header",]
+|===
+|*Code* |*Description*
+|M      |Mandatory D01B Field
+|C      |Conditional D01B Field
+|===
+
+=== References
+
+https://unece.org/trade/uncefact/introducing-unedifact +
+https://www.stylusstudio.com/edifact/D01B/ORDERS.htm
+
+<<<
+== Head Section
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*UNB \| Interchange Header*
+|*Pos* |*Segment/
+Element* |*Description* |*Status* |*Example* |*Remarks*
+.3+|010 |S001 |SYNTAX IDENTIFIER                      |M m|        |
+^|       0001 |Syntax identifier                      |M m|+UNOC   |
+^|       0002 |Syntax version number                  |M m|:3      |Supported codes: 3, 4
+.3+|020 |S002 |INTERCHANGE SENDER                     |M m|        |
+^|       0004 |Interchange sender identification      |M m|+7600000… |Sender Party GLN
+^|       0007 |Identification code qualifier          |C m|:14     |14 = EAN International
+.3+|030 |S003 |INTERCHANGE RECIPIENT                  |M m|        |
+^|       0010 |Interchange recipient identification   |M m|+7600000… |Receiver Party GLN
+^|       0007 |Identification code qualifier          |C m|:14     |14 = EAN International
+.3+|040 |S004 |DATE AND TIME OF PREPARATION           |M m|        |
+^|       0017 |Date                                   |M m|+230504 |yyMMdd
+^|       0019 |Time                                   |M m|:1358   |HHmm
+|050   ^|0020 |Interchange control reference          |M m|+12345'   |
+|060    |S005 |RECIPIENT'S REFERENCE/PASSWORD DETAILS |C m|        |Not in use
+|070   ^|0026 |Application reference                  |C m|        |Not in use
+|080   ^|0029 |Processing priority code               |C m|        |Not in use
+|090   ^|0031 |Acknowledgement request                |C m|        |Not in use
+|100   ^|0032 |Interchange agreement identifier       |C m|        |Not in use
+|110   ^|0035 |Test indicator                         |C m|+1      |1 = Test
+|===
+
+.Example:
+----
+UNA:+.? '
+UNB+UNOC:3+7900000000001:14+7900000000003:14+230504:1358+1122334455++++++1'
+----
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0010 \| Segment \| UNH \| Message Header*
+6+|A service segment starting and uniquely identifying a message. The message type code for the Despatch advice message is DESADV.
+|*Pos* |*Segment/
+Element* |*Description*              |*Status* |*Example* |*Remarks*
+|010  ^|0062              |MESSAGE REFERENCE NUMBER   |M       m|+12345    |
+.6+|020   |S009              |MESSAGE IDENTIFIER         |M       m|          |
+^|         0065              |Message type               |M       m|+ORDERS   |
+^|         0052              |Message version number     |M       m|:D        |
+^|         0054              |Message release number     |M       m|:01B      |
+^|         0051              |Controlling agency, coded  |M       m|:UN       |
+^|         0057              |Association assigned code  |C       m|          |optional
+| ^|       \...              |                           |C       m|          |Not in use
+|===
+
+.Example
+----
+UNH+12345+ORDERS:D:01B:UN'
+----
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0020 \| Segment \| BGM \| Beginning of message*
+6+|A segment for unique identification of the Despatch Advice document, by means of its name and its number.
+|*Pos* |*Segment/
+Element*     |*Description*    |*Status* |*Example* |*Remarks*
+.4+|010      |C002     |DOCUMENT/MESSAGE NAME    |C         m|BGM       |
+.2+^|         1001     |Document name code       |C         m|+220      |
+4+|                     *_Supported:_* 220 = Order
+^|            \...     |                         |C         m|          |Not in use
+|020         |1004     |Document identifier      |C         m|+123456   |Order id
+.2+|030  .2+^|1225     |Message function, coded  |C         m|+9        |
+4+|                     *_Supported:_* 9 = Original
+|040        ^|4343     |Response type, coded     |C         m|          |Not in use
+|===
+
+.Example
+----
+BGM+220+123456+9'
+----
+
+<<<
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0030 \| DTM \| Date/time/period*
+6+|A segment specifying general dates and, when relevant, times related to the whole message.
+|*Pos* |*Segment/
+Element* |*Description*           |*Status*  |*Example* |*Remarks*
+.6+|010  |C507 |DATE/TIME/PERIOD                       |M        m|DTM       |
+.2+^|     2005 |Date/time/period qualifier             |M        m|+137      |
+4+|             *_Supported:_* +
+                  137 = Document date +
+                  2 = Delivery Date requested
+^|        2380 |Date/time/period                      |C        m|:20220217  |
+.2+^|     2379 |Date/time/period format qualifier     |C        m|:102       |
+4+|             *_Supported:_* 102 = CCYYMMDD
+|===
+
+.Example:
+----
+DTM+137:20220217:102'
+DTM+2:20220218:102'
+----
+
+
+<<<
+=== Segment Group 1
+[width="100%",cols="100%",options="header"]
+|===
+|*0090 \| Segment Group 1 \| References and Dates*
+|A group of segments for giving references and where necessary, their dates, relating to the whole message.
+|===
+
+[width="100%",cols="1,1,4",options="header"]
+|===
+3+|*SG1 Used Segment List*
+|*Pos* |*Tag* |*Name*
+|0100 |RFF |Reference
+|===
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0090 \| Segment \| RFF \| Reference*
+6+|A segment to specify a reference by its number.
+|*Pos*    |*Segment/
+Element*    |*Description*                            |*Status* |*Example*         |*Remarks*
+.4+|010     |C506 |REFERENCE                         |M       m|RFF               |
+.2+^|        1153 |Reference qualifier               |M       m|+ABO              |
+4+a|               *_Supported codes:_* ABO = = Originator's reference
+^|           1154 |Reference number                  |C       m|:Testbestellung1' |Order reference by Brack Alltron
+|        ^|\... 4+|Not in use
+|===
+
+.Example:
+----
+RFF+ABO:Testbestellung1'
+----
+
+
+<<<
+=== Segment Group 2
+[width="100%",cols="100%",options="header"]
+|===
+|*0120 \| Segment Group 2 \| Parties*
+|A group of segments identifying the parties with associated information.
+|===
+
+[width="99%",cols="1,1,4",options="header"]
+|===
+3+|*SG2 Used Segment List*
+|*Pos* |*Tag* |*Name*
+|0130  |NAD   |Name (& Address)
+|===
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0120 \| Segment \| NAD \| Name and address*
+6+|A segment identifying names and addresses of the parties and their functions relevant to the order. Identification of the supplier and buyer parties is mandatory for the order message.
+|*Pos*       |*Segment/Element* |*Description*               |*Status*   |*Example* |*Remarks*
+.2+|010  .2+^|3035 |Party qualifier                          |M         m|+BY       |
+4+|*_Supported codes:_* +
+BY = Buyer +
+SU = Supplier +
+DP = Delivery Party +
+IV = Invoice Party
+.2+|020        |C082 |PARTY IDENTIFICATION DETAILS           |C         m| |
+^|              3039 |Party id. identification               |M         m|+7900000000001        |GLN
+|030           |C058 |NAME AND ADDRESS                       |C         m| |
+.3+|040        |C080 |PARTY NAME                             |C         m| |
+^|              3036 |Party name                             |M         m|+BRACK.CH AG         |Company
+^|              3036 |Party name                             |C         m|:Abt. S?+I           |
+.3+|050        |C059 |STREET                                 |C         m| |
+^|              3042 |Street and number/p.o. box             |M         m|+Hintermättlistr. 3  |Street
+^|              3042 |Street and number/p.o. box             |C         m|:Rampe 1             |
+|060          ^|3164 |City name                              |C         m|+Mägenwil            |City
+|070          ^|3229 |Country sub-entity identification      |C         m| |
+|080          ^|3251 |Postcode identification                |C         m|+5506                |PLZ
+|090          ^|3207 |Country, coded                         |C         m|+CH                  |
+|===
+
+.Example:
+----
+NAD+BY+7900000000001++BRACK.CH AG:Abt. S?+I+Hintermättlistr. 3:Rampe 1+Mägenwil++5506+CH'
+NAD+DP+7900000000002++BRACK.CH AG:Abt. Logistik+Teststrasse 17:Ramps 12+Willisau++6130+CH'
+NAD+IV+7900000000001++BRACK.CH AG:Abt. S?+I+Hintermättlistr. 3:Rampe 1+Mägenwil++5506+CH'
+NAD+SU+7000000000003++Kreditor 9001:EDI-Division+Teststrasse 2:Rampe 2+Aarau++5000+CH'
+----
+
+<<<
+==== Segment Group 3
+[width="100%",cols="100%",options="header",]
+|===
+|*0160 \| Segment Group 3 \| References*
+|A group of segments specifying the currencies and related dates/periods valid for the whole order.
+|===
+
+[width="100%",cols="1,1,4",options="header"]
+|===
+3+|*SG3 Segment List*
+|*Pos* |*Tag* |*Name*
+|0170 |RFF |Reference
+|===
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0170 \| Segment \| RFF \| References*
+6+|A group of segments giving references only relevant to the specified party rather than the whole order.
+|*Pos*    |*Segment/Element* |*Description*        |*Status*   |*Example* |*Remarks*
+.8+|010      |C506 |REFERENCE                      |M         m|          |
+.2+^|         1153 |Reference Code Qualifier       |M         m|+VA       |
+4+|                 *_Supported codes:_* VA = Vat registration number
+.2+^|         1154 |Reference Identifier           |C         m|:CHE…     |
+4+|                 Vat Number or Internal customer Number
+^|            1156 |Document line identifier       |C         m|          |Not used
+^|            4000 |Reference version identifier   |C         m|          |Not used
+^|            1060 |Revision identifier            |C         m|          |Not used
+|===
+
+.Example:
+----
+RFF+VA:CHE-000.100.001 MWST'
+RFF+IT:009002'
+----
+
+<<<
+==== Segment Group 5
+
+[width="100%",cols="100%",options="header",]
+|===
+|*0220 \| Segment Group 5 \| Contact Details*
+|A group of segments giving contact details of the specific person or department within the party identified in the NAD segment.
+|===
+
+[width="100%",cols="1,1,4",options="header"]
+|===
+3+|*SG5 Segment List*
+|*Pos* |*Tag* |*Name*
+|0230 |CTA |Contact Information
+|0240 |COM |Communication contact
+|===
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0230 \| Segment \| CTA \| Contact information*
+6+|A segment to identify a person or department, and their function, to whom communications should be directed.
+|*Pos*       |*Segment/Element* |*Description*        |*Status* |*Example*    |*Remarks*
+.2+|010  .2+^|3139 |Contact function code             |C       m|+PD          |
+4+|                *_Supported codes:_* +
+                   PD = Purchasing contact +
+                   OC = Order contact +
+                   SU = Supplier Contact
+.3+|020     |C056 |DEPARTMENT OR EMPLOYEE DETAILS     |C       m| |
+^|           3413 |Department or employee name code   |C       m|+            |empty
+^|           3412 |Department or employee name        |C       m|:BRACK.CH AG |Name
+|===
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0240 \| Segment \| COM \| Communication information*
+6+|A segment to identify a communications type and number for the contact specified in the https://www.stylusstudio.com/edifact/D01B/CTA_.htm[CTA] segment.
+|*Pos*     |*Segment/Element* |*Description*                |*Status* |*Example*      |*Remarks*
+.4+|010    |C076 |COMMUNICATION CONTACT                     |M       m|               |
+^|          3148 |Communication adress identifier           |M       m|+062 000 00 01 |
+.2+^|       3155 |Communication address code qualifier      |M       m|:TE            |
+4+|              *_Supported codes:_* +
+                 TE = Telephone +
+                 EM = Email
+|===
+
+.Example:
+----
+CTA+PD+:BRACK.CH AG'
+COM+062 000 00 01:TE'
+CTA+OC+:Paul Meier'
+COM+paul.meier999@brack.ch:EM'
+COM+?+41 62 000 00 01:TE'
+----
+
+<<<
+=== Segment Group 7
+
+[width="100%",cols="100%",options="header",]
+|===
+|*0290 \| Segment Group 7 \| Currencies*
+|A group of segments specifying the currencies and related dates/periods valid for the whole order.
+|===
+
+[width="100%",cols="1,1,4",options="header"]
+|===
+3+|*SG7 Segment List*
+|*Pos* |*Tag* |*Name*
+|0300 |CUX |Currencies
+|===
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0300 \| Segment \| CUX \| Currencies*
+6+|A segment identifying the order currency.
+|*Pos*       |*Segment/Element* |*Description*       |*Status* |*Example* |*Remarks*
+.6+|010      |C504 |CURRENCY DETAILS                 |C        | |
+.2+^|         6347 |Currency details qualifier       |M       m|+2 |
+4+|                 *_Supported:_* 2 = Reference currency
+.2+^|         6345 |Currency, coded                  |C       m|:CHF |
+4+|                 *_Supported:_* CHF
+^|            6343 |Currency qualifier               |C       m| |Not used
+|020         |C504 |CURRENCY DETAILS                 |C       m| |Not used
+.2+|030     ^|5402 |Rate of exchange                 |C       m| |Not used
+^|            6341 |Currency market exchange, coded  |C       m| |Not used
+|===
+
+.Example:
+----
+CUX+2:CHF:9'
+----
+
+
+<<<
+=== Segment Group 8
+
+[width="100%",cols="100%",options="header",]
+|===
+|*0330 \| Segment Group 8 \| Terms of Payment*
+|A segment group specifying the terms of payment and accounting classifications applicable to the entire message.
+|===
+
+[width="100%",cols="1,1,4",options="header"]
+|===
+3+|*SG8 Segment List*
+|*Pos* |*Tag* |*Name*
+|0340  |PAT |Payment terms basis
+|===
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0340 \| Segment \| PAT \| Pament terms basis*
+6+|A segment identifying the payment terms and date/time basis.
+|*Pos*      |*Segment/Element* |*Description*              |*Status* |*Example* |*Remarks*
+|010       ^|4279 |Payment terms type code qualifier       |M       m|1 |
+.5+|020     |C110 |PAYMENT TERMS                           |C       m|+ |Not used
+^|           4277 |Payment terms description identifier    |C       m| |Not used
+^|           1131 |Code list identification code           |C       m| |Not used
+^|           3055 |Code list responsible agency code       |C       m| |Not used
+^|           4276 |Payment terms description               |C       m| |Not used
+.5+|030     |C112 |TERMS/TIME INFORMATION                  |C       m| |
+^|           4275 |Time reference code                     |M       m|+5 |Date of Invioce
+^|           2009 |Terms time relation code                |C       m|:3 |After Reference
+^|           2151 |Period type code                        |C       m|:D |Days
+^|           2152 |Period count quantity                   |C       m|:30 |Number of Days
+|===
+
+.Example:
+----
+PAT+1++5:3:D:30'
+----
+
+<<<
+=== Segment Group 25
+
+[width="100%",cols="100%",options="header",]
+|===
+|*0920 \| Segment Group 25 \| Rules, Law, Regulation*
+|A group of segments identifying any rules, laws or regulations with which the supplier must comply to meet requirements e.g. building regulations, safety requirements, etc.
+|===
+
+[width="100%",cols="1,1,4",options="header"]
+|===
+3+|*SG15 Segment List*
+|*Pos* |*Tag* |*Name*
+|0930  |RCS |Requirements and Conditions +
+             Conditional, only if value for field 7294 is given.
+|===
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0930 \| Segment \| RCS \| Requirements and Conditions*
+6+|A segment to enable industry or national requirements to be specified.
+|*Pos*      |*Segment/Element* |*Description*                      |*Status* |*Example* |*Remarks*
+|010       ^|7293 |Sector area identification code qualifier       |M       m|+26 |Purchasing conditions
+.5+|020     |C550 |REQUIREMENT/ CONDITION IDENTIFICATION           |C       m| |
+^|           7295 |Requirement or condition description identifier |M       m|+11 |Separate procedure
+^|           1131 |Code list identification code                   |C       m| |Not used
+^|           3055 |Code list responsible agency code               |C       m| |Not used
+^|           7294 |Requirement or condition description            |C       m|:OPG |As defined in backend
+|030        |1229 |Action request/notification description code    |C       m| |Not used
+|040        |2307 |Country name code                               |C       m| |Not used
+|===
+
+.Example:
+----
+RCS+26+11:::OPG'
+----
+
+<<<
+== Detail Section
+=== Segment Group 28
+
+[width="100%",cols="100%",options="header",]
+|===
+|*1030 \| Segment Group 28 \| Lines*
+|A group of segments providing details of the individual ordered items.
+|===
+
+[width="100%",cols="1,1,4",options="header"]
+|===
+3+|*SG28 Segment List*
+|*Pos* |*Tag* |*Name*
+|1040   |LIN |Line item
+|1050   |PIA |Additional product id
+|1080   |QTY |Quantity
+|1110   |DTM |Date
+|1320   |SG32 |Price details
+|===
+
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*1040 \| Segment \| LIN \| Line item*
+6+|A segment identifying the line item by the line number and configuration level, and additionally, identifying the product or service ordered.
+|*Pos*        |*Segment/Element* |*Description*         |*Status* |*Example* |*Remarks*
+|010         ^|1082 |Line item number                   |M     m|+10000 |
+|020         ^|1229 |Action request/notification, coded |C       m| |Not used
+.4+|030      ^|C212 |ITEM NUMBER IDENTIFICATION         |C       m| |
+^|             7140 |Item number                        |C       m|+7612532010634 |EAN
+.2+^|          7143 |Item number type, coded            |C       m|:SRV |
+4+|*_Provided:_* SRV = EAN.UCC Global Trade Item Number
+|040         |C829 |SUB-LINE INFORMATION                |C       m| |Not used
+|050        ^|1222 |Configuration level                 |C       m| |Not used
+|060        ^|7083 |Configuration, coded                |C       m| |Not used
+|===
+
+.Example:
+----
+LIN+10000++7612532010634:SRV'
+----
+
+<<<
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*1050 \| Segment \| PIA \| Additional product id*
+6+|A segment providing additional identification to the product specified in the LIN segment.
+|*Pos*        |*Segment/Element* |*Description*                 |*Status* |*Example* |*Remarks*
+.2+|010   .2+^|4347 |Product id. function qualifier             |M       m|+5  |
+4+|                  *_Supported:_* 5 = Product identification
+.4+|020       |C212 |ITEM NUMBER IDENTIFICATION                 |M       m| |
+^|             7140 |Item number                                |C       m|+7741600 |Product number
+.2+^|          7143 |Item number type, coded                    |C       m|:SA      |
+4+|                  *_Provided codes:_* +
+SA = Supplier's item nr +
+BP = Buyer's item nr +
+MF = Manufacturer's item nr +
+SRV = EAN.UCC Global Trade Item Number
+|030 |C212 |ITEM NUMBER IDENTIFICATION |C        m| |Not used
+|040 |C212 |ITEM NUMBER IDENTIFICATION |C        m| |Not used
+|050 |C212 |ITEM NUMBER IDENTIFICATION |C        m| |Not used
+|060 |C212 |ITEM NUMBER IDENTIFICATION |C        m| |Not used
+|===
+
+.Example:
+----
+PIA+5+7741600:MF'
+PIA+5+7612532010634:SRV'
+PIA+5+7741553:SA'
+PIA+5+400001:BP'
+----
+
+<<<
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*1080 \| Segment \| QTY \| Quantity*
+6+|A segment identifying the ordered quantity.
+|*Pos*    |*Segment/Element* |*Description*         |*Status* |*Example* |*Remarks*
+.7+|010   |C186 |QUANTITY DETAILS                   |M        m| |
+.2+^|         6063 |Quantity qualifier              |M        m|+21 a|
+4+|              *_Supported codes:_* 21 = Ordered quantity
+^|            6060 |Quantity                        |M        m|:21 |
+.2+^|         6411 |Measure unit qualifier          |C        m|:PCE |
+4+|*_Provided:_* PCE = Piece
+|===
+
+.Example:
+----
+QTY+21:7:PCE'
+----
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*1110 \| Segment \| DTM \| Date & Time*
+6+|A segment specifying date/time/period details relating to the line item only.
+|*Pos*      |*Segment/Element* |*Description*                        |*Status* |*Example* |*Remarks*
+.6+|010     |C507 |DATE/TIME/PERIOD                                  |M        m| |
+.2+^|        2005 |Date or time or period function code qualifier    |M        m|+2 |
+4+|                *_Provided code:_* 2 = Delivery date/time, requested
+^|           2380 |Date or time or period value                      |C        m|:20220218 |Date value
+.2+^|        2379 |Date or time or period format code                |C        m|:102 |
+4+|*_Provided:_* 102 = CCYYMMDD
+|===
+
+.Example:
+----
+DTM+2:20220218:102'
+----
+
+<<<
+==== Segment Group 32
+[width="100%",cols="100%",options="header",]
+|===
+|*1320 \| Segment Group 32 \| Price*
+|A group of segments identifying the relevant pricing information for the goods or services ordered.
+|===
+
+[width="100%",cols="1,1,4",options="header",]
+|===
+3+|*SG32 Segment List*
+|*Pos* |*Tag* |*Name*
+|1330 |PRI |Price details +
+            3 lines of PRI are provided
+|===
+
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*1330 \| Segment \| PRI \| Price details*
+6+|A segment to specify the price type and amount.
+|*Pos*      |*Segment/Element* |*Description*    |*Status* |*Example* |*Remarks*
+.8+|010     |C509 |PRICE INFORMATION             |C         m|        |
+.2+^|        5125 |Price qualifier               |M         m|+AAA    |
+4+|                *_Provided:_* +
+                   AAA = Calculation net +
+                   AAB = Calculation gross
+^|           5118 |Price                         |C         m|:6.45   |
+.2+^|        5375 |Price type code               |C         m|:PE     |
+4+|*_Provided:_* +
+PE = Per Each +
+AQ = As is quantity
+.2+^|5387 |Price specification code              |C         m|:AAB    |
+4+|*_Provided:_* AAB = Price includes tax
+|020 |5213 |Sub-line price change, coded         |C         m|        |Not used
+|===
+
+.Example:
+----
+PRI+AAA:6.45:PE'
+PRI+AAB:46.28:AQ:AAB'
+PRI+AAA:45.15:AQ'
+----
+
+== Summary section
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*2330 \| Segment \| UNS \| Section control*
+6+|A service segment placed at the start of the summary section to avoid segment collision.
+|*Pos*        |*Segment/Element* |*Description*           |*Status* |*Example* |*Remarks*
+.2+|010   .2+^|0081 |Section identification               |M       m|+S a|
+4+|                   *_Provided:_* S = Detail/summary section separation
+|===
+
+.Example:
+----
+UNS+S'
+----
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*2330 \| Segment \| MOA \| Monetary Amount*
+6+|A segment specifying the summary amount for the allowance or charge.
+|*Pos*    |*Segment/Element* |*Description*               |*Status* |*Example* |*Remarks*
+.7+|010      |C516 |MONETARY AMOUNT                       |M        m| |
+.2+^|         5025 |Monetary amount type code qualifier   |C        m|+79 |
+4+|                *_Provided codes:_* +
+77 = Invoice amount (incl Vat) +
+79 = Total line items amount
+^|5004 |Monetary amount                                   |C        m|21115.59 |
+^|6345 |Currency identification code                      |C        m| |Not in use
+^|6343 |Currency type code qualifier                      |C        m| |Not in use
+^|4405 |Status description code                           |C        m| |Not in use
+|===
+
+.Example:
+----
+MOA+77:22739.14'
+MOA+79:21115.59'
+----
+
+<<<
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*2400 \| Segment \| UNT \| Message trailer*
+6+|A service segment ending a message, giving the total number of segments in the message and the control reference number of the message.
+|*Pos*          |*Segment/Element* |*Description*            |*Status* |*Example* |*Remarks*
+|010           ^|0074 |Number of segments in a message       |M       m|+45 |
+|020           ^|0062 |Message reference number              |M       m|+1122334455' |Order Id
+|===
+
+.Example:
+----
+UNT+45+1122334455'
+----
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*UNZ \| Interchange trailer*
+6+|To end and check the completeness of an interchange.
+|*Pos*  |*Segment/Element* |*Description*     |*Status* |*Example* |*Remarks*
+|010   ^|0036 |Interchange control count      |M       m|+1 |
+|020   ^|0020 |Interchange control reference  |M       m|+1122334455' |
+|===
+
+.Example:
+----
+UNZ+1+1122334455'
+----
+
+== Structure overview
+[width="100%",cols="1,1,14,1,1"]
+|===
+^.^|
+2+a|
+----
+UNA:+.? '
+UNB+UNOC:3+7900000000001:14+7900000000003:14+230504:1358+1122334455++++++1'
+----
+2+|
+
+.9+^.^|H +
+E +
+A +
+D +
+E +
+R
+
+2+a|
+----
+UNH+1122334455+ORDERS:D:01B:UN'
+BGM+220+1122334455+9'
+DTM+137:20220217:102'
+DTM+2:20220218:102'
+IMD+++:::::de'
+----
+2+|
+
+2+a|
+----
+RFF+ABO:Testbestellung1'
+----
+2+|SG 1
+
+2+a|
+----
+NAD+BY+7900000000001++BRACK.CH AG+Hintermättlistr. 3+Mägenwil++5506+CH'
+----
+2+|SG 2
+
+| a|
+----
+RFF+VA:CHE-000.100.001 MWST'
+RFF+IT:009002'
+----
+|SG 3 .2+|
+
+| a|
+----
+CTA+PD+:BRACK.CH AG'
+COM+062 000 00 01:TE'
+CTA+OC+:Paul Meier'
+COM+paul.meier999@brack.ch:EM'
+COM+?+41 62 000 00 01:TE'
+----
+|SG 5
+
+2+a|
+----
+NAD+DP+7900000000002++BRACK.CH AG+Teststrasse 17:Ramps 12+Willisau++6130+CH'
+NAD+IV+7900000000001++BRACK.CH AG:Abt.xy+Hintermättlistr. 3+Mägenwil++5506+CH'
+NAD+SU+7000000000001++Kreditor 9001:EDI-Division+Teststrasse 2+Aarau++5000+CH'
+----
+2+| SG 2
+
+2+a|
+----
+CUX+2:CHF'
+----
+2+| SG 7
+
+2+a|
+----
+PAT+1++5:3:D:30'
+----
+2+| SG 8
+
+2+a|
+----
+RCS+26+11:::OPG'
+----
+2+| SG 25
+
+
+
+.2+^.^|D +
+E +
+A +
+T +
+A +
+I +
+L
+
+2+a|
+----
+LIN+10000++7612532010634:SRV'
+PIA+5+7741600:MF'
+PIA+5+7612532010634:SRV'
+PIA+5+7741553:SA'
+PIA+5+400001:BP'
+QTY+21:7:PCE'
+DTM+2:20220218:102'
+----
+2+| SG 28
+
+| a|
+----
+PRI+AAA:6.45:PE'
+PRI+AAB:46.28:AQ:AAB'
+PRI+AAA:45.15:AQ'
+----
+|SG 32 |
+
+^.^|S +
+U +
+M +
+M +
+A +
+R +
+Y
+
+2+a|
+----
+UNS+S'
+MOA+77:22739.14'
+MOA+79:21115.59'
+----
+2+|
+
+
+^.^|
+2+a|
+----
+UNT+44+1'
+UNZ+1+123456'
+----
+2+|
+|===
