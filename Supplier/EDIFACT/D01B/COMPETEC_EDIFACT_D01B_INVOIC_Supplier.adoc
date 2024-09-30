@@ -1,13 +1,14 @@
 = EDIFACT D01B INVOIC
 Brack Alltron AG
 :doctype: book
+:toc:
 v1.2, 27-09-2024
 
+== Supplier Invoice Message
 [preface]
 == Preface
 
 This document describes the implementation of EDIFACT D01B for supplier invoices.
-
 
 === Changelog
 .Changelog
@@ -18,8 +19,6 @@ This document describes the implementation of EDIFACT D01B for supplier invoices
 |1.1 |25.07.2023 |Corrections |DAO
 |1.2 |27.09.2024 |Conversion to Adoc, small corrections |SEBR, DAO
 |===
-
-== Supplier Invoice Message
 
 === Status Codes
 .Status Codes
@@ -33,37 +32,34 @@ This document describes the implementation of EDIFACT D01B for supplier invoices
 
 === References
 
-https://unece.org/trade/uncefact/introducing-unedifact
-
+https://unece.org/trade/uncefact/introducing-unedifact +
 https://www.stylusstudio.com/edifact/D01B/INVOIC.htm
 
 <<<
-=== Head Section
-
+== Header Section
 [width="100%",cols="1,2,4,1,2,2",options="header"]
 |===
 6+|*UNB \| Interchange Header*
 |*Pos*     |*Segment/Element* |*Description*  |*Status* |*Example* |*Remarks*
-|010       |S001 |SYNTAX IDENTIFIER                     |M      m|          |
-|         ^|0001 |Syntax identifier                     |M      m|+UNOC     |
-.2+|   .2+^|0002 |Syntax version number                 |M      m|:3        |
-4+| *_Supported codes:_* 3, 4
-|020       |S002 |INTERCHANGE SENDER                    |M      m|          |
-|         ^|0004 |Interchange sender identification     |M      m|+7609999999999 |Sender Party GLN
-|         ^|0007 |Identification code qualifier         |C      m|:14       |14 = EAN International
-|030       |S003 |INTERCHANGE RECIPIENT                 |M      m|          |
-|         ^|0010 |Interchange recipient identification  |M      m|+7601111111111  |Receiver Party GLN
-.2+|   .2+^|0007 |Identification code qualifier         |C      m|:14       |
+.4+|010       |S001 |SYNTAX IDENTIFIER                     |M      m|          |
+^|             0001 |Syntax identifier                     |M      m|+UNOC     |
+.2+^|          0002 |Syntax version number                 |M      m|:3        |
+4+|                   *_Supported codes:_* 3, 4
+.3+|020       |S002 |INTERCHANGE SENDER                    |M      m|          |
+^|             0004 |Interchange sender identification     |M      m|+7609999999999 |Sender Party GLN
+^|             0007 |Identification code qualifier         |C      m|:14       |14 = EAN International
+.4+|030       |S003 |INTERCHANGE RECIPIENT                 |M      m|          |
+^|             0010 |Interchange recipient identification  |M      m|+7601111111111  |Receiver Party GLN
+.2+^|          0007 |Identification code qualifier         |C      m|:14       |
 4+| *_Supported codes:_* +
 14 = EAN International +
 59 = ODETTE
-
-|040       |S004 |DATE AND TIME OF PREPARATION          |M      m|          |
-|         ^|0017 |Date                                  |M      m|+20220707 |yyMMdd
-|         ^|0019 |Time                                  |M      m|:1155     |HHmm
-|050      ^|0020 |Interchange control reference         |M      m|+123      |
-|         ^|… | | | |Not in use
-|110      ^|0035 |Test indicator                        |C      m|+1        |1 = Test
+.3+|040       |S004 |DATE AND TIME OF PREPARATION          |M      m|          |
+^|             0017 |Date                                  |M      m|+20220707 |yyMMdd
+^|             0019 |Time                                  |M      m|:1155     |HHmm
+.2+|050      ^|0020 |Interchange control reference         |M      m|+123      |
+^|             …  4+|Not in use
+|110         ^|0035 |Test indicator                        |C      m|+1        |1 = Test
 |===
 
 .Example:
@@ -78,13 +74,13 @@ UNB+UNOC:4+7609999999999:14+7601111111111:14+20240707:1155+123++++++1'
 6+|A service segment starting and uniquely identifying a message. The message type code for the Invoice message is INVOIC.
 |*Pos* |*Segment/Element* |*Description*        |*Status* |*Example* |*Remarks*
 |010    ^|0062 |MESSAGE REFERENCE NUMBER        |M       m|+11 |
-|020     |S009 |MESSAGE IDENTIFIER              |M       m| |
-|       ^|0065 |Message type                    |M       m|+INVOIC |
-|       ^|0052 |Message version number          |M       m|:D |
-|       ^|0054 |Message release number          |M       m|:01B |
-|       ^|0051 |Controlling agency, coded       |M       m|:UN |
-|       ^|0057 |Association assigned code       |C       m|:EAN010 |optional
-|       ^|… | |C | |Not in use
+.7+|020  |S009 |MESSAGE IDENTIFIER              |M       m| |
+^|        0065 |Message type                    |M       m|+INVOIC |
+^|        0052 |Message version number          |M       m|:D |
+^|        0054 |Message release number          |M       m|:01B |
+^|        0051 |Controlling agency, coded       |M       m|:UN |
+^|        0057 |Association assigned code       |C       m|:EAN010 |optional
+^|        ...   4+|Not in use
 |===
 
 .Example:
@@ -97,13 +93,13 @@ UNH+11+INVOIC:D:01B:UN:EAN010'
 6+|*0020 \| Segment \| BGM \| Beginning of message*
 6+|A segment by which the sender must uniquely identify the invoice by means of its type and number and when necessary its function.
 |*Pos*   |*Segment/Element* |*Description*   |*Status* |*Example* |*Remarks*
-|010     |C002 |DOCUMENT/MESSAGE NAME        |C       m| |
-.2+| .2+^|1001 |Document name code           |C       m|+380 |
-4+|*_Supported code:_* 380 = Invoice
-|       ^|… |                                |C       m| |Not in use
+.3+|010   |C002 |DOCUMENT/MESSAGE NAME        |C       m| |
+.2+^|      1001 |Document name code           |C       m|+380 |
+4+|               *_Supported code:_* 380 = Invoice
+|        ^|… |                                |C       m| |Not in use
 |020    ^|1004 |Document identifier          |#C#       m|+22095031075 |Invoice nbr.
 .2+|030 .2+^|1225 |Message function, coded  |C       m|+9      |
-4+|*_Supported code:_* 9 = Original
+4+|                *_Supported code:_* 9 = Original
 |040    ^|4343 |Response type, coded         |C       m| |Not in use
 |===
 
@@ -117,18 +113,17 @@ BGM+380+22095031075+9'
 |===
 6+|*0030 \| DTM \| Date/time/period*
 6+|A segment specifying general dates and, when relevant, times related to the whole message.
-|*Pos*     |*Segment/Element* |*Description*         |*Status* |*Example* |*Remarks*
-|010       |C507 |DATE/TIME/PERIOD                   |M       m| |
-.2+|   .2+^|2005 |Date/time/period qualifier         |M       m|+137      |
-4+|
-*_Supported codes:_* +
-3 = Invoice Date +
-137 = Document date +
-35 = Delivery Date
-
-|        ^|2380 |Date/time/period                    |C      m|:20220705 |
-.2+|  .2+^|2379 |Date/time/period format qualifier   |C      m|:102      |
-4+|*_Supported code:_* 102 = CCYYMMDD
+|*Pos*     |*Segment/
+Element* |*Description*                                |*Status* |*Example* |*Remarks*
+.6+|010      |C507 |DATE/TIME/PERIOD                   |M       m| |
+.2+^|         2005 |Date/time/period qualifier         |M       m|+137      |
+4+|                 *_Supported codes:_* +
+                     3 = Invoice Date +
+                   137 = Document date +
+                    35 = Delivery Date
+^|            2380 |Date/time/period                    |C      m|:20220705 |
+.2+^|         2379 |Date/time/period format qualifier   |C      m|:102      |
+4+|                 *_Supported code:_* 102 = CCYYMMDD
 |===
 
 .Example:
@@ -138,7 +133,7 @@ DTM+35:20220705:102'
 ----
 
 <<<
-==== Segment Group 1
+=== Segment Group 1
 [width="100%",cols="100%",options="header"]
 |===
 |*0120 \| Segment Group 1 \| References and Dates*
@@ -158,16 +153,16 @@ DTM+35:20220705:102'
 6+|*0130 \| Segment \| RFF \| Reference*
 6+|A segment to specify a reference by its number.
 |*Pos*    |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
-|010      |C506 |REFERENCE                  |M       m| |
-.2+|  .2+^|1153 |Reference qualifier        |M       m|+ON   |
-4+|*_Supported codes:_* +
-#ON = Order nr. (buyer)# +
-VN = Order nr. (supplier) +
-IV = Invoice nr. +
-AAK = Despatch advice nr. +
-PQ = Payment reference (QR Reference)
-|      ^|1154 |Reference number             |C      m|:1990845089' |
-|      ^|…    | | | |Not in use
+.4+|010    |C506 |REFERENCE                  |M       m| |
+.2+^|       1153 |Reference qualifier        |M       m|+ON   |
+4+|               *_Supported codes:_* +
+                 #ON = Order nr. (buyer)# +
+                 VN = Order nr. (supplier) +
+                 IV = Invoice nr. +
+                 AAK = Despatch advice nr. +
+                 PQ = Payment reference (QR Reference)
+^|         1154 |Reference number             |C      m|:1990845089' |
+|        ^|…    | | | |Not in use
 |===
 
 .Example:
@@ -181,12 +176,12 @@ RFF+ON:1990845089'
 6+|*0140 \| Segment \| DTM \| Date/time/period*
 6+|A segment specifying the date/time related to the reference.
 |*Pos*     |*Segment/Element* |*Description*        |*Status* |*Example* |*Remarks*
-|010       |C507 |DATE/TIME/PERIOD                  |M       m|     |
-.2+|   .2+^|2005 |Date/time/period qualifier        |M       m|+171 |
-4+|*_Supported code:_* 171 = Reference date/time
-|         ^|2380 |Date/time/period                  |C       m|:20230419 |
-.2+|   .2+^|2379 |Date/time/period format qualifier |C       m|:102 |
-4+|*_Supported code:_* 102 = CCYYMMDD
+.6+|010    |C507 |DATE/TIME/PERIOD                  |M       m|     |
+.2+^|       2005 |Date/time/period qualifier        |M       m|+171 |
+4+|               *_Supported code:_* 171 = Reference date/time
+^|          2380 |Date/time/period                  |C       m|:20230419 |
+.2+^|       2379 |Date/time/period format qualifier |C       m|:102 |
+4+|               *_Supported code:_* 102 = CCYYMMDD
 |===
 
 .Example:
@@ -195,7 +190,7 @@ DTM+171:20230419:102'
 ----
 
 <<<
-==== Segment Group 2
+=== Segment Group 2
 [width="100%",cols="100%",options="header",]
 |===
 |*0220 \| Segment Group 2 \| Invoice Parties*
@@ -217,20 +212,19 @@ DTM+171:20230419:102'
 6+|A segment identifying names and addresses of the parties and their functions relevant to the invoice. 
 |*Pos*      |*Segment/Element* |*Description*        |*Status* |*Example* |*Remarks*
 .2+|010 .2+^|3035 |Party qualifier                   |#M#    m|+SU |
-4+|*_Supported codes:_* +
-#SU = Supplier# +
-#BY = Buyer# +
-DP = Delivery Party
-
-|020       |C082 |PARTY IDENTIFICATION DETAILS      |C       m| |
-|         ^|3039 |Party id. identification          |M       m|+7609999111111 |
+4+|                 *_Supported codes:_* +
+                 #SU = Supplier# +
+                 #BY = Buyer# +
+                 DP = Delivery Party
+.2+|020    |C082 |PARTY IDENTIFICATION DETAILS      |C       m| |
+^|          3039 |Party id. identification          |M       m|+7609999111111 |
 |030       |C058 |NAME AND ADDRESS                  |C       m| |Not in use
-|040       |C080 |PARTY NAME                        |C       m| |
-|         ^|3036 |Party name                        |M       m|+Sample Company |Address name 1
-|         ^|3036 |Party name                        |C       m|:John Doe |Address name 2
-|050       |C059 |STREET                            |C       m| |
-|         ^|3042 |Street and number/p.o. box        |M       m|+Streetname 1 |Street name 1
-|         ^|3042 |Street and number/p.o. box        |C       m|:Building 10b |Street name 2
+.3+|040       |C080 |PARTY NAME                        |C       m| |
+^|          3036 |Party name                        |M       m|+Sample Company |Address name 1
+^|          3036 |Party name                        |C       m|:John Doe |Address name 2
+.3+|050    |C059 |STREET                            |C       m| |
+^|          3042 |Street and number/p.o. box        |M       m|+Streetname 1 |Street name 1
+^|          3042 |Street and number/p.o. box        |C       m|:Building 10b |Street name 2
 |060      ^|3164 |City name                         |C       m|+Zürich |
 |070      ^|3229 |Country sub-entity identification |C       m| |Not in use
 |080      ^|3251 |Postcode identification           |C       m|+8005 |PLZ
@@ -249,8 +243,8 @@ NAD+SU+7609999111111::9++Company AG+Musterstrasse 11+Musterhausen++1234+CH'
 |*Pos*       |*Segment/Element* |*Description*       |*Status* |*Example* |*Remarks*
 .2+|010  .2+^|3035 |Party qualifier                  |M       m|+RB   |
 4+|*_Supported code:_* RB = Receiving financial institution
-|020         |C078 |ACCOUNT IDENTIFICATION           |C       m| |
-|           ^|3194 |Account holder number            |C       m|:CH94307… |QR IBAN
+.2+|020      |C078 |ACCOUNT IDENTIFICATION           |C       m| |
+^|            3194 |Account holder number            |C       m|:CH94307… |QR IBAN
 |030         |C088 |INSTITUTION IDENTIFICATION       |C       m| |Not used
 |040        ^|3207 |Country, coded                   |C       m| |Not used
 |===
@@ -261,7 +255,7 @@ FII+RB+CH9430761016097605323'
 ----
 
 <<<
-==== Segment Group 3
+=== Segment Group 3
 [width="100%",cols="100%",options="header",]
 |===
 |*0270 \| Segment Group 3 \| Party References and Dates*
@@ -280,12 +274,13 @@ FII+RB+CH9430761016097605323'
 |===
 6+|*0280 \| Segment \| RFF \| Party Reference*
 6+|A segment identifying a party reference by its number.
-|*Pos*   |*Segment/Element* |*Description*  |*Status* |*Example* |*Remarks*
-|010     |C506 |REFERENCE                   |M       m|       |
-.2+| .2+^|1153 |Reference qualifier         |M       m|+VA    |
-4+|*_Supported code:_* VA = VAT registration number
-.2+| .2+^|1154 |Reference number            |C       m|:CHE191398369 |
-4+|#The declaration of the VAT number of the invoicing party/renderer of service is mandatory. The UID number has to be submitted in the format CHE999999999.#
+|*Pos*      |*Segment/
+Element* |*Description*                        |*Status* |*Example* |*Remarks*
+.5+|010     |C506 |REFERENCE                   |M       m|       |
+.2+^|        1153 |Reference qualifier         |M       m|+VA    |
+4+|                *_Supported code:_* VA = VAT registration number
+.2+^|        1154 |Reference number            |C       m|:CHE191398369 |
+4+|                #The declaration of the VAT number of the invoicing party/renderer of service is mandatory. The UID number has to be submitted in the format CHE999999999.#
 |===
 
 .Example:
@@ -294,7 +289,7 @@ RFF+VA:CHE191398369'
 ----
 
 <<<
-==== Segment Group 6
+=== Segment Group 6
 [width="100%",cols="100%",options="header",]
 |===
 |*0360 \| Segment Group 6 \| Tax information*
@@ -315,16 +310,16 @@ RFF+VA:CHE191398369'
 6+|A segment specifying a tax type, category and rate or exemption, relating to the whole invoice e.g. Value Added Tax at the standard rate is applicable for all items.
 |*Pos*       |*Segment/Element* |*Description*         |*Status* |*Example* |*Remarks*
 .2+|010  .2+^|5283 |Duty/tax/fee function qualifier    |M       m|+7 |
-4+|*_Supported code:_* 7 = Tax
-|020         |C241 |DUTY/TAX/FEE TYPE                  |C       m| |
-.2+|     .2+^|5153 |Duty/tax/fee type, coded           |C       m|+VAT |
-4+|*_Supported code:_* VAT = Value added tax
+4+|                 *_Supported code:_* 7 = Tax
+.3+|020      |C241 |DUTY/TAX/FEE TYPE                  |C       m| |
+.2+^|         5153 |Duty/tax/fee type, coded           |C       m|+VAT |
+4+|                 *_Supported code:_* VAT = Value added tax
 |030         |C533 |DUTY/TAX/FEE ACCOUNT DETAIL        |C       m| |Not used
 |040        ^|5286 |Duty/tax/fee assessment basis      |C       m| |Not used
-|050         |C243 |DUTY/TAX/FEE DETAIL                |C       m| |
-|           ^|5278 |Duty/tax/fee rate                  |C       m|:8.1 |VAT rate
+.2+^|050     |C243 |DUTY/TAX/FEE DETAIL                |C       m| |
+^|            5278 |Duty/tax/fee rate                  |C       m|:8.1 |VAT rate
 .2+|060  .2+^|5305 |Duty/tax/fee category, coded       |C       m|+S |
-4+|*_Supported code:_* S = Standard rate
+4+|                 *_Supported code:_* S = Standard rate
 |070        ^|3446 |Party tax identification number    |C       m| |Not used
 |===
 
@@ -339,13 +334,13 @@ TAX+7+VAT+++:::8.1+S'
 6+|*0380 \| Segment \| MOA \| Monetary amount*
 6+|A segment specifying the amount for the identified tax/fee.
 |*Pos*    |*Segment/Element* |*Description*       |*Status* |*Example* |*Remarks*
-|010      |C516 |MONETARY AMOUNT                  |M       m| |
-.2+|  .2+^|5025 |Monetary amount type qualifier   |M       m|+1 a|
-4+|*_Supported codes:_* 1 = VAT, 1st value
-|        ^|5004 |Monetary amount                  |C       m|:0.62 |
-.2+|  .2+^|6345 |Currency, coded                  |C       m|:CHF  |
-4+|*_Supported code:_* CHF
-|        ^|… | | | |
+.6+|010      |C516 |MONETARY AMOUNT                  |M       m| |
+.2+^|         5025 |Monetary amount type qualifier   |M       m|+1 a|
+4+|                 *_Supported codes:_* 1 = VAT, 1st value
+^|            5004 |Monetary amount                  |C       m|:0.62 |
+.2+^|         6345 |Currency, coded                  |C       m|:CHF  |
+4+|                *_Supported code:_* CHF
+|        ^|   ...  4+|Not used
 |===
 
 .Example:
@@ -354,7 +349,7 @@ MOA+1:0.62:CHF'
 ----
 
 <<<
-==== Segment Group 7
+=== Segment Group 7
 [width="100%",cols="100%",options="header",]
 |===
 |*0400 \| Segment Group 7 \| Currencies*
@@ -373,13 +368,13 @@ MOA+1:0.62:CHF'
 6+|*0410 \| Segment \| CUX \| Currencies* 
 6+|A segment identifying the invoice currency. 
 |*Pos*    |*Segment/Element* |*Description*     |*Status* |*Example* |*Remarks*
-|010      |C504 |CURRENCY DETAILS               |C       m|      |
-.2+|  .2+^|6347 |Currency details qualifier     |M       m|+2    |
-4+|*_Supported code:_* 2 = Reference currency
-.2+|  .2+^|6345 |Currency, coded                |C       m|:CHF  |
-4+|*_Supported code:_* CHF
-.2+|  .2+^|6343 |Currency qualifier             |C       m|:4   |
-4+|*_Supported code:_* 4 = Invoicing currency
+.7+|010      |C504 |CURRENCY DETAILS               |C       m|      |
+.2+^|         6347 |Currency details qualifier     |M       m|+2    |
+4+|                 *_Supported code:_* 2 = Reference currency
+.2+^|         6345 |Currency, coded                |C       m|:CHF  |
+4+|                 *_Supported code:_* CHF
+.2+^|         6343 |Currency qualifier             |C       m|:4   |
+4+|                 *_Supported code:_* 4 = Invoicing currency
 |===
 
 .Example:
@@ -388,7 +383,7 @@ CUX+2:CHF:4'
 ----
 
 <<<
-==== Segment Group 8
+=== Segment Group 8
 [width="100%",cols="100%",options="header",]
 |===
 |*0430 \| Segment Group 8 \| Terms of payment*
@@ -406,18 +401,19 @@ CUX+2:CHF:4'
 |===
 6+|*0440 \| Segment \| PAT \| Payment terms basis*
 6+|A segment identifying the payment terms and date/time basis.
-|*Pos*       |*Segment/Element* |*Description*         |*Status*  |*Example* |*Remarks*
-.2+|010  .2+^|4279 |Payment terms type qualifier       |M        m|+1        |
+|*Pos*       |*Segment/Element* |*Description*          |*Status*  |*Example* |*Remarks*
+.2+|010  .2+^|4279 |Payment terms type qualifier        |M        m|+1        |
 4+|*_Supported code:_* 1 = Basic
-|020         |C110 |PAYMENT TERMS                      |C        m| |Not used
-|030         |C112 |TERMS/TIME INFORMATION             |C        m| |
-.2+|    .2+^|2475 |Payment time reference, coded       |M        m|+5 |
-4+|*_Supported code:_* 5 = Date of invoice
-.2+|    .2+^|2009 |Time relation, coded                |C        m|:3 a|
-4+|*_Supported code:_* 3 = After reference
-.2+|    .2+^|2151 |Type of period, coded               |C        m|:D a|
-4+|*_Supported code:_* D = Day
-|          ^|2152 |Number of periods                   |C        m|:20 |Due date as absolute number of days after invoicing
+|020         |C110 |PAYMENT TERMS                       |C        m| |Not used
+.9+|030      |C112 |TERMS/TIME INFORMATION              |C        m| |
+.2+^|         2475 |Payment time reference, coded       |M        m|+5 |
+4+|                 *_Supported code:_* 5 = Date of invoice
+.2+^|         2009 |Time relation, coded                |C        m|:3 a|
+4+|                 *_Supported code:_* 3 = After reference
+.2+^|         2151 |Type of period, coded               |C        m|:D a|
+4+|                 *_Supported code:_* D = Day
+.2+^|            2152 |Number of periods                   |C        m|:20 |
+4+|                  Due date as absolute number of days after invoicing
 |===
 
 .Example:
@@ -426,8 +422,8 @@ PAT+1++5:3:D:20'
 ----
 
 <<<
-=== Detail Section
-==== Segment Group 26
+== Detail Section
+=== Segment Group 26
 [width="100%",cols="100%",options="header",]
 |===
 |*1090 \| Segment Group 26 \| Lines*
@@ -455,12 +451,12 @@ PAT+1++5:3:D:20'
 |*Pos*     |*Segment/Element* |*Description*           |*Status* |*Example* |*Remarks*
 |010      ^|1082 |Line item number                     |C       m|+1 |
 |020      ^|1229 |Action request                       |C       m| |Not used
-|030       |C212 |ITEM NUMBER IDENTIFICATION           |C       m| |
-|         ^|7140 |Item number                          |C       m|+9120072855368 |EAN
-.2+|   .2+^|7143 |Item number type, coded              |C       m|:SRV |
-4+|*_Supported codes:_* +
-SRV = EAN.UCC Global Trade Item Number +
-EN = International Article Numbering Association (EAN)
+.4+|030    |C212 |ITEM NUMBER IDENTIFICATION           |C       m| |
+^|          7140 |Item number                          |C       m|+9120072855368 |EAN
+.2+^|       7143 |Item number type, coded              |C       m|:SRV |
+4+|               *_Supported codes:_* +
+                  SRV = EAN.UCC Global Trade Item Number +
+                  EN = International Article Numbering Association (EAN)
 |040       |C829 |SUB-LINE INFORMATION                 |C       m| |Not used
 |050      ^|1222 |Configuration level                  |C       m| |Not used
 |060      ^|7083 |Configuration, coded                 |C       m| |Not used
@@ -480,12 +476,12 @@ LIN+1++4047443223210:SRV'
 4+|*_Supported codes:_* +
 1 = Additional identification +
 5 = Product identification
-|020         ^|C212 |ITEM NUMBER IDENTIFICATION          |M       m| |
-|            ^|7140 |Item number                         |C       m|+1451693 |
-.2+|      .2+^|7143 |Item number type, coded             |C       m|:SA |
-4+|*_Supported codes:_* +
-SA = Supplier article nr. +
-IN = Buyer's item nr.
+.4+|020     ^|C212 |ITEM NUMBER IDENTIFICATION          |M       m| |
+^|            7140 |Item number                         |C       m|+1451693 |
+.2+^|         7143 |Item number type, coded             |C       m|:SA |
+4+|                 *_Supported codes:_* +
+                    SA = Supplier article nr. +
+                    IN = Buyer's item nr.
 |030          |C212 |ITEM NUMBER IDENTIFICATION          |C       m| |Not used
 |040          |C212 |ITEM NUMBER IDENTIFICATION          |C       m| |Not used
 |050          |C212 |ITEM NUMBER IDENTIFICATION          |C       m| |Not used
@@ -509,11 +505,11 @@ PIA+1+18906117:IN'
 A = Free-form long description +
 F = Free form
 |020         ^|7081 |Item characteristic, coded          |C       m| |Not in use
-|030          |C273 |ITEM DESCRIPTION                    |C       m| |
-|            ^|… | | | |Not in use
-|            ^|7008 |Item description                    |C       m|:Buttergipfel   |First 35 description chars
-.2+|      .2+^|7008 |Item description                    |C       m|:Extra Knusprig |Second 35 description chars
-4+| Descriptions longer than 70 chars will be trimmed
+.5+|030       |C273 |ITEM DESCRIPTION                    |C       m| |
+^|             \... | | | |Not in use
+^|             7008 |Item description                    |C       m|:Buttergipfel   |First 35 description chars
+.2+^|          7008 |Item description                    |C       m|:Extra Knusprig |Second 35 description chars
+4+|                  Descriptions longer than 70 chars will be trimmed
 |040         ^|7383 |Surface/layer indicator, coded      |C       m| |Not in use
 |===
 
@@ -527,12 +523,12 @@ IMD+F++:::Buttergipfel:Extra Knusprig'
 6+|*1150 \| Segment \| QTY \| Quantity*
 6+|A segment identifying the invoiced quantity.
 |*Pos*     |*Segment/Element* |*Description*    |*Status*  |*Example* |*Remarks*
-|010       |C186 |QUANTITY DETAILS              |M        m| |
-.2+|   .2+^|6063 |Quantity qualifier            |M        m|+47 |
-4+|*_Supported code:_* 47 = Invoiced quantity
-|         ^|6060 |Quantity                      |M        m|:2 |Only integer values supported
-.2+|   .2+^|6411 |Measure unit qualifier        |C        m|:PCE a|
-4+|*_Supported code:_* PCE = Piece
+.6+|010    |C186 |QUANTITY DETAILS              |M        m| |
+.2+^|       6063 |Quantity qualifier            |M        m|+47 |
+4+|               *_Supported code:_* 47 = Invoiced quantity
+^|          6060 |Quantity                      |M        m|:2 |Only integer values supported
+.2+^|       6411 |Measure unit qualifier        |C        m|:PCE a|
+4+|               *_Supported code:_* PCE = Piece
 |===
 
 .Example:
@@ -547,10 +543,10 @@ QTY+47:2:PCE'
 |*Pos*       |*Segment/Element* |*Description*      |*Status* |*Example* |*Remarks*
 .2+|010  .2+^|7297 |Set identification qualifier    |M       m|+1 |
 4+|*_Supported code:_* 1 = Product
-|020         |C206 |IDENTIFICATION NUMBER           |M       m| |
-|           ^|7402 |Identity number                 |M       m|+GPKBD1102A123456 |
-.2+|     .2+^|7405 |Identity number qualifier       |C       m|:BN |
-4+|*_Supported code:_* BN = Serial number
+.4+|020      |C206 |IDENTIFICATION NUMBER           |M       m| |
+^|            7402 |Identity number                 |M       m|+GPKBD1102A123456 |
+.2+^|         7405 |Identity number qualifier       |C       m|:BN |
+4+|                 *_Supported code:_* BN = Serial number
 |===
 
 .Example:
@@ -560,7 +556,7 @@ GIR+1+GPKBD1102A678910:BN'
 ----
 
 <<<
-==== Segment Group 27
+=== Segment Group 27
 [width="100%",cols="100%",options="header",]
 |===
 |*1250 \| Segment Group 27 \| Line Amounts*
@@ -579,12 +575,12 @@ GIR+1+GPKBD1102A678910:BN'
 6+|*1260 \| Segment \| MOA \| Monetary amount*
 6+|A segment specifying any monetary amounts relating to the product.
 |*Pos*      |*Segment/Element* |*Description*        |*Status* |*Example* |*Remarks*
-|010        |C516 |MONETARY AMOUNT                   |M       m| |
-.2+|    .2+^|5025 |Monetary amount type qualifier    |M       m|+203 |
-4+|*_Supported codes:_* +
-203 = Line item amount +
-66 = Goods item total (Net price times quantity for the line item)
-| |5004 |Monetary amount                             |C       m|:11.78 |
+.4+|010     |C516 |MONETARY AMOUNT                   |M       m| |
+.2+^|        5025 |Monetary amount type qualifier    |M       m|+203 |
+4+|                *_Supported codes:_* +
+                   203 = Line item amount +
+                    66 = Goods item total (Net price times quantity for the line item)
+^|           5004 |Monetary amount                   |C       m|:11.78 |
 |===
 
 .Example:
@@ -593,7 +589,7 @@ MOA+203:11.78'
 ----
 
 <<<
-==== Segment Group 29
+=== Segment Group 29
 [width="100%",cols="100%",options="header",]
 |===
 |*1330 \| Segment Group 29 \| Price*
@@ -612,10 +608,10 @@ MOA+203:11.78'
 6+|*1340 \| Segment \| PRI \| Price details*
 6+|A segment to specify the price type and amount.
 |*Pos*       |*Segment/Element* |*Description*     |*Status* |*Example* |*Remarks*
-|010         |C509 |PRICE INFORMATION              |C       m| |
-.2+|     .2+^|5125 |Price qualifier                |M       m|+AAA |
-4+|*_Supported code:_* AAA = Calculation net
-|           ^|5118 |Price                          |C       m|:5.89 |
+.4+|010      |C509 |PRICE INFORMATION              |C       m| |
+.2+^|         5125 |Price qualifier                |M       m|+AAA |
+4+|                 *_Supported code:_* AAA = Calculation net
+^|            5118 |Price                          |C       m|:5.89 |
 |020        ^|5213 |Sub-line price change, coded   |C       m| |Not in use
 |===
 
@@ -625,7 +621,7 @@ PRI+AAA:5.89'
 ----
 
 <<<
-==== Segment Group 30
+=== Segment Group 30
 [width="100%",cols="100%",options="header",]
 |===
 |*1390 \| Segment Group 30 \| References*
@@ -644,15 +640,15 @@ PRI+AAA:5.89'
 6+|*1400 \| Segment \| RFF \| Reference*
 6+|A segment to specify the price type and amount.
 |*Pos*        |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
-|010          |C506 |REFERENCE                  |C       m|          |
-.2+|      .2+^|1153 |Reference code qualifier   |M       m|+ON       |
-4+|*_Supported codes:_* +
-ON = Order nr. (buyer) +
-VN = Order nr. (supplier) +
-LI = Line item reference nr.
-|            ^|1154 |Referenz identifier        |C |:1990845089 |Order nr.
-|            ^|1156 |Document line identifier   |C |:1 |
-|            ^|… |                              |C | |Not in use
+.6+|010       |C506 |REFERENCE                  |C       m|          |
+.2+^|          1153 |Reference code qualifier   |M       m|+ON       |
+4+|                 *_Supported codes:_* +
+                    ON = Order nr. (buyer) +
+                    VN = Order nr. (supplier) +
+                    LI = Line item reference nr.
+^|             1154 |Referenz identifier        |C |:1990845089 |Order nr.
+^|             1156 |Document line identifier   |C |:1 |
+^|             \... |                           |C | |Not in use
 |===
 
 .Example:
@@ -662,7 +658,7 @@ RFF+LI:10000'
 ----
 
 <<<
-==== Segment Group 34
+=== Segment Group 34
 [width="100%",cols="100%",options="header",]
 |===
 |*1550 \| Segment Group 34 \| Line item tax*
@@ -684,16 +680,16 @@ RFF+LI:10000'
 |*Pos*        |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
 .2+|010   .2+^|5283 |Duty/tax/fee function qualifier      |M        m|+7 |
 4+|*_Supported code:_* 7 = Tax
-|020          |C241 |DUTY/TAX/FEE TYPE                    |C        m| |
-.2+|      .2+^|5153 |Duty/tax/fee type, coded             |C        m|+VAT |
-4+|*_Supported code:_* VAT = Value added tax
+.3+|020       |C241 |DUTY/TAX/FEE TYPE                    |C        m| |
+.2+^|          5153 |Duty/tax/fee type, coded             |C        m|+VAT |
+4+|                  *_Supported code:_* VAT = Value added tax
 |030          |C533 |DUTY/TAX/FEE ACCOUNT DETAIL          |C        m| |Not used
 |040         ^|5286 |Duty/tax/fee assessment basis        |C        m| |Not used
-|050          |C243 |DUTY/TAX/FEE DETAIL                  |C        m| |
-|            ^|… | | | |
-|            ^|5278 |Duty/tax/fee rate                    |C        m|:2.6 |VAT rate
+.3+|050       |C243 |DUTY/TAX/FEE DETAIL                  |C        m| |
+^|             \... 4+| Not used
+^|             5278 |Duty/tax/fee rate                    |C        m|:2.6 |VAT rate
 .2+|060   .2+^|5305 |Duty/tax/fee category, coded         |C        m|+S |
-4+|*_Supported code:_* S = Standard rate
+4+|                  *_Supported code:_* S = Standard rate
 |070         ^|3446 |Party tax identification number      |C        m| |Not used
 |===
 
@@ -708,13 +704,13 @@ TAX+7+VAT+++:::2.6+S'
 6+|*1570 \| Segment \| MOA \| Monetary amount*
 6+|A segment specifying the amount for the identified tax/fee.
 |*Pos*      |*Segment/Element* |*Description*      |*Status* |*Example* |*Remarks*
-|010        |C516 |MONETARY AMOUNT                 |M       m| |
-.2+|    .2+^|5025 |Monetary amount type qualifier  |M       m|+124 |
-4+|*_Supported codes:_* +
-124 = Tax amount +
-125 = Taxable amount
-|         ^|5004 |Monetary amount                  |C       m|:0.62 |
-|         ^|6345 |Currency, coded                  |C       m|:CHF |
+.5+|010     |C516 |MONETARY AMOUNT                 |M       m| |
+.2+^|        5025 |Monetary amount type qualifier  |M       m|+124 |
+4+|                *_Supported codes:_* +
+                   124 = Tax amount +
+                   125 = Taxable amount
+^|           5004 |Monetary amount                  |C       m|:0.62 |
+^|           6345 |Currency, coded                  |C       m|:CHF |
 |===
 
 .Example:
@@ -724,7 +720,7 @@ MOA+124:31.62:CHF'
 ----
 
 <<<
-=== Summary section
+== Summary section
 
 [width="100%",cols="1,2,4,1,2,2",options="header"]
 |===
@@ -759,16 +755,16 @@ UNS+S'
 6+|*2200 \| Segment \| MOA \| Monetary amount*
 6+|A segment giving the total amounts for the whole invoice message.
 |*Pos*        |*Segment/Element* |*Description*       |*Status*  |*Example* |*Remarks*
-|010          |C516 |MONETARY AMOUNT                  |M        m|      |
-.2+|      .2+^|5025 |Monetary amount type qualifier   |M        m|+77   |
-4+|*_Supported codes:_* +
-47 = Delivery fee +
-77 = Invoice amount +
-79 = Total line items amount +
-86 = Total monetary amount +
-124 = Tax amount +
-125 = Taxable Amount
-| |5004 |Monetary amount                              |C        m|:13.37 |
+.4+|010       |C516 |MONETARY AMOUNT                  |M        m|      |
+.2+^|          5025 |Monetary amount type qualifier   |M        m|+77   |
+4+|                  *_Supported codes:_* +
+                     47 = Delivery fee +
+                     77 = Invoice amount +
+                     79 = Total line items amount +
+                     86 = Total monetary amount +
+                     124 = Tax amount +
+                     125 = Taxable Amount
+|              5004 |Monetary amount                  |C        m|:13.37 |
 |===
 
 .Example:
@@ -778,7 +774,7 @@ MOA+86:500.91'
 ----
 
 <<<
-==== Segment Group 52
+=== Segment Group 52
 [width="100%",cols="100%",options="header",]
 |===
 |*2240 \| Segment Group 52 \| Taxes and Totals*
@@ -799,16 +795,16 @@ MOA+86:500.91'
 6+|A segment specifying a tax type, category and rate or exemption, relating to the whole invoice e.g. Value Added Tax at the standard rate is applicable for all items.
 |*Pos*       |*Segment/Element* |*Description*           |*Status* |*Example* |*Remarks*
 .2+|010  .2+^|5283 |Duty/tax/fee function qualifier      |M       m|+7 |
-4+|*_Supported code:_* 7 = Tax
-|020         |C241 |DUTY/TAX/FEE TYPE                    |C v| |
-.2+|      .2+|5153 |Duty/tax/fee type, coded             |C       m|+VAT |
-4+|*_Supported codes:_* VAT = Value added tax
+4+|                 *_Supported code:_* 7 = Tax
+.3+|020      |C241 |DUTY/TAX/FEE TYPE                    |C v| |
+.2+|          5153 |Duty/tax/fee type, coded             |C       m|+VAT |
+4+|                 *_Supported codes:_* VAT = Value added tax
 |030         |C533 |DUTY/TAX/FEE ACCOUNT DETAIL          |C       m| |Not used
 |040        ^|5286 |Duty/tax/fee assessment basis        |C       m| |Not used
-|050         |C243 |DUTY/TAX/FEE DETAIL                  |C       m| |
-|           ^|5278 |Duty/tax/fee rate                    |C       m|:8.1 |VAT rate
+.2+|050      |C243 |DUTY/TAX/FEE DETAIL                  |C       m| |
+^|            5278 |Duty/tax/fee rate                    |C       m|:8.1 |VAT rate
 .2+|060  .2+^|5305 |Duty/tax/fee category, coded         |C       m|+S |
-4+|*_Supported code:_* S = Standard rate
+4+|                 *_Supported code:_* S = Standard rate
 |070        ^|3446 |Party tax identification number      |C       m| |Not used
 |===
 
@@ -823,12 +819,12 @@ TAX+7+VAT+++:::8.1+S'
 6+|*2260 \| Segment \| MOA \| Monetary amount*
 6+|A segment giving the total amounts for the whole invoice message.
 |*Pos*      |*Segment/Element* |*Description*      |*Status* |*Example* |*Remarks*
-|010        |C516 |MONETARY AMOUNT                 |M       m| |
-.2+|    .2+^|5025 |Monetary amount type qualifier  |M       m|+124 a|
-4+|*_Supported codes:_* +
-124 = Tax amount +
-125 = Taxable amount
-|         ^|5004 |Monetary amount                  |C       m|:35.81 |
+.4+|010     |C516 |MONETARY AMOUNT                 |M       m| |
+.2+^|        5025 |Monetary amount type qualifier  |M       m|+124 a|
+4+|                  *_Supported codes:_* +
+                     124 = Tax amount +
+                     125 = Taxable amount
+^|           5004 |Monetary amount                  |C       m|:35.81 |
 |===
 
 .Example:
@@ -867,10 +863,18 @@ UNZ+1+123'
 ----
 
 <<<
-=== Example INVOIC Message
+== Example INVOIC Message
 
 [width="100%",cols="1,14,1"]
 |===
+
+^.^|
+a|
+----
+UNA:+.? '
+UNB+UNOC:4+7609999999999:14+7601111111111:14+20240707:1155+123++++++1'
+----
+|
 .4+^.^|H +
 E +
 A +
@@ -880,8 +884,6 @@ R
 
 a|
 ----
-UNA:+.? '
-UNB+UNOC:4+7609999999999:14+7601111111111:14+20240707:1155+123++++++1'
 UNH+11+INVOIC:D:01B:UN:EAN010'
 BGM+380+22095031075+9'
 DTM+3:20230419:102'
@@ -958,7 +960,7 @@ MOA+124:31.62'
 ----
 ^| SG34
 
-.4+^.^|S +
+.3+^.^|S +
 U +
 M +
 M +
@@ -986,6 +988,8 @@ MOA+125:465.1'
 ----
 | SG52
 
+
+^.^|
 a|
 ----
 UNT+46+11'

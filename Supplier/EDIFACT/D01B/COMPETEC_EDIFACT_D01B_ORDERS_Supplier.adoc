@@ -1,7 +1,10 @@
 = EDIFACT D01B ORDERS
 Brack Alltron AG
 :doctype: book
+:toc:
 v1.1, 27-09-2024
+
+== Supplier Order Message
 
 [preface]
 == Preface
@@ -17,8 +20,6 @@ This document describes the implementation of Edifact D01B for supplier orders.
 |1.1 |27.09.2024 |Conversion to Adoc, small corrections |SEBR, DAO
 |===
 
-== Supplier Order Message
-
 === Status Codes
 
 [width="100%",cols="1, 4",options="header",]
@@ -30,37 +31,36 @@ This document describes the implementation of Edifact D01B for supplier orders.
 
 === References
 
-https://unece.org/trade/uncefact/introducing-unedifact
-
+https://unece.org/trade/uncefact/introducing-unedifact +
 https://www.stylusstudio.com/edifact/D01B/ORDERS.htm
 
 <<<
-=== Head Section
+== Head Section
 
 [width="100%",cols="1,2,4,1,2,2",options="header"]
 |===
 6+|*UNB \| Interchange Header*
 |*Pos* |*Segment/
 Element* |*Description* |*Status* |*Example* |*Remarks*
-|010  |S001 |SYNTAX IDENTIFIER                      |M m|        |
-|    ^|0001 |Syntax identifier                      |M m|+UNOC   |
-|    ^|0002 |Syntax version number                  |M m|:3      |Supported codes: 3, 4
-|020  |S002 |INTERCHANGE SENDER                     |M m|        |
-|    ^|0004 |Interchange sender identification      |M m|+7600000… |Sender Party GLN
-|    ^|0007 |Identification code qualifier          |C m|:14     |14 = EAN International
-|030  |S003 |INTERCHANGE RECIPIENT                  |M m|        |
-|    ^|0010 |Interchange recipient identification   |M m|+7600000… |Receiver Party GLN
-|    ^|0007 |Identification code qualifier          |C m|:14     |14 = EAN International
-|040  |S004 |DATE AND TIME OF PREPARATION           |M m|        |
-|    ^|0017 |Date                                   |M m|+230504 |yyMMdd
-|    ^|0019 |Time                                   |M m|:1358   |HHmm
-|050 ^|0020 |Interchange control reference          |M m|+12345'   |
-|060  |S005 |RECIPIENT'S REFERENCE/PASSWORD DETAILS |C m|        |Not in use
-|070 ^|0026 |Application reference                  |C m|        |Not in use
-|080 ^|0029 |Processing priority code               |C m|        |Not in use
-|090 ^|0031 |Acknowledgement request                |C m|        |Not in use
-|100 ^|0032 |Interchange agreement identifier       |C m|        |Not in use
-|110 ^|0035 |Test indicator                         |C m|+1      |1 = Test
+.3+|010 |S001 |SYNTAX IDENTIFIER                      |M m|        |
+^|       0001 |Syntax identifier                      |M m|+UNOC   |
+^|       0002 |Syntax version number                  |M m|:3      |Supported codes: 3, 4
+.3+|020 |S002 |INTERCHANGE SENDER                     |M m|        |
+^|       0004 |Interchange sender identification      |M m|+7600000… |Sender Party GLN
+^|       0007 |Identification code qualifier          |C m|:14     |14 = EAN International
+.3+|030 |S003 |INTERCHANGE RECIPIENT                  |M m|        |
+^|       0010 |Interchange recipient identification   |M m|+7600000… |Receiver Party GLN
+^|       0007 |Identification code qualifier          |C m|:14     |14 = EAN International
+.3+|040 |S004 |DATE AND TIME OF PREPARATION           |M m|        |
+^|       0017 |Date                                   |M m|+230504 |yyMMdd
+^|       0019 |Time                                   |M m|:1358   |HHmm
+|050   ^|0020 |Interchange control reference          |M m|+12345'   |
+|060    |S005 |RECIPIENT'S REFERENCE/PASSWORD DETAILS |C m|        |Not in use
+|070   ^|0026 |Application reference                  |C m|        |Not in use
+|080   ^|0029 |Processing priority code               |C m|        |Not in use
+|090   ^|0031 |Acknowledgement request                |C m|        |Not in use
+|100   ^|0032 |Interchange agreement identifier       |C m|        |Not in use
+|110   ^|0035 |Test indicator                         |C m|+1      |1 = Test
 |===
 
 .Example:
@@ -76,17 +76,16 @@ UNB+UNOC:3+7900000000001:14+7900000000003:14+230504:1358+1122334455++++++1'
 |*Pos* |*Segment/
 Element* |*Description*              |*Status* |*Example* |*Remarks*
 |010  ^|0062              |MESSAGE REFERENCE NUMBER   |M       m|+12345    |
-|020   |S009              |MESSAGE IDENTIFIER         |M       m|          |
-|     ^|0065              |Message type               |M       m|+ORDERS   |
-|     ^|0052              |Message version number     |M       m|:D        |
-|     ^|0054              |Message release number     |M       m|:01B      |
-|     ^|0051              |Controlling agency, coded  |M       m|:UN       |
-|     ^|0057              |Association assigned code  |C       m|          |optional
-|     ^|…                 |                           |C       m|          |Not in use
+.6+|020   |S009              |MESSAGE IDENTIFIER         |M       m|          |
+^|         0065              |Message type               |M       m|+ORDERS   |
+^|         0052              |Message version number     |M       m|:D        |
+^|         0054              |Message release number     |M       m|:01B      |
+^|         0051              |Controlling agency, coded  |M       m|:UN       |
+^|         0057              |Association assigned code  |C       m|          |optional
+| ^|       \...              |                           |C       m|          |Not in use
 |===
 
 .Example
-[source]
 ----
 UNH+12345+ORDERS:D:01B:UN'
 ----
@@ -97,18 +96,17 @@ UNH+12345+ORDERS:D:01B:UN'
 6+|A segment for unique identification of the Despatch Advice document, by means of its name and its number.
 |*Pos* |*Segment/
 Element*     |*Description*    |*Status* |*Example* |*Remarks*
-|010         |C002     |DOCUMENT/MESSAGE NAME    |C         m|BGM       |
-.2+|     .2+^|1001     |Document name code       |C         m|+220      |
-4+|*_Supported:_* 220 = Order
-|           ^|…        |                         |C         m|          |Not in use
+.4+|010      |C002     |DOCUMENT/MESSAGE NAME    |C         m|BGM       |
+.2+^|         1001     |Document name code       |C         m|+220      |
+4+|                     *_Supported:_* 220 = Order
+^|            \...     |                         |C         m|          |Not in use
 |020         |1004     |Document identifier      |C         m|+123456   |Order id
 .2+|030  .2+^|1225     |Message function, coded  |C         m|+9        |
-4+|*_Supported:_* 9 = Original
+4+|                     *_Supported:_* 9 = Original
 |040        ^|4343     |Response type, coded     |C         m|          |Not in use
 |===
 
 .Example
-[source]
 ----
 BGM+220+123456+9'
 ----
@@ -120,15 +118,14 @@ BGM+220+123456+9'
 6+|A segment specifying general dates and, when relevant, times related to the whole message.
 |*Pos* |*Segment/
 Element* |*Description*           |*Status*  |*Example* |*Remarks*
-|010 |C507 |DATE/TIME/PERIOD                       |M        m|DTM       |
-.2+|    .2+^|2005 |Date/time/period qualifier      |M        m|+137      |
-4+|*_Supported:_* +
+.6+|010  |C507 |DATE/TIME/PERIOD                       |M        m|DTM       |
+.2+^|     2005 |Date/time/period qualifier             |M        m|+137      |
+4+|             *_Supported:_* +
                   137 = Document date +
                   2 = Delivery Date requested
-
-|         ^|2380 |Date/time/period                      |C        m|:20220217  |
-.2+|   .2+^|2379 |Date/time/period format qualifier     |C        m|:102       |
-4+|*_Supported:_* 102 = CCYYMMDD
+^|        2380 |Date/time/period                      |C        m|:20220217  |
+.2+^|     2379 |Date/time/period format qualifier     |C        m|:102       |
+4+|             *_Supported:_* 102 = CCYYMMDD
 |===
 
 .Example:
@@ -139,7 +136,7 @@ DTM+2:20220218:102'
 
 
 <<<
-==== Segment Group 1
+=== Segment Group 1
 [width="100%",cols="100%",options="header"]
 |===
 |*0090 \| Segment Group 1 \| References and Dates*
@@ -158,12 +155,12 @@ DTM+2:20220218:102'
 6+|*0090 \| Segment \| RFF \| Reference*
 6+|A segment to specify a reference by its number.
 |*Pos*    |*Segment/
-Element* |*Description*                            |*Status* |*Example*         |*Remarks*
-|010      |C506 |REFERENCE                         |M       m|RFF               |
-.2+|  .2+^|1153 |Reference qualifier               |M       m|+ABO              |
-4+a| *_Supported codes:_* ABO = = Originator's reference
-|        ^|1154 |Reference number                  |C       m|:Testbestellung1' |Order reference by Brack Alltron
-|        ^|… | | | |Not in use
+Element*    |*Description*                            |*Status* |*Example*         |*Remarks*
+.4+|010     |C506 |REFERENCE                         |M       m|RFF               |
+.2+^|        1153 |Reference qualifier               |M       m|+ABO              |
+4+a|               *_Supported codes:_* ABO = = Originator's reference
+^|           1154 |Reference number                  |C       m|:Testbestellung1' |Order reference by Brack Alltron
+|        ^|\... 4+|Not in use
 |===
 
 .Example:
@@ -173,7 +170,7 @@ RFF+ABO:Testbestellung1'
 
 
 <<<
-==== Segment Group 2
+=== Segment Group 2
 [width="100%",cols="100%",options="header"]
 |===
 |*0120 \| Segment Group 2 \| Parties*
@@ -222,7 +219,7 @@ NAD+SU+7000000000003++Kreditor 9001:EDI-Division+Teststrasse 2:Rampe 2+Aarau++50
 ----
 
 <<<
-=== Segment Group 3
+==== Segment Group 3
 [width="100%",cols="100%",options="header",]
 |===
 |*0160 \| Segment Group 3 \| References*
@@ -258,7 +255,7 @@ RFF+IT:009002'
 ----
 
 <<<
-=== Segment Group 5
+==== Segment Group 5
 
 [width="100%",cols="100%",options="header",]
 |===
@@ -426,7 +423,7 @@ RCS+26+11:::OPG'
 ----
 
 <<<
-=== Detail Section
+== Detail Section
 === Segment Group 28
 
 [width="100%",cols="100%",options="header",]
@@ -536,7 +533,7 @@ DTM+2:20220218:102'
 ----
 
 <<<
-=== Segment Group 32
+==== Segment Group 32
 [width="100%",cols="100%",options="header",]
 |===
 |*1320 \| Segment Group 32 \| Price*
@@ -649,6 +646,14 @@ UNZ+1+1122334455'
 == Structure overview
 [width="100%",cols="1,1,14,1,1"]
 |===
+^.^|
+2+a|
+----
+UNA:+.? '
+UNB+UNOC:3+7900000000001:14+7900000000003:14+230504:1358+1122334455++++++1'
+----
+2+|
+
 .9+^.^|H +
 E +
 A +
@@ -658,8 +663,6 @@ R
 
 2+a|
 ----
-UNA:+.? '
-UNB+UNOC:3+7900000000001:14+7900000000003:14+230504:1358+1122334455++++++1'
 UNH+1122334455+ORDERS:D:01B:UN'
 BGM+220+1122334455+9'
 DTM+137:20220217:102'
@@ -766,6 +769,13 @@ Y
 UNS+S'
 MOA+77:22739.14'
 MOA+79:21115.59'
+----
+2+|
+
+
+^.^|
+2+a|
+----
 UNT+44+1'
 UNZ+1+123456'
 ----

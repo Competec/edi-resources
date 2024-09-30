@@ -1,13 +1,15 @@
 = EDIFACT D01B DESADV
 Brack Alltron AG
 :doctype: book
+:toc:
 v1.2, 27-09-2024
 
+
+== Supplier Despatch Advice Message
 [preface]
-== Preface
+=== Preface
 
 This document describes the implementation of Edifact D01B for supplier delivery notes / dispatch notification.
-
 
 === Changelog
 .changelog
@@ -18,9 +20,6 @@ This document describes the implementation of Edifact D01B for supplier delivery
 | 1.1      |24.07.2024 |Corrections        |DAO
 | 1.2      |27.09.2024 |Conversion to Adoc, small corrections |SEBR, DAO
 |===
-
-
-== Supplier Despatch Advice Message
 
 === Status Codes
 .status codes
@@ -33,38 +32,36 @@ This document describes the implementation of Edifact D01B for supplier delivery
 |===
 
 === References
-
-https://unece.org/trade/uncefact/introducing-unedifact
-
+https://unece.org/trade/uncefact/introducing-unedifact +
 https://www.stylusstudio.com/edifact/D01B/DESADV.htm
 
 <<<
-=== Head Section
+== Header Section
 
 [width="100%",cols="1,2,4,1,2,2",options="header"]
 |===
 6+|*UNB \| Interchange Header*
 |*Pos* |*Segment/
 Element* |*Description* |*Status* |*Example* |*Remarks*
-|010  |S001 |SYNTAX IDENTIFIER                      |M m|        |
-|    ^|0001 |Syntax identifier                      |M m|+UNOC   |
-|    ^|0002 |Syntax version number                  |M m|:3      |Supported codes: 3, 4
-|020  |S002 |INTERCHANGE SENDER                     |M m|        |
-|    ^|0004 |Interchange sender identification      |#M# m|+7630000000000 |Sender Party GLN
-|    ^|0007 |Identification code qualifier          |C m|:14     |14 = EAN International
-|030  |S003 |INTERCHANGE RECIPIENT                  |M m|        |
-|    ^|0010 |Interchange recipient identification   |M m|+7630000000001 |Receiver Party GLN
-|    ^|0007 |Identification code qualifier          |C m|:14     |14 = EAN International
-|040  |S004 |DATE AND TIME OF PREPARATION           |M m|        |
-|    ^|0017 |Date                                   |M m|+240313 |yyMMdd
-|    ^|0019 |Time                                   |M m|:2214   |HHmm
-|050 ^|0020 |Interchange control reference          |M m|+123   |
-|060  |S005 |RECIPIENT'S REFERENCE/PASSWORD DETAILS |C m|        |Not in use
-|070 ^|0026 |Application reference                  |C m|        |Not in use
-|080 ^|0029 |Processing priority code               |C m|        |Not in use
-|090 ^|0031 |Acknowledgement request                |C m|        |Not in use
-|100 ^|0032 |Interchange agreement identifier       |C m|        |Not in use
-|110 ^|0035 |Test indicator                         |C m|+1      |1 = Test
+.3+|010  |S001 |SYNTAX IDENTIFIER                      |M m|        |
+^|        0001 |Syntax identifier                      |M m|+UNOC   |
+^|        0002 |Syntax version number                  |M m|:3      |Supported codes: 3, 4
+.3+|020  |S002 |INTERCHANGE SENDER                     |M m|        |
+^|        0004 |Interchange sender identification      |#M# m|+7630000000000 |Sender Party GLN
+^|        0007 |Identification code qualifier          |C m|:14     |14 = EAN International
+.3+|030  |S003 |INTERCHANGE RECIPIENT                  |M m|        |
+^|        0010 |Interchange recipient identification   |M m|+7630000000001 |Receiver Party GLN
+^|        0007 |Identification code qualifier          |C m|:14     |14 = EAN International
+.3+|040  |S004 |DATE AND TIME OF PREPARATION           |M m|        |
+^|        0017 |Date                                   |M m|+240313 |yyMMdd
+^|        0019 |Time                                   |M m|:2214   |HHmm
+|050 ^|0020 |Interchange control reference             |M m|+123   |
+|060  |S005 |RECIPIENT'S REFERENCE/PASSWORD DETAILS    |C m|        |Not in use
+|070 ^|0026 |Application reference                     |C m|        |Not in use
+|080 ^|0029 |Processing priority code                  |C m|        |Not in use
+|090 ^|0031 |Acknowledgement request                   |C m|        |Not in use
+|100 ^|0032 |Interchange agreement identifier          |C m|        |Not in use
+|110 ^|0035 |Test indicator                            |C m|+1      |1 = Test
 |===
 
 .Example
@@ -79,14 +76,14 @@ UNB+UNOC:3+7630000000000:14+7630000000001:14+240313:2214+123++DESADV++++1'
 6+|A service segment starting and uniquely identifying a message. The message type code for the Despatch advice message is DESADV.
 |*Pos* |*Segment/
 Element* |*Description*              |*Status* |*Example* |*Remarks*
-|010  ^|0062              |MESSAGE REFERENCE NUMBER   |M       m|+1        |
-|020   |S009              |MESSAGE IDENTIFIER         |M       m|          |
-|     ^|0065              |Message type               |M       m|+DESADV   |
-|     ^|0052              |Message version number     |M       m|:D        |
-|     ^|0054              |Message release number     |M       m|:01B      |
-|     ^|0051              |Controlling agency, coded  |M       m|:UN       |
-|     ^|0057              |Association assigned code  |C       m|          |optional
-|     ^|…                 |                           |C       m|          |Not in use
+|010    ^|0062              |MESSAGE REFERENCE NUMBER   |M       m|+1        |
+.7+|020  |S009              |MESSAGE IDENTIFIER         |M       m|          |
+^|        0065              |Message type               |M       m|+DESADV   |
+^|        0052              |Message version number     |M       m|:D        |
+^|        0054              |Message release number     |M       m|:01B      |
+^|        0051              |Controlling agency, coded  |M       m|:UN       |
+^|        0057              |Association assigned code  |C       m|          |optional
+^|        ...               |                           |C       m|          |Not in use
 |===
 
 .Example
@@ -100,15 +97,15 @@ UNH+1+DESADV:D:01B:UN'
 6+|*0020 \| Segment \| BGM \| Beginning of message*
 6+|A segment for unique identification of the Despatch Advice document, by means of its name and its number.
 |*Pos* |*Segment/
-Element* |*Description*    |*Status* |*Example* |*Remarks*
-|010    |C002     |DOCUMENT/MESSAGE NAME    |C         m|BGM       |
-|      ^|1001     |Document name code       |C         m|+351     a|*_Supported:_* +
-351 = Despatch advice
-|      ^|…        |                         |C         m|          |Not in use
-|020   ^|1004     |Document identifier      |#C#       m|+DN123456 |Despatch advice nbr.
-|030   ^|1225     |Message function, coded  |C         m|+9       a| *_Supported:_* +
-9 = Original
-|040  ^|4343 |Response type, coded          |C         m|          |Not in use
+Element*   |*Description*                          |*Status*    |*Example* |*Remarks*
+.4+|010    |C002     |DOCUMENT/MESSAGE NAME        |C          m|BGM       |
+.2+^|       1001     |Document name code           |C          m|+351      |
+4+|                   *_Supported:_* 351 = Despatch advice
+^|           …       |                             |C          m|          |Not in use
+|020       ^|1004    |Document identifier          |#C#        m|+DN123456 |Despatch advice nbr.
+.2+|030 .2+^|1225    |Message function, coded      |C          m|+9        |
+4+|                   *_Supported:_* 9 = Original
+|040       ^|4343 |Response type, coded            |C          m|          |Not in use
 |===
 
 .Example
@@ -123,15 +120,14 @@ BGM+351+DN123456+9'
 6+|A segment specifying general dates and, when relevant, times related to the whole message.
 |*Pos* |*Segment/
 Element* |*Description*           |*Status*  |*Example* |*Remarks*
-|010 |C507 |DATE/TIME/PERIOD                       |M        m|DTM       |
-.2+|    .2+^|2005 |Date/time/period qualifier      |M        m|+17       |
-               4+a| Supported codes: +
+.6+|010 |C507 |DATE/TIME/PERIOD                       |M        m|DTM       |
+.2+^|    2005 |Date/time/period qualifier      |M        m|+17       |
+4+a|           *_Supported codes_*: +
                   137 = Document date +
                   17 = Delivery Date estimated
-
-|    ^|2380 |Date/time/period                      |C        m|:20240229  |
-|    ^|2379 |Date/time/period format qualifier     |C        m|:102      a|*_Supported:_* +
-           102 = CCYYMMDD
+^|        2380 |Date/time/period                      |C        m|:20240229  |
+.2+^|     2379 |Date/time/period format qualifier     |C        m|:102       |
+4+|              *_Supported:_* 102 = CCYYMMDD
 |===
 
 .Example:
@@ -146,12 +142,11 @@ DTM+17:20240229:102'
 6+|A segment indicating that the message is subject to special conditions due to origin, customs preference or commercial factors.
 |*Pos* |*Segment/
 Element* |*Description* |*Status* |*Example* |*Remarks*
-|010 ^|3239 |Country of origin name code |C       m|ALI       |
-|    ^|9213 |Duty regime type code       |C       m|          |
-.2+|    .2+^|4183 |Special condition code      |C       m|+148     a|
-                   4+a|*_Supported code:_* +
-148 = Supply direct delivery (marks dropshipment deliveries, not required for warehouse deliveries)
-
+.4+|010 ^|3239 |Country of origin name code |C       m|ALI       |
+^|        9213 |Duty regime type code       |C       m|          |
+.2+^|     4183 |Special condition code      |C       m|+148     a|
+4+a|            *_Supported code:_* +
+                 148 = Supply direct delivery (marks dropshipment deliveries, not required for warehouse deliveries)
 |===
 
 .Example:
@@ -160,13 +155,12 @@ ALI+++148'
 ----
 
 <<<
-==== Segment Group 1
+=== Segment Group 1
 [width="100%",cols="100%",options="header"]
 |===
 |*0080 \| Segment Group 1 \| References and Dates*
 |A group of segments for giving references and where necessary, their dates, relating to the whole message.
 |===
-
 
 [width="100%",cols="1,1,4",options="header"]
 |===
@@ -182,16 +176,14 @@ ALI+++148'
 6+|A segment to specify a reference by its number.
 |*Pos*    |*Segment/
 Element* |*Description*        |*Status* |*Example*    |*Remarks*
-|010      |C506 |REFERENCE                         |M       m|RFF          |
-.2+|  .2+^|1153 |Reference qualifier               |M       m|+ON          |
-             4+a| *_Supported codes:_* +
+.6+|010      |C506 |REFERENCE                         |M       m|RFF          |
+.2+^|         1153 |Reference qualifier               |M       m|+ON          |
+4+a|                *_Supported codes:_* +
 #ON = Order number# +
 CN = Carrier's reference number (dropshipment)
-
-.2+|  .2+^|1154 |Reference number                  |#C#       m|:1990845089' |
-                4+|Brack Alltron Order number (ON), Consignment/package number for tracking purposes (CN)
-
-|        ^|… | | | |Not in use
+.2+^|         1154 |Reference number                  |#C#       m|:1990845089' |
+4+|                 Brack Alltron Order number (ON), Consignment/package number for tracking purposes (CN)
+^|            ...  4+|Not in use
 |===
 
 .Example:
@@ -206,15 +198,13 @@ RFF+CN:99.9999.9999.99'
 6+|*0100 \| Segment \| DTM \| Date/time/period*
 6+|A segment specifying the date/time related to the reference.
 |*Pos*   |*Segment/
-Element* |*Description*   |*Status* |*Example*    |*Remarks*
-|010     |C507 |DATE/TIME/PERIOD             |M        m|DTM         |
-|       ^|2005 |Date/time/period qualifier   |M        m|+171       a| *_Supported:_* +
-               171 = Reference date/time
-
-|       ^|2380 |Date/time/period             |C        m|:20240228   |
-|       ^|2379 |Date/time/period format qualifier |C   m|:102       a|  *_Supported:_* +
-               102 = CCYYMMDD
-
+Element*    |*Description*   |*Status* |*Example*    |*Remarks*
+.8+|010     |C507 |DATE/TIME/PERIOD             |M        m|DTM         |
+.2+^|           2005 |Date/time/period qualifier   |M        m|+171        |
+4+|                *_Supported:_* 171 = Reference date/time
+^|           2380 |Date/time/period             |C        m|:20240228   |
+.2+^|        2379 |Date/time/period format qualifier |C   m|:102        |
+4+|                *_Supported:_* 102 = CCYYMMDD
 |===
 
 .Example:
@@ -223,7 +213,7 @@ DTM+171:20240228:102'
 ----
 
 <<<
-==== Segment Group 2
+=== Segment Group 2
 [width="100%",cols="100%",options="header"]
 |===
 |*0110 \| Segment Group 2 \| Parties*
@@ -251,19 +241,19 @@ Element* |*Description*       |*Status* m|*Example*        | *Remarks*
           DP = Delivery party (for warehouse deliveries) +
           UC = Ultimate consignee (for dropshipment deliveries) +
 
-|020   |C082 |PARTY IDENTIFICATION DETAILS        |C         m|                 |
-|     ^|3039 |Party identification                |M         m|+760999…         |Not required for UC party
-|030   |C058 |NAME AND ADDRESS                    |C         m|                 |Not in use
-|040   |C080 |PARTY NAME                          |C         m|                 |
-|     ^|3036 |Party name                          |M         m|+Cornelia Muster |Address name 1
-|     ^|3036 |Party name                          |C         m|                 |Address name 2
-|050   |C059 |STREET                              |C         m|                 |
-|     ^|3042 |Street and number/p.o. box          |M         m|+Streetname 1    |Street street 1
-|     ^|3042 |Street and number/p.o. box          |C         m|:Building 10b    |Street street 2
-|060  ^|3164 |City name                           |C         m|+Zürich          |
-|070  ^|3229 |Country sub-entity identification   |C         m|                 |Not in use
-|080  ^|3251 |Postcode identification             |C         m|+8005            |PLZ
-|090  ^|3207 |Country, coded                      |C         m|+CH              |
+.2+|020   |C082 |PARTY IDENTIFICATION DETAILS        |C         m|                 |
+^|         3039 |Party identification                |M         m|+760999…         |Not required for UC party
+|030      |C058 |NAME AND ADDRESS                    |C         m|                 |Not in use
+.3+|040   |C080 |PARTY NAME                          |C         m|                 |
+^|         3036 |Party name                          |M         m|+Cornelia Muster |Name 1
+^|         3036 |Party name                          |C         m|                 |Name 2
+.3+|050   |C059 |STREET                              |C         m|                 |
+^|         3042 |Street and number/p.o. box          |M         m|+Streetname 1    |Street street 1
+^|         3042 |Street and number/p.o. box          |C         m|:Building 10b    |Street street 2
+|060  ^|3164 |City name                              |C         m|+Zürich          |
+|070  ^|3229 |Country sub-entity identification      |C         m|                 |Not in use
+|080  ^|3251 |Postcode identification                |C         m|+8005            |PLZ
+|090  ^|3207 |Country, coded                         |C         m|+CH              |
 |===
 
 .Example (dropshipment):
@@ -281,7 +271,7 @@ NAD+DP+7609999129308::9++Alltron AG+Street 10+Willisau Competec++6131+CH'
 ----
 
 <<<
-==== Segment Group 6
+=== Segment Group 6
 [width="100%",cols="100%",options="header"]
 |===
 |*0240 \| Segment Group 6 \| Details of transport*
@@ -300,30 +290,28 @@ NAD+DP+7609999129308::9++Alltron AG+Street 10+Willisau Competec++6131+CH'
 |===
 6+|*0250 \| Segment \| TDT \| Details of transport*
 6+|A segment specifying the carriage, and the mode and means of transport of the goods being despatched.
-|*Pos* |*Segment/
-Element* |*Description*               |*Status* |*Example* |*Remarks*
+|*Pos*   |*Segment/
+Element* |*Description*                                    |*Status* |*Example* |*Remarks*
 .2+|010 .2+^|8051 |Transport stage code qualifier          |M       m|+20       |
 4+|*_Supported:_* 20 = Main-carriage transport
 |020       ^|8028 |Means of transport journey identifier   |C       m|          |Not in use
 |030        |C220 |MODE OF TRANSPORT                       |C       m|          |
-.2+|    .2+^|8067 |Transport mode name code          |C       m|+50       |
-4+a|
-*_Supported:_* +
-30 = Road transport +
-50 = Mail +
-100 = Courier service
-
-|040     |C228 |TRANSPORT MEANS                         |C       m|            |Not in use
-|050     |C040 |CARRIER                                 |C       m|            |
-|       ^|3127 |Carrier identifier                      |M       m|+7611550000001 |GLN
-|       ^|1131 |Identification code                     |C       m|:14         |
-.2+| .2+^|3055 |Responsible agency code                 |C       m|:9          |
-4+|*_Supported:_* 9 = EAN (International Article Numbering association)
-|      ^|3128 |Carrier name                            |C       m|:Post CH AG |
-|      ^|… | | | |
-|080    |C222 |TRANSPORT IDENTIFICATION                |C       m|            |
-|      ^|… | | | |
-|      ^|8212 |Transport means identification name     |C       m|:BL 123456  |Vehicle licence plate
+.2+|    .2+^|8067 |Transport mode name code                |C       m|+50       |
+4+a|               *_Supported:_* +
+                   30 = Road transport +
+                   50 = Mail +
+                  100 = Courier service
+|040     |C228 |TRANSPORT MEANS                            |C       m|            |Not in use
+.7+|050  |C040 |CARRIER                                    |C       m|            |
+^|        3127 |Carrier identifier                         |M       m|+7611550000001 |GLN
+^|        1131 |Identification code                        |C       m|:14         |
+.2+^|     3055 |Responsible agency code                    |C       m|:9          |
+4+|             *_Supported:_* 9 = EAN (International Article Numbering association)
+^|        3128 |Carrier name                               |C       m|:Post CH AG |
+^|        ...  | | | |
+.3+|080    |C222 |TRANSPORT IDENTIFICATION                 |C       m|            |
+^|        … | | | |
+^|        8212 |Transport means identification name        |C       m|:BL 123456  |Vehicle licence plate
 |===
 
 .Example (dropshipment):
@@ -337,7 +325,7 @@ TDT+20++30++7611550000002::9:Müller Transport+++:::BL 123456'
 ----
 
 <<<
-=== Detail Section
+== Detail Section
 
 [width="100%",cols="100%",options="header",]
 |===
@@ -370,7 +358,7 @@ CPS+1'
 ----
 
 <<<
-==== Segment Group 17
+=== Segment Group 17
 [width="100%",cols="100%",options="header",]
 |===
 |*0650 \| Segment Group 17 \| Lines*
@@ -396,13 +384,12 @@ CPS+1'
 Element* |*Description* |*Status* |*Example* |*Remarks*
 |010     ^|1082 |Line item number                     |C         m|+1 |
 |020     ^|1229 |Action request/notification, coded   |C         m| |Not used
-|030      |C212 |ITEM NUMBER IDENTIFICATION           |C         m| |
-|        ^|7140 |Item number                          |C         m|+9120072855368 |EAN
-.2+|  .2+^|7143 |Item number type, coded              |C         m|:EN |
+.4+|030      |C212 |ITEM NUMBER IDENTIFICATION        |C         m| |
+^|        7140 |Item number                           |C         m|+9120072855368 |EAN
+.2+^|     7143 |Item number type, coded               |C         m|:EN |
 4+a| *_Supported:_* +
 EN = International Article Numbering Association (EAN) +
 SRV = EAN.UCC Global Trade Item Number
-
 |040 |C829 |SUB-LINE INFORMATION                      |C         m| |Not used
 |050 |1222 |Configuration level                       |C         m| |Not used
 |060 |7083 |Configuration, coded                      |C         m| |Not used
@@ -419,17 +406,15 @@ LIN+1++0197497400854:SRV'
 6+|*0670 \| Segment \| PIA \| Additional product id*
 6+|A segment providing either additional identification to the product specified in the LIN segment.
 |*Pos*       |*Segment/
-Element* |*Description*        |*Status*  |*Example* |*Remarks*
+Element* |*Description*                               |*Status*  |*Example* |*Remarks*
 .2+|010  .2+^|4347 |Product id. function qualifier    |M        m| +1  |
-4+a|*_Supported:_* +
-1 = Additional identification +
-5 = Product identification
-
-|020  |C212 |ITEM NUMBER IDENTIFICATION                |M        m| |
-|    ^|7140 |Item number                               |#C#      m|+1567285 |Brack Alltron item number
-|    ^|7143 |Item number type, coded                   |C        m|:IN a|*_Supported:_* +
-#IN = Buyer's item number#
-
+4+a|                *_Supported:_* +
+                    1 = Additional identification +
+                    5 = Product identification
+.4+|020      |C212 |ITEM NUMBER IDENTIFICATION        |M        m| |
+^|            7140 |Item number                       |#C#      m|+1567285 |Brack Alltron item number
+.2+^|         7143 |Item number type, coded           |C        m|:IN |
+4+|                 *_Supported:_* #IN = Buyer's item number#
 |030  |C212 |ITEM NUMBER IDENTIFICATION                |C        m| |Not used
 |040  |C212 |ITEM NUMBER IDENTIFICATION                |C        m| |Not used
 |050  |C212 |ITEM NUMBER IDENTIFICATION                |C        m| |Not used
@@ -447,18 +432,18 @@ PIA+5+1567285:IN'
 6+|*0680 \| Segment \| IMD \| Item description*
 6+|A segment for describing the product or service being ordered.
 |*Pos*       |*Segment/
-Element* |*Description*            |*Status* |*Example* |*Remarks*
+Element* |*Description*                                   |*Status* |*Example* |*Remarks*
 .2+|010  .2+^|7077 |Item description type, coded          |C       m| +F |
 4+a| *_Supported:_* +
 A = Free-form long description +
 F = Free form
 
 |020       ^|7081 |Item characteristic, coded             |C        m| |Not in use
-|030       ^|C273 |ITEM DESCRIPTION                       |C        m| |
-|          ^|… | | | |Not in use
-|          ^|7008 |Item description                       |C        m|:Buttergipfel  |First 35 description chars
-.2+|    .2+^|7008 |Item description                       |C        m|:ExtraKnusprig |Second 35 description chars
-4+|Descriptions longer than 70 chars will be trimmed
+.5+|030    ^|C273 |ITEM DESCRIPTION                       |C        m| |
+^|           … | | | |Not in use
+^|           7008 |Item description                       |C        m|:Buttergipfel  |First 35 description chars
+.2+^|        7008 |Item description                       |C        m|:ExtraKnusprig |Second 35 description chars
+4+|                Descriptions longer than 70 chars will be trimmed
 |040       ^|7383 |Surface/layer indicator, coded         |C        m| |Not in use
 |===
 
@@ -475,14 +460,12 @@ IMD+F++:::PRO X360 435 G10 R3-7330U:Second Line Text'
 6+|A segment identifying the despatched quantity.
 |*Pos*    |*Segment/
 Element* |*Description*   |*Status* |*Example* |*Remarks*
-|010      |C186 |QUANTITY DETAILS             |M       m| |
-|        ^|6063 |Quantity qualifier           |M       m|+12 a|*_Supported:_* +
-#12 = Dispatched quantity#
-
-|        ^|6060 |Quantity                     |#M#     m|:2 |Only integer values supported
-|        ^|6411 |Measure unit qualifier       |C       m|:PCE a|*_Supported:_* +
-PCE = Piece
-
+.7+|010      |C186 |QUANTITY DETAILS             |M       m| |
+.2+^|         6063 |Quantity qualifier           |M       m|+12 |
+4+|                 *_Supported:_* #12 = Dispatched quantity#
+^|            6060 |Quantity                     |#M#     m|:2 |Only integer values supported
+.2+^|         6411 |Measure unit qualifier       |C       m|:PCE |
+4+|                 *_Supported:_* PCE = Piece
 |===
 
 .Example:
@@ -491,7 +474,7 @@ QTY+12:2:PCE'
 ----
 
 <<<
-==== Segment Group 18
+=== Segment Group 18
 [width="100%",cols="100%",options="header",]
 |===
 |*0820 \| Segment Group 18 \| Line References and Dates*
@@ -511,13 +494,12 @@ QTY+12:2:PCE'
 6+|*0830 \| Segment \| RFF \| Reference*
 6+|A segment identifying documents related to the line item.
 |*Pos*  |*Segment/
-Element* |*Description* |*Status* |*Example* |*Remarks*
-|010    |C506 |REFERENCE                |M       m| |
-|      ^|1153 |Reference qualifier      |M     m|+LI a|*_Supported codes:_* +
-#LI = Line item reference number#
-
-|      ^|1154 |Reference number         |#C#     m|:1000 |Brack Alltron order line number
-|      ^|… | | | |Not in use
+Element*   |*Description*                   |*Status* |*Example* |*Remarks*
+.5+|010    |C506 |REFERENCE                 |M       m| |
+.2+^|       1153 |Reference qualifier       |M       m|+LI |
+4+|               *_Supported codes:_*  #LI = Line item reference number#
+^|          1154 |Reference number         |#C#      m|:1000 |Brack Alltron order line number
+^|          ...  4+|Not in use
 |===
 
 .Example:
@@ -526,7 +508,7 @@ RFF+LI:1000'
 ----
 
 <<<
-=== Summary Section
+== Summary Section
 
 [width="100%",cols="1,2,4,1,2,2",options="header"]
 |===
@@ -559,7 +541,7 @@ UNZ+1+123'
 ----
 
 <<<
-=== Example DESADV Message (warehouse delivery)
+== Example DESADV Message (warehouse delivery)
 
 [width="100%",cols="1, 14,1"]
 |===
@@ -656,7 +638,7 @@ UNZ+1+123'
 
 
 <<<
-=== Example DESADV Message (dropshipment delivery)
+== Example DESADV Message (dropshipment delivery)
 [width="100%",cols="1, 14,1"]
 |===
 .4+^.^|H +

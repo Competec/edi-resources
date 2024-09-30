@@ -1,7 +1,8 @@
 = EDIFACT D01B ORDRSP
 Brack Alltron AG
 :doctype: book
-v1.0, 30-09-2024
+:toc:
+v1.1, 30-09-2024
 
 == Supplier Orderresponse
 [preface]
@@ -14,7 +15,8 @@ This document describes the implementation of Edifact D01B for supplier orders.
 [width="100%",cols="1,1,1,1",options="header",]
 |===
 |*Version* |*Date* |*Change* |*Author*
-|1.0 |18.12.2023 |Initial definition |SEBR
+|1.0  |18.12.2023 |Initial definition |SEBR
+|1.1  |30.09.2024 |Conversion to Adoc, small corrections |SEBR
 |===
 
 === Status Codes
@@ -23,13 +25,12 @@ This document describes the implementation of Edifact D01B for supplier orders.
 |*Code* |*Description*
 |M      |Mandatory D01B Field
 |C      |Conditional D01B Field
-|#M#     | Mandatory by Competec
+|#M#    | Mandatory by Competec
 |===
 
 === References
 https://unece.org/trade/uncefact/introducing-unedifact +
 https://www.stylusstudio.com/edifact/D01B/ordrsp.htm
-
 
 
 <<<
@@ -159,7 +160,7 @@ DTM+137:20230228:102'
 
 
 |===
-6+|*0090 \| Segment \| RFF \| Reference*
+6+|*0100 \| Segment \| RFF \| Reference*
 6+|A segment to specify a reference by its number.
 |*Pos*    |*Segment/
 Element* |*Description*                            |*Status* |*Example*         |*Remarks*
@@ -253,6 +254,7 @@ NAD+DP+7613081000000++BRACK.CH AG+::Rossgassmoos 10+Willisau Competec+CH+6131'
 <<<
 == Detail Section
 
+=== Segment Group 26
 [width="100%",cols="100%",options="header",]
 |===
 |*0970 \| Segment Group 26 \| Lines*
