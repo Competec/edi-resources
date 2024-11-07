@@ -161,7 +161,7 @@ DTM+2:20230228:102'
 |===
 3+|*SG1 Summary*
 |*Pos* |*Tag* |*Name*
-|0110 |RFF |Reference
+|0100 |RFF |Reference
 |0110 |DTM |Date / time
 |===
 
