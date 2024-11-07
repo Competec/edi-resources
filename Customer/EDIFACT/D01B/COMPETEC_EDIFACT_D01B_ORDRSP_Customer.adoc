@@ -327,13 +327,7 @@ CUX+2:CHF:9'
 identifying the product or service ordered.
 |*Pos*         |*Segment/Element* |*Description*                          |*Status* |*Example* |*Remarks*
 |010          ^|1082 |Line item number                                   m|#M#      |10 |Must be unique in message
-.2+|020    .2+^|1229 |Action request / notification description code     m|#M#      |5  |#Currently always 5 = acc. no amendment is returnded, as no urther information is known#
-4+|                   *_Supported codes:_* +
-1 = added +
-3 = changed +
-4 = no action +
-#5 = acc. no amendment# +
-7 = not accepted
+|020          ^|1229 |Action request / notification description code     m|#N#      |   |#Currently always empty, as no further information is known#
 .5+|030       |C212 |ITEM NUMBER IDENTIFICATION                         m|C        | |
 ^|             7140 |Item identifier                                    m|M        |7613001653132 |GTIN
 .2+^|          7143 |Item type identification code                      m|M        |SRV a|
@@ -348,7 +342,7 @@ SRV = GS1 Global Trade Item Number
 Example:
 
 ----
-LIN+1+5+5412345111115:SRV'
+LIN+1++5412345111115:SRV'
 ----
 
 <<<
@@ -632,7 +626,7 @@ L
 
 2+a|
 ----
-LIN+1+5+5412345111115:SRV'
+LIN+1++5412345111115:SRV'
 PIA+1+991397:SA'
 PIA+1+7277199:VN'
 IMD+F++:::ALPINAMED MSM Curcuma'
