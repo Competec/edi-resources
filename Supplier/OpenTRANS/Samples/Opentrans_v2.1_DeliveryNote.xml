@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<DISPATCHNOTIFICATION
+ xmlns="http://www.opentrans.org/XMLSchema/2.1" version="2.1"
+ xmlns:bmecat="http://www.bmecat.org/bmecat/2005">
+  <DISPATCHNOTIFICATION_HEADER>
+    <DISPATCHNOTIFICATION_INFO>
+        <DISPATCHNOTIFICATION_ID>DN1122334455</DISPATCHNOTIFICATION_ID>
+        <DISPATCHNOTIFICATION_DATE>2024-05-11T10:00:00+01:00</DISPATCHNOTIFICATION_DATE>
+        <DELIVERY_DATE>
+            <DELIVERY_START_DATE>2024-02-29T10:00:00+01:00</DELIVERY_START_DATE>
+            <DELIVERY_END_DATE>2024-02-29T10:00:00+01:00</DELIVERY_END_DATE>
+        </DELIVERY_DATE>
+        <PARTIES>
+            <PARTY>
+                <bmecat:PARTY_ID type="buyer_specific">L123456</bmecat:PARTY_ID>
+                <bmecat:PARTY_ID type="gln">760000000000</bmecat:PARTY_ID>
+                <PARTY_ROLE>supplier</PARTY_ROLE>
+            </PARTY>
+            <PARTY>
+                <bmecat:PARTY_ID type="buyer_specific">K22222</bmecat:PARTY_ID>
+                <PARTY_ROLE>final_delivery</PARTY_ROLE>
+                <ADDRESS>
+                    <bmecat:NAME>Max Muster</bmecat:NAME>
+                    <bmecat:STREET>Gartenweg 123</bmecat:STREET>
+                    <bmecat:ZIP>1212</bmecat:ZIP>
+                    <bmecat:CITY>Musterlingen</bmecat:CITY>
+                </ADDRESS>
+            </PARTY>
+            <PARTY>
+                <bmecat:PARTY_ID type="buyer_specific">A1234567</bmecat:PARTY_ID>
+                <bmecat:PARTY_ID type="gln">769999999999</bmecat:PARTY_ID>
+                <PARTY_ROLE>buyer</PARTY_ROLE>
+            </PARTY>
+        </PARTIES>
+
+        <bmecat:SUPPLIER_IDREF type="buyer_specific">L123456</bmecat:SUPPLIER_IDREF>
+        <bmecat:BUYER_IDREF type="buyer_specific">A1234567</bmecat:BUYER_IDREF>
+
+        <SHIPMENT_PARTIES_REFERENCE>
+            <DELIVERY_IDREF type="buyer_specific">K22222</DELIVERY_IDREF>
+        </SHIPMENT_PARTIES_REFERENCE>
+
+        <SHIPMENT_ID>SHIP_ID_1234567</SHIPMENT_ID>
+        <TRACKING_TRACING_URL>www.sometrackingpage.com/trackandtrace/findMySendungsnummer</TRACKING_TRACING_URL>
+    </DISPATCHNOTIFICATION_INFO>
+  </DISPATCHNOTIFICATION_HEADER>
+
+  <DISPATCHNOTIFICATION_ITEM_LIST>
+    <DISPATCHNOTIFICATION_ITEM>
+        <LINE_ITEM_ID>1</LINE_ITEM_ID>
+        <PRODUCT_ID>
+            <bmecat:BUYER_PID>1567285</bmecat:BUYER_PID>
+            <bmecat:DESCRIPTION_SHORT>Notebooktasche</bmecat:DESCRIPTION_SHORT>
+        </PRODUCT_ID>
+        <QUANTITY>2</QUANTITY>
+        <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+        <ORDER_REFERENCE>
+            <ORDER_ID>1990845089</ORDER_ID>
+            <LINE_ITEM_ID>300</LINE_ITEM_ID>
+        </ORDER_REFERENCE>
+        <SHIPMENT_PARTIES_REFERENCE>
+            <DELIVERY_IDREF type="buyer_specific">K22222</DELIVERY_IDREF>
+        </SHIPMENT_PARTIES_REFERENCE>
+    </DISPATCHNOTIFICATION_ITEM>
+
+    <DISPATCHNOTIFICATION_ITEM>
+        <LINE_ITEM_ID>2</LINE_ITEM_ID>
+        <PRODUCT_ID>
+            <bmecat:BUYER_PID>1567326</bmecat:BUYER_PID>
+            <bmecat:DESCRIPTION_SHORT>Some other product text, little longer</bmecat:DESCRIPTION_SHORT>
+        </PRODUCT_ID>
+        <QUANTITY>2</QUANTITY>
+        <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+        <ORDER_REFERENCE>
+            <ORDER_ID>1990845089</ORDER_ID>
+            <LINE_ITEM_ID>13</LINE_ITEM_ID>
+        </ORDER_REFERENCE>
+        <SHIPMENT_PARTIES_REFERENCE>
+            <DELIVERY_IDREF type="buyer_specific">K22222</DELIVERY_IDREF>
+        </SHIPMENT_PARTIES_REFERENCE>
+    </DISPATCHNOTIFICATION_ITEM>
+
+  </DISPATCHNOTIFICATION_ITEM_LIST>
+
+  <DISPATCHNOTIFICATION_SUMMARY>
+    <TOTAL_ITEM_NUM>2</TOTAL_ITEM_NUM>
+  </DISPATCHNOTIFICATION_SUMMARY>
+</DISPATCHNOTIFICATION>
