@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<ORDERRESPONSE xmlns:ns2="http://www.bmecat.org/bmecat/2005"
+               xmlns="http://www.opentrans.org/XMLSchema/2.1"
+               version="2.1">
+    <ORDERRESPONSE_HEADER>
+        <ORDERRESPONSE_INFO>
+            <ORDER_ID>1991072172</ORDER_ID>
+            <ORDERRESPONSE_DATE>2024-06-28T00:00:00</ORDERRESPONSE_DATE>
+            <PARTIES>
+                <PARTY>
+                    <ns2:PARTY_ID type="gln">7609999129308</ns2:PARTY_ID>
+                    <PARTY_ROLE>buyer</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>BRACK.CH AG</ns2:NAME>
+                    </ADDRESS>
+                </PARTY>
+                <PARTY>
+                    <ns2:PARTY_ID type="gln">7990000000009</ns2:PARTY_ID>
+                    <PARTY_ROLE>supplier</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>Partner AG</ns2:NAME>
+                    </ADDRESS>
+                </PARTY>
+            </PARTIES>
+            <ORDER_PARTIES_REFERENCE>
+                <ns2:BUYER_IDREF type="supplier_specific">7609999129308</ns2:BUYER_IDREF>
+                <ns2:SUPPLIER_IDREF type="customer_specific">7990000000009</ns2:SUPPLIER_IDREF>
+            </ORDER_PARTIES_REFERENCE>
+        </ORDERRESPONSE_INFO>
+    </ORDERRESPONSE_HEADER>
+    <ORDERRESPONSE_ITEM_LIST>
+        <ORDERRESPONSE_ITEM>
+            <LINE_ITEM_ID>10000</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <ns2:SUPPLIER_PID type="supplier_specific">73.83587</ns2:SUPPLIER_PID>
+            </PRODUCT_ID>
+            <QUANTITY>70</QUANTITY>
+            <ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <ns2:PRICE_AMOUNT>5.34</ns2:PRICE_AMOUNT>
+            </PRODUCT_PRICE_FIX>
+            <DELIVERY_DATE type="optional">
+                <DELIVERY_START_DATE>2024-07-01</DELIVERY_START_DATE>
+                <DELIVERY_END_DATE>2024-07-01</DELIVERY_END_DATE>
+            </DELIVERY_DATE>
+        </ORDERRESPONSE_ITEM>
+    </ORDERRESPONSE_ITEM_LIST>
+    <ORDERRESPONSE_SUMMARY>
+        <TOTAL_ITEM_NUM>70</TOTAL_ITEM_NUM>
+    </ORDERRESPONSE_SUMMARY>
+</ORDERRESPONSE>
