@@ -4,7 +4,7 @@
         source="Muster AG" 
         destination="10" 
         accesscode="ABC12345" 
-        test_flag="0" 
+        test_flag="1"
         message_type="order" 
         document_version_date="01.11.2024" 
         document_version="1.0" 
