@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<order>
+    <message_header 
+        source="Muster AG" 
+        destination="10" 
+        accesscode="ABC12345" 
+        test_flag="1"
+        message_type="order" 
+        document_version_date="01.11.2024" 
+        document_version="1.0" 
+        generation_date="19.11.2024" 
+        generation_time="10:30:00" 
+        eMail_confirmation="confirmation@musterag.com" 
+    />
+    <order_header>
+        <order_reference>
+            <BORN>1234567890</BORN>
+            <BORD>19.11.2024</BORD>
+        </order_reference>
+        <order_party>
+            <buyer_party>
+                <party_id>
+                    <LPAN>123456</LPAN>
+                </party_id>
+            </buyer_party>
+            <ship_to_party>
+                <party_id>
+                    <LPAN>987654</LPAN>
+                </party_id>
+                <name_address>
+                    <PNA1>Muster AG</PNA1>
+                    <PNA2>Gebäude A2</PNA2>
+                    <PRFF>Max Bachmann</PRFF>
+                    <PSTR>Musterweg 8</PSTR>
+                    <PPOB>Postfach 36</PPOB>
+                    <PCTY>Musterhausen</PCTY>
+                    <PPOC>1234</PPOC>
+                    <PCTR>CH</PCTR>
+                </name_address>
+            </ship_to_party>
+        </order_party>
+        <order_information>
+            <additional_information>
+                <CCOM>+41 123 456 789</CCOM>
+                <CREF>Ref001</CREF>
+                <ECUN>Special Bid Customer</ECUN>
+                <LNGC>G</LNGC>
+                <SHCF>Y</SHCF>
+                <SFDF>Y</SFDF>
+                <RDDT>25.11.2024</RDDT>
+                <CCNA>Max Muster</CCNA>
+                <CARC>999</CARC>
+                <ITXT>Order Introduction</ITXT>
+                <HAIN>Handle with care</HAIN>
+            </additional_information>
+        </order_information>
+    </order_header>
+    <order_body>
+        <line_item_number>
+            <BLIN>1</BLIN>
+            <part_number>
+                <LITM>123456</LITM>
+                <MITM>Manufacturer-ABC</MITM>
+            </part_number>
+            <additional_line_information>
+                <PTXT>Item Description</PTXT>
+                <SBNR>SpecialBid123</SBNR>
+                <EUEA>customer@example.com</EUEA>
+                <EUCN>End Customer Company</EUCN>
+                <LREF>Line Ref001</LREF>
+                <CCTR>Cost Center A</CCTR>
+            </additional_line_information>
+            <quantity>
+                <quantity_value>
+                    <OQTY>10</OQTY>
+                </quantity_value>
+            </quantity>
+            <price>
+                <UPRC>15.75</UPRC>
+            </price>
+        </line_item_number>
+    </order_body>
+</order>
