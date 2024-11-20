@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<delivery_note>
+  <message_header 
+    source="Absender" 
+    test_flag="1" 
+    message_type="delivery note" 
+    document_version_date="01.01.2022"
+    document_version="2.02"
+    generation_date="20.11.2024" 
+    generation_time="13:00:00" />
+  <delivery_note_header>
+    <order_party>
+      <buyer_party>
+        <party_id>
+          <LPAN>1234567890</LPAN>
+        </party_id>
+      </buyer_party>
+      <ship_to_party>
+        <party_id>
+          <LPAN></LPAN>
+        </party_id>
+        <nameaddress>
+          <PNA1>Musterfirma GmbH</PNA1>
+          <PNA2>Gebäude 2A</PNA2>
+		  <PRFF>Max Mustermann</PRFF>
+          <PSTR>Musterstraße 1</PSTR>
+		  <PPOB>Postfach 41</PPOB>
+          <PCTY>Musterstadt</PCTY>
+          <PPOC>8000</PPOC>
+          <PCTR>CH</PCTR>
+        </nameaddress>
+      </ship_to_party>
+    </order_party>
+    <shipping_information>
+	  <ECUN></ECUN>
+      <TSHW>10.5</TSHW>
+      <VOLU>0.25</VOLU>
+      <box_information>
+        <BOXN>99.37.115923.10633680</BOXN>
+        <TTLI>https://service.post.ch/EasyTrack/submitParcelData.do?formattedParcelCodes=99.37.115923.10633680&p_language=de</TTLI>
+      </box_information>
+    </shipping_information>
+  </delivery_note_header>
+  <delivery_note_body>
+    <delivery_note_number>
+      <DNNR>9876543210</DNNR>
+	  <DNDT>28.11.2024</DNDT>
+      <EDDT></EDDT>
+      <orderreferenz>
+        <order_referenz>
+          <BORN>1234567890</BORN>
+          <BORD>20.11.2024</BORD>
+          <LPOC>20</LPOC>
+          <LPOT>A</LPOT>
+          <LORN>9876543210</LORN>
+          <line_item_number>
+            <BLIN>1</BLIN>
+            <LLIN>10000</LLIN>
+			<LPLT>S</LPLT>
+			<KHLN>0.0</KHLN>
+            <part_number>
+              <CITM>7817</CITM>
+			  <LITM>827856</LITM>
+              <MITM>89578925588</MITM>
+              <EITM>4905524434088</EITM>
+              <serial_number>
+                <SENR>SN1234567890</SENR>
+              </serial_number>
+            </part_number>
+            <part_description>
+              <DSC1>Sony Zubehör KIT</DSC1>
+            </part_description>
+            <additional_line_information>
+			   <PTXT>1224363722</PTXT>
+			   <SBNR></SBNR>
+			   <CARC></CARC>
+			   <CARN></CARN>
+            </additional_line_information>
+            <quantities>
+              <QUTY>10.00</QUTY>
+              <UOMQ>Stk</UOMQ>
+            </quantities>
+          </line_item_number>
+        </order_referenz>
+      </orderreferenz>
+    </delivery_note_number>
+  </delivery_note_body>
+</delivery_note>
