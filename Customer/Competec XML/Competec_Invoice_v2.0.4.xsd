@@ -1,0 +1,749 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="invoice">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="message_header">
+					<xs:complexType>
+						<xs:attribute name="source" use="required">
+							<xs:annotation>
+								<xs:documentation>Name of sender party</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="test_flag" use="required">
+							<xs:annotation>
+								<xs:documentation>1 = Test, 0 = Productive</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:integer" />
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="message_type" use="required"
+							fixed="invoice">
+							<xs:annotation>
+								<xs:documentation>Name of the document</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="50" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="document_version_date"
+							use="required">
+							<xs:annotation>
+								<xs:documentation>dd.mm.yyyy</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="document_version" use="required">
+							<xs:annotation>
+								<xs:documentation>Number of the document version
+								</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="generation_date" use="required">
+							<xs:annotation>
+								<xs:documentation>Document generation date dd.mm.yyyy
+								</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="10" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+						<xs:attribute name="generation_time" use="required">
+							<xs:annotation>
+								<xs:documentation>Document generation time hh:mm:ss
+								</xs:documentation>
+							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:maxLength value="8" />
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="invoice_header">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="order_party">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="buyer_party">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="party_id">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="LPAN" minOccurs="1">
+																	<xs:annotation>
+																		<xs:documentation>Logistic Provider Address Number
+																		</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="10" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="billing_information">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="BPMT">
+																	<xs:annotation>
+																		<xs:documentation>Buyer Payment Time
+																		</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="10" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="LVNO">
+																	<xs:annotation>
+																		<xs:documentation>Logistic Provider VAT Number
+																		</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="20" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="BVNO" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Buyer VAT Number</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="20" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ship_to_party">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="party_id">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="LPAN" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Logistic Provider Adress Number
+																		</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="10" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="nameaddress">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="PNA1">
+																	<xs:annotation>
+																		<xs:documentation>Party Name 1</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="50" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="PNA2">
+																	<xs:annotation>
+																		<xs:documentation>Party Name 2</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="50" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="PRFF" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Party Reference</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string" />
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="PSTR">
+																	<xs:annotation>
+																		<xs:documentation>Party Street</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="50" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="PPOB" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Party Postbox</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="41" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="PCTY">
+																	<xs:annotation>
+																		<xs:documentation>Party City</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="35" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="PPOC">
+																	<xs:annotation>
+																		<xs:documentation>Party Postal Code</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="20" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="PCTR">
+																	<xs:annotation>
+																		<xs:documentation>Party Country</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="10" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="invoice_body">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="invoice_number">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="LPIC">
+											<xs:annotation>
+												<xs:documentation>Logistic Provider Invoice Company
+												</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:integer" />
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="LPIT">
+											<xs:annotation>
+												<xs:documentation>Logistic Provider Invoice Type
+												</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="2" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="INNR">
+											<xs:annotation>
+												<xs:documentation>Invoice Number</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="20" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="INDT">
+											<xs:annotation>
+												<xs:documentation>Invoice Date</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="10" />
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="document_referenz">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="order_referenz">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="BORN">
+																	<xs:annotation>
+																		<xs:documentation>Buyer Order Number
+																		</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="40" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="BORD">
+																	<xs:annotation>
+																		<xs:documentation>Buyer Order Date dd.mm.yyyy
+																		</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="10" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="LPOC">
+																	<xs:annotation>
+																		<xs:documentation>Logistic Provider Order Company
+																		</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:integer" />
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="LPOT">
+																	<xs:annotation>
+																		<xs:documentation>Logistic Provider Order Type
+																		</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="2" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="LORN">
+																	<xs:annotation>
+																		<xs:documentation>Logistic Provider Order Number
+																		</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:maxLength value="20" />
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="ECUN" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Endcustomer Name for Special Bid
+																			empty for standard orders</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string" />
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="line_item_number"
+																	maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="BLIN">
+																				<xs:annotation>
+																					<xs:documentation>Buyer Line Item Number
+																					</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:integer" />
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="LLIN">
+																				<xs:annotation>
+																					<xs:documentation>Logistic Provider Line Item
+																						Number</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:integer" />
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="LPLT" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Logistic Provider Line Type
+																					</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string">
+																						<xs:maxLength value="1" />
+																					</xs:restriction>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="KHLN" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Kit Header Line Number
+																					</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal" />
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element
+																				name="additional_line_information">
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="PTXT" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Position Text
+																								</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string" />
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="SBNR" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Special Bid Number agreed with
+																									Supplier</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string" />
+																							</xs:simpleType>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="delivery_note_number">
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="DNNR" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Delivery Note Number
+																								</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string">
+																									<xs:maxLength value="20" />
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="SHDT" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Shipping Date dd.mm.yyyy
+																								</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string">
+																									<xs:maxLength value="10" />
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="part_number">
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="CITM" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Customer Item Number
+																								</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string" />
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="LITM">
+																							<xs:annotation>
+																								<xs:documentation>Logistic Provider Item Number
+																								</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string">
+																									<xs:maxLength value="30" />
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="MITM">
+																							<xs:annotation>
+																								<xs:documentation>Manufacturer Item Number
+																								</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string">
+																									<xs:maxLength value="40" />
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="EITM">
+																							<xs:annotation>
+																								<xs:documentation>EAN Item Number
+																								</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string">
+																									<xs:maxLength value="50" />
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="serial_number">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="SENR"
+																										minOccurs="0" maxOccurs="unbounded">
+																										<xs:annotation>
+																											<xs:documentation>Serial number
+																											</xs:documentation>
+																										</xs:annotation>
+																										<xs:simpleType>
+																											<xs:restriction
+																												base="xs:string">
+																												<xs:maxLength value="40" />
+																											</xs:restriction>
+																										</xs:simpleType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="part_description">
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="DSC1">
+																							<xs:annotation>
+																								<xs:documentation>Item Description
+																								</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string">
+																									<xs:maxLength value="43" />
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="pricing_details">
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="CUNP">
+																							<xs:annotation>
+																								<xs:documentation>Current Unit Price
+																								</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:decimal" />
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="IQTY">
+																							<xs:annotation>
+																								<xs:documentation>Quantity</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:decimal" />
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="UOMQ">
+																							<xs:annotation>
+																								<xs:documentation>Unit</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string">
+																									<xs:maxLength value="10" />
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="LNAM">
+																							<xs:annotation>
+																								<xs:documentation>Price without VAT
+																								</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:decimal" />
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="VATR">
+																							<xs:annotation>
+																								<xs:documentation>VAT Rate</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:decimal" />
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="VATA">
+																							<xs:annotation>
+																								<xs:documentation>VAT Amount</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:decimal" />
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="CURR">
+																							<xs:annotation>
+																								<xs:documentation>Currency</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string">
+																									<xs:maxLength value="10" />
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="additional_amount">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="AAMC" minOccurs="0">
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string" />
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="AAMV" minOccurs="0">
+																				<xs:simpleType>
+																					<xs:restriction base="xs:string" />
+																				</xs:simpleType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="total_amount">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="NIAM">
+														<xs:annotation>
+															<xs:documentation>Total Amount without VAT
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:decimal" />
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="TIAM">
+														<xs:annotation>
+															<xs:documentation>Total Amount with VAT
+															</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:decimal" />
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="CURR">
+														<xs:annotation>
+															<xs:documentation>Currency</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="10" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="QRIB">
+														<xs:annotation>
+															<xs:documentation>QR IBAN</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="34" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="QRRE">
+														<xs:annotation>
+															<xs:documentation>QR Reference</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="27" />
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="vat_amount">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="vat_rate" minOccurs="1"
+																	maxOccurs="unbounded">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="VATR">
+																				<xs:annotation>
+																					<xs:documentation>VAT Rate</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal" />
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="IATX">
+																				<xs:annotation>
+																					<xs:documentation>VAT Base</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal" />
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="VATA">
+																				<xs:annotation>
+																					<xs:documentation>VAT Amount</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:decimal" />
+																				</xs:simpleType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
