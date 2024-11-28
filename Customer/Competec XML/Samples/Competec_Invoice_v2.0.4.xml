@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<invoice>
+    <message_header
+            source="Alltron AG"
+            test_flag="1"
+            message_type="invoice"
+            document_version_date="01.01.2022"
+            document_version="2.02"
+            generation_date="20.11.2024"
+            generation_time="14:00:00"/>
+    <invoice_header>
+        <order_party>
+            <buyer_party>
+                <party_id>
+                    <LPAN>1234567890</LPAN>
+                </party_id>
+                <billing_information>
+                    <BPMT>30</BPMT>
+                    <LVNO>CHE-105.990.179 MWST</LVNO>
+                    <BVNO></BVNO>
+                </billing_information>
+            </buyer_party>
+            <ship_to_party>
+                <party_id>
+                    <LPAN></LPAN>
+                </party_id>
+                <nameaddress>
+                    <PNA1>Musterfirma GmbH</PNA1>
+                    <PNA2>Gebäude 2A</PNA2>
+                    <PRFF>Max Muster</PRFF>
+                    <PSTR>Musterstraße 1</PSTR>
+                    <PPOB>Postfach 7</PPOB>
+                    <PCTY>Musterstadt</PCTY>
+                    <PPOC>8000</PPOC>
+                    <PCTR>CH</PCTR>
+                </nameaddress>
+            </ship_to_party>
+        </order_party>
+    </invoice_header>
+    <invoice_body>
+        <invoice_number>
+            <LPIC>20</LPIC>
+            <LPIT>R</LPIT>
+            <INNR>9876543210</INNR>
+            <INDT>20.11.2024</INDT>
+            <document_referenz>
+                <order_referenz>
+                    <BORN>1234567890</BORN>
+                    <BORD>19.11.2024</BORD>
+                    <LPOC>20</LPOC>
+                    <LPOT>A</LPOT>
+                    <LORN>987654328810</LORN>
+                    <ECUN></ECUN>
+                    <line_item_number>
+                        <BLIN>1</BLIN>
+                        <LLIN>10000</LLIN>
+                        <LPLT>S</LPLT>
+                        <KHLN>0.0</KHLN>
+                        <additional_line_information>
+                            <PTXT>1234567890</PTXT>
+                            <SBNR>Spezialdeal 88</SBNR>
+                        </additional_line_information>
+                        <delivery_note_number>
+                            <DNNR>5286325623</DNNR>
+                            <SHDT></SHDT>
+                        </delivery_note_number>
+                        <part_number>
+                            <CITM>871</CITM>
+                            <LITM>581885</LITM>
+                            <MITM>79855</MITM>
+                            <EITM>4905524434088</EITM>
+                            <serial_number>
+                                <SENR>SN1234567890</SENR>
+                            </serial_number>
+                        </part_number>
+                        <part_description>
+                            <DSC1>Artikelbeschreibung</DSC1>
+                        </part_description>
+                        <pricing_details>
+                            <CUNP>100</CUNP>
+                            <IQTY>1</IQTY>
+                            <UOMQ>Stk.</UOMQ>
+                            <LNAM>100</LNAM>
+                            <VATR>7.7</VATR>
+                            <VATA>7.70</VATA>
+                            <CURR>CHF</CURR>
+                        </pricing_details>
+                    </line_item_number>
+                    <additional_amount>
+                        <AAMC></AAMC>
+                        <AAMV></AAMV>
+                    </additional_amount>
+                </order_referenz>
+            </document_referenz>
+        </invoice_number>
+        <total_amount>
+            <NIAM>100.00</NIAM>
+            <TIAM>107.70</TIAM>
+            <CURR>CHF</CURR>
+            <QRIB>CH9430761016097605323</QRIB>
+            <QRRE>810156000001111111244013338</QRRE>
+            <vat_amount>
+                <vat_rate>
+                    <VATR>7.7</VATR>
+                    <IATX>100</IATX>
+                    <VATA>7.70</VATA>
+                </vat_rate>
+            </vat_amount>
+        </total_amount>
+    </invoice_body>
+</invoice>
