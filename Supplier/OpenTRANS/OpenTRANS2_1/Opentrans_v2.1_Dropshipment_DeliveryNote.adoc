@@ -76,6 +76,7 @@ Supported codes for PARTY_ROLE and their interpretation:
 | buyer             | Buyers Address    | mandatory
 | supplier          | Suppliers Address | mandatory
 | final_delivery    | Delivery Address  | mandatory
+| deliverer         | Deliverer Name    | optional, used to provide the deliverers name only
 |========================================================================
 
 [[Address]]
@@ -121,37 +122,62 @@ Addresses may be omitted, except for final_delivery.
         <bmecat:PARTY_ID type="gln">769999999999</bmecat:PARTY_ID>
         <PARTY_ROLE>buyer</PARTY_ROLE>
     </PARTY>
+    <PARTY>
+        <bmecat:PARTY_ID type="supplier_specific">C12345</bmecat:PARTY_ID>
+        <PARTY_ROLE>deliverer</PARTY_ROLE>
+        <ADDRESS>
+            <bmecat:NAME>DHL EXPRESS</bmecat:NAME>
+        </ADDRESS>
+    </PARTY>
 </PARTIES>
 ----
 
 <<<
 
-[[ShipPartiesRef]]
+[[PartiesRef]]
 Parties References
 ^^^^^^^^^^^^^^^^^^
-The type for each reference is supplier_specific.
 
 .Parties references
 [width="100%",options="header",cols="3,2,2"]
 |=======================================================================
-| Element name     | Description                          | Example
-| BUYER_IDREF      | defines buyer party id with type     | 444444
-| SUPPLIER_IDREF   | defines supplier party id with type  | 666666
-| SHIPMENT_PARTIES_REFERENCE   | defines delivery party id with type  | 444444
+| Element name     | Description                                           | Example
+| BUYER_IDREF      | defines buyer party id with type buyer_specific       | A1234567
+| SUPPLIER_IDREF   | defines supplier party id with type buyer_specific    | L123456
+| SHIPMENT_PARTIES_REFERENCE   | delivery and deliverer party              |
 |=======================================================================
+
+
+[[ShipPartiesRef]]
+Shipment Parties References
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+DELIVERER_IDREF is only required when Party with role deliverer is used.
+Only the first name field of address is required to identify the carrier.
+
+If the carrier name is not available, both deliverer party and DELIVERER_IDREF may be omitted.
+
+.Parties references
+[width="100%",options="header",cols="3,2,2"]
+|=======================================================================
+| Element name      | Description                         | Example
+| DELIVERY_IDREF    | defines delivery party id           | K22222
+| DELIVERER_IDREF   | defines deliverer party id          | C12345
+|=======================================================================
+
 
 .Example:
 [source,xml]
 ----
 <DISPATCHNOTIFICATION_INFO>
-<!-- more elements here -->
-<bmecat:SUPPLIER_IDREF type="buyer_specific">L123456</bmecat:SUPPLIER_IDREF>
-<bmecat:BUYER_IDREF type="buyer_specific">A1234567</bmecat:BUYER_IDREF>
+    <!-- more elements here -->
+    <bmecat:SUPPLIER_IDREF type="buyer_specific">L123456</bmecat:SUPPLIER_IDREF>
+    <bmecat:BUYER_IDREF type="buyer_specific">A1234567</bmecat:BUYER_IDREF>
 
-<SHIPMENT_PARTIES_REFERENCE>
-    <DELIVERY_IDREF type="buyer_specific">K22222</DELIVERY_IDREF>
-</SHIPMENT_PARTIES_REFERENCE>
-<!-- more elements here -->
+    <SHIPMENT_PARTIES_REFERENCE>
+        <DELIVERY_IDREF type="buyer_specific">K22222</DELIVERY_IDREF>
+        <DELIVERER_IDREF type="supplier_specific">C12345</DELIVERER_IDREF>
+    </SHIPMENT_PARTIES_REFERENCE>
+    <!-- more elements here -->
 </DISPATCHNOTIFICATION_INFO>
 ----
 
@@ -171,10 +197,10 @@ Tracking and Tracing
 [source,xml]
 ----
 <DISPATCHNOTIFICATION_INFO>
-<!-- more elements here -->
-<SHIPMENT_ID>SHIP_ID_1234567</SHIPMENT_ID>
-<TRACKING_TRACING_URL>www.sometrackingpage.com/trackandtrace</TRACKING_TRACING_URL>
-<!-- more elements here -->
+    <!-- more elements here -->
+    <SHIPMENT_ID>SHIP_ID_1234567</SHIPMENT_ID>
+    <TRACKING_TRACING_URL>www.sometrackingpage.com/trackandtrace</TRACKING_TRACING_URL>
+    <!-- more elements here -->
 </DISPATCHNOTIFICATION_INFO>
 ----
 
