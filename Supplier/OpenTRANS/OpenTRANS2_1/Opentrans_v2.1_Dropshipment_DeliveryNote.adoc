@@ -76,7 +76,7 @@ Supported codes for PARTY_ROLE and their interpretation:
 | buyer             | Buyers Address    | mandatory
 | supplier          | Suppliers Address | mandatory
 | final_delivery    | Delivery Address  | mandatory
-| deliverer         | Deliverer Name    | This party provides the name for the carrier in DELIVERER_IDREF. No other field is handled.
+| deliverer         | Deliverer Name    | optional, used to provide the deliverers name only
 |========================================================================
 
 [[Address]]
@@ -154,7 +154,7 @@ Shipment Parties References
 DELIVERER_IDREF is only required when Party with role deliverer is used.
 Only the first name field of address is required to identify the carrier.
 
-If neither carrier nor track and trace information is provided, both deliverer party and DELIVERER_IDREF may be omitted.
+If the carrier name is not available, both deliverer party and DELIVERER_IDREF may be omitted.
 
 .Parties references
 [width="100%",options="header",cols="3,2,2"]
@@ -184,10 +184,6 @@ If neither carrier nor track and trace information is provided, both deliverer p
 [[TrackAndTrace]]
 Tracking and Tracing
 ^^^^^^^^^^^^^^^^^^^^
-The carrier name for Track and Trace must be to parties, with role deliverer.
-It also must be added to SHIPMENT_PARTIES_REFERENCE by DELIVERER_IDREF.
-
-If there is no track and trace url, the deliverer party is mandatory.
 
 .tracking and tracing information
 [width="100%",options="header"]
