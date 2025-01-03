@@ -1,4 +1,4 @@
-= EDIFACT D96A INVOIC
+= EDIFACT D96A INVOIC CreditNote
 Brack Alltron AG
 :doctype: book
 :toc:
@@ -8,7 +8,7 @@ v1.2, 27-09-2024
 [preface]
 == Preface
 
-This document describes the implementation of EDIFACT D01B for customer credit notes.
+This document describes the implementation of EDIFACT D96A for customer credit notes.
 The EDIFACT Credit Note message is an INVOIC message using type BGM+381.
 
 === Changelog
@@ -40,22 +40,22 @@ https://www.stylusstudio.com/edifact/D96A/INVOIC.htm
 |===
 6+|*UNB \| Interchange Header*
 |*Pos*     |*Segment/Element* |*Description*  |*Status* |*Example* |*Remarks*
-.4+|010       |S001 |SYNTAX IDENTIFIER                     |M      m|          |
+.3+|010       |S001 |SYNTAX IDENTIFIER                     |M      m|          |
 ^|             0001 |Syntax identifier                     |M      m|+UNOC     |
-.2+^|          0002 |Syntax version number                 |M      m|:3        |
-4+|                   *_Supported codes:_* 3, 4
+^|             0002 |Syntax version number                 |M      m|:4        |3 = Version 3
+
 .3+|020       |S002 |INTERCHANGE SENDER                    |M      m|          |
 ^|             0004 |Interchange sender identification     |M      m|+7609999999999 |Sender Party GLN
 ^|             0007 |Identification code qualifier         |C      m|:14       |14 = EAN International
-.4+|030       |S003 |INTERCHANGE RECIPIENT                 |M      m|          |
+
+.3+|030       |S003 |INTERCHANGE RECIPIENT                 |M      m|          |
 ^|             0010 |Interchange recipient identification  |M      m|+7601111111111  |Receiver Party GLN
-.2+^|          0007 |Identification code qualifier         |C      m|:14       |
-4+| *_Supported codes:_* +
-14 = EAN International +
-59 = ODETTE
+^|          0007 |Identification code qualifier         |C      m|:14       |14 = EAN International
+
 .3+|040       |S004 |DATE AND TIME OF PREPARATION          |M      m|          |
-^|             0017 |Date                                  |M      m|+20220707 |yyMMdd
+^|             0017 |Date                                  |M      m|+20220707 |yyyyMMdd
 ^|             0019 |Time                                  |M      m|:1155     |HHmm
+
 .2+|050      ^|0020 |Interchange control reference         |M      m|+123      |
 ^|             …  4+|Not in use
 |110         ^|0035 |Test indicator                        |C      m|+1        |1 = Test
@@ -63,7 +63,7 @@ https://www.stylusstudio.com/edifact/D96A/INVOIC.htm
 
 .Example:
 ----
-UNB+UNOC:4+7609999999999:14+7601111111111:14+20240707:1155+123++++++1'
+UNB+UNOC:3+7609999999999:14+7601111111111:14+20240707:1155+123++++++1'
 ----
 
 <<<
@@ -78,13 +78,13 @@ UNB+UNOC:4+7609999999999:14+7601111111111:14+20240707:1155+123++++++1'
 ^|        0052 |Message version number          |M       m|:D |
 ^|        0054 |Message release number          |M       m|:96A |
 ^|        0051 |Controlling agency, coded       |M       m|:UN |
-^|        0057 |Association assigned code       |C       m|:EAN010 |optional
+^|        0057 |Association assigned code       |C       m| |Not in use
 ^|        ...   4+|Not in use
 |===
 
 .Example:
 ----
-UNH+11+INVOIC:D:96A:UN:EAN010'
+UNH+11+INVOIC:D:96A:UN'
 ----
 
 [width="100%",cols="1,2,4,1,2,2",options="header"]
@@ -92,9 +92,8 @@ UNH+11+INVOIC:D:96A:UN:EAN010'
 6+|*0020 \| Segment \| BGM \| Beginning of message*
 6+|A segment by which the sender must uniquely identify the invoice by means of its type and number and when necessary its function.
 |*Pos*   |*Segment/Element* |*Description*   |*Status* |*Example* |*Remarks*
-.3+|010   |C002 |DOCUMENT/MESSAGE NAME        |C       m| |
-.2+^|      1001 |Document name code           |C       m|+381 |
-4+|               *_Supported code:_* 380 = Invoice
+.2+|010   |C002 |DOCUMENT/MESSAGE NAME        |C       m| |
+^|      1001 |Document name code           |C       m|+381 |381 = Credit Note
 |        ^|… |                                |C       m| |Not in use
 |020    ^|1004 |Document identifier          |#C#       m|+22095031075 |Credit note nbr.
 .2+|030 .2+^|1225 |Message function, coded  |C       m|+9      |
@@ -104,7 +103,7 @@ UNH+11+INVOIC:D:96A:UN:EAN010'
 
 .Example:
 ----
-BGM+380+22095031075+9'
+BGM+381+22095031075+9'
 ----
 
 <<<
@@ -696,7 +695,7 @@ UNZ+1+123'
 ----
 
 <<<
-== Example INVOIC Message
+== Example INVOIC CreditNote  Message
 
 [width="100%",cols="1,14,1"]
 |===
@@ -718,7 +717,7 @@ R
 a|
 ----
 UNH+11+INVOIC:D:01B:UN:EAN010'
-BGM+380+22095031075+9'
+BGM+381+22095031075+9'
 DTM+3:20230419:102'
 DTM+137:20210520:102'
 ----
