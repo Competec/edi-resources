@@ -1,0 +1,191 @@
+= Order Response Documentation
+
+[cols="1,1,1,1,1,1,1,1", options="header"]
+|===
+|xmlElement |BMECAT |attribute |attributeValue |sampleValue |mustCanShould |dataType |description
+
+|<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+| | | | |must | |Static
+
+|ORDERRESPONSE
+| |xmlns |http://www.opentrans.org/XMLSchema/2.1 | |must | |Static
+
+|ORDERRESPONSE
+| |version |2.1 | |must | |Static
+
+|ORDERRESPONSE
+|BMECAT |xmlns:bmecat |http://www.bmecat.org/bmecat/2005 | |must |string |namespace can be defined or directly in element
+
+|• ORDERRESPONSE_HEADER
+| | | | |must |element |
+
+|• • ORDERRESPONSE_INFO
+| | | | |must |element |
+
+|• • • ORDER_ID
+| | | |1991072172 |must |string |Brack/Alltron Order ID
+
+|• • • ORDERRESPONSE_DATE
+| | | |2024-06-28T00:00:00+01:00 |must |datetime |The format must be YYYY-MM-DDTHH:MM:SS+00:00
+
+|• • • PARTIES
+| | | | |must |element |
+
+|• • • • PARTY
+| | | | |must |element |
+
+|• • • • • PARTY_ID
+|BMECAT | | |7609999129308 |must |string |This value must be identical with the IDREF of the PARTY_ROLE
+
+|• • • • • PARTY_ROLE
+| | | |buyer |must |string |Must have exactly 1 buyer and 1 supplier
+
+|• • • • • ADDRESS
+| | | | |must |element |
+
+|• • • • • • NAME
+|BMECAT | | |BRACK.CH AG |must |string |Supplier Name and Buyer Name
+
+|• • • ORDER_PARTIES_REFERENCE
+| | | | |must |element |
+
+|• • • • BUYER_IDREF
+|BMECAT |type |supplier_specific |7609999129308 |must |string |Must match buyer PARTY_ID
+
+|• • • • SUPPLIER_IDREF
+|BMECAT |type |customer_specific |7990000000009 |must |string |Must match supplier PARTY_ID
+
+|• ORDERRESPONSE_ITEM_LIST
+| | | | |must |element |
+
+|• • ORDERRESPONSE_ITEM
+| | | | |must |element |
+
+|• • • LINE_ITEM_ID
+| | | |10000 |must |integer |
+
+|• • • PRODUCT_ID
+| | | | |must |element |
+
+|• • • • SUPPLIER_PID
+|BMECAT | | |73.83587 |must |string |Supplier SKU
+
+|• • • • BUYER_PID
+|BMECAT | | |73.83587 |can |string |Brack/Alltron Product ID
+
+|• • • QUANTITY
+| | | |1 |must |integer |
+
+|• • • ORDER_UNIT
+|BMECAT | | |C62 |must |string |Must be C62
+
+|• • • PRODUCT_PRICE_FIX
+| | | | |must |element |
+
+|• • • • PRICE_AMOUNT
+|BMECAT | | |5.34 |must |decimal |
+
+|• • • DELIVERY_DATE
+| | | | |can |element |
+
+|• • • • DELIVERY_START_DATE
+| | | |2024-07-01 |must |date |
+
+|• • • • DELIVERY_END_DATE
+| | | |2024-07-01 |must |date |
+
+|• ORDERRESPONSE_SUMMARY
+| | | | |can |element |
+
+|• • TOTAL_ITEM_NUM
+| | | |70 |can |integer |Summary of ORDERRESPONSE_ITEM
+|===
+
+---
+
+== XML Structure
+
+* ORDERRESPONSE
+** ORDERRESPONSE_HEADER
+*** ORDERRESPONSE_INFO
+**** ORDER_ID
+**** ORDERRESPONSE_DATE
+**** PARTIES
+***** PARTY
+****** PARTY_ID
+****** PARTY_ROLE
+****** ADDRESS
+******* NAME
+**** ORDER_PARTIES_REFERENCE
+***** BUYER_IDREF
+***** SUPPLIER_IDREF
+** ORDERRESPONSE_ITEM_LIST
+*** ORDERRESPONSE_ITEM
+**** LINE_ITEM_ID
+**** PRODUCT_ID
+***** SUPPLIER_PID
+**** QUANTITY
+**** ORDER_UNIT
+**** PRODUCT_PRICE_FIX
+***** PRICE_AMOUNT
+**** DELIVERY_DATE
+***** DELIVERY_START_DATE
+***** DELIVERY_END_DATE
+** ORDERRESPONSE_SUMMARY
+*** TOTAL_ITEM_NUM
+
+== Sample File
+[source,xml]
+----
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<ORDERRESPONSE xmlns:ns2="http://www.bmecat.org/bmecat/2005"
+               xmlns="http://www.opentrans.org/XMLSchema/2.1"
+               version="2.1">
+    <ORDERRESPONSE_HEADER>
+        <ORDERRESPONSE_INFO>
+            <ORDER_ID>1991072172</ORDER_ID>
+            <ORDERRESPONSE_DATE>2024-06-28T00:00:00</ORDERRESPONSE_DATE>
+            <PARTIES>
+                <PARTY>
+                    <ns2:PARTY_ID type="gln">7609999129308</ns2:PARTY_ID>
+                    <PARTY_ROLE>buyer</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>BRACK.CH AG</ns2:NAME>
+                    </ADDRESS>
+                </PARTY>
+                <PARTY>
+                    <ns2:PARTY_ID type="gln">7990000000009</ns2:PARTY_ID>
+                    <PARTY_ROLE>supplier</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>Partner AG</ns2:NAME>
+                    </ADDRESS>
+                </PARTY>
+            </PARTIES>
+            <ORDER_PARTIES_REFERENCE>
+                <ns2:BUYER_IDREF type="supplier_specific">7609999129308</ns2:BUYER_IDREF>
+                <ns2:SUPPLIER_IDREF type="customer_specific">7990000000009</ns2:SUPPLIER_IDREF>
+            </ORDER_PARTIES_REFERENCE>
+        </ORDERRESPONSE_INFO>
+    </ORDERRESPONSE_HEADER>
+    <ORDERRESPONSE_ITEM_LIST>
+        <ORDERRESPONSE_ITEM>
+            <LINE_ITEM_ID>10000</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <ns2:SUPPLIER_PID type="supplier_specific">73.83587</ns2:SUPPLIER_PID>
+            </PRODUCT_ID>
+            <QUANTITY>70</QUANTITY>
+            <ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <ns2:PRICE_AMOUNT>5.34</ns2:PRICE_AMOUNT>
+            </PRODUCT_PRICE_FIX>
+            <DELIVERY_DATE type="optional">
+                <DELIVERY_START_DATE>2024-07-01</DELIVERY_START_DATE>
+                <DELIVERY_END_DATE>2024-07-01</DELIVERY_END_DATE>
+            </DELIVERY_DATE>
+        </ORDERRESPONSE_ITEM>
+    </ORDERRESPONSE_ITEM_LIST>
+    <ORDERRESPONSE_SUMMARY>
+        <TOTAL_ITEM_NUM>70</TOTAL_ITEM_NUM>
+    </ORDERRESPONSE_SUMMARY>
+</ORDERRESPONSE>
+----
