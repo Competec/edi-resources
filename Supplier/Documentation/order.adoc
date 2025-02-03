@@ -1,0 +1,249 @@
+= Order Documentation
+
+[cols="1,1,1,1,1,1,1,1", options="header"]
+|===
+|xmlElement |BMECAT |attribute |attributeValue |sampleValue |mustCanShould |dataType |description
+
+|<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+| | | | |must | |Static
+
+|ORDER
+| |xmlns |http://www.opentrans.org/XMLSchema/2.1 | |must | |Static
+
+|ORDER
+| |version |2.1 | |must | |Static
+
+|ORDER
+| |type |standard | |must |string |Static
+
+|ORDER
+|BMECAT |xmlns:ns2 |http://www.bmecat.org/bmecat/2005 | |must |string |namespace can be defined or directly in element
+
+|• ORDER_HEADER
+| | | | |must |Element |
+
+|• • ORDER_INFO
+| | | | |must |Element |
+
+|• • • ORDER_ID
+| | | |1990785210 |must |string |Brack/Alltron Order ID
+
+|• • • ORDER_DATE
+| | | |2021-10-27T00:00:00 |must |datetime |The format must be YYYY-MM-DDTHH:MM:SS
+
+|• • • PARTIES
+| | | | |must |Element |
+
+|• • • • PARTY
+| | | | |must |Element |Must have buyer, delivery, and supplier parties
+
+|• • • • • PARTY_ID
+|BMECAT |type |supplier_specific |0930688 |must |string |Party identifier (supplier, buyer, delivery)
+
+|• • • • • PARTY_ID
+|BMECAT |type |gln |7609999129308 |can |string |Global Location Number
+
+|• • • • • PARTY_ROLE
+| | | |buyer |must |string |Must be buyer, delivery, or supplier
+
+|• • • • • ADDRESS
+| | | | |must |Element |
+
+|• • • • • • NAME
+|BMECAT | | |Alltron AG |must |string |Company name
+
+|• • • ORDER_PARTIES_REFERENCE
+| | | | |must |Element |
+
+|• • • • BUYER_IDREF
+|BMECAT |type |supplier_specific |0930688 |must |string |Must match buyer PARTY_ID
+
+|• • • • SUPPLIER_IDREF
+|BMECAT |type |customer_specific |A3520 |must |string |Must match supplier PARTY_ID
+
+|• • • CURRENCY
+|BMECAT | | |CHF |must |string |Currency code
+
+|• ORDER_ITEM_LIST
+| | | | |must |Element |
+
+|• • ORDER_ITEM
+| | | | |must |Element |
+
+|• • • LINE_ITEM_ID
+| | | |10000 |must |integer |Unique line item identifier
+
+|• • • PRODUCT_ID
+| | | | |must |Element |
+
+|• • • • SUPPLIER_PID
+|BMECAT |type |supplier_specific |111363 |must |string |Supplier product ID
+
+|• • • QUANTITY
+| | | |5 |must |integer |Order quantity
+
+|• • • ORDER_UNIT
+|BMECAT | | |C62 |must |string |Must be C62
+
+|• • • PRODUCT_PRICE_FIX
+| | | | |must |Element |
+
+|• • • • PRICE_AMOUNT
+|BMECAT | | |41.06 |must |decimal |Price per unit (excl. VAT)
+
+|• • • PRICE_LINE_AMOUNT
+| | | |205.3 |must |decimal |Total line amount (excl. VAT)
+
+|• ORDER_SUMMARY
+| | | | |must |Element |
+
+|• • TOTAL_ITEM_NUM
+| | | |2 |must |integer |Total number of order items
+
+|• • TOTAL_AMOUNT
+| | | |3206.56 |must |decimal |Total order amount
+|===
+
+---
+
+== XML Structure
+
+* ORDER
+** ORDER_HEADER
+*** ORDER_INFO
+**** ORDER_ID
+**** ORDER_DATE
+**** PARTIES
+***** PARTY
+****** PARTY_ID
+****** PARTY_ROLE
+****** ADDRESS
+******* NAME
+**** ORDER_PARTIES_REFERENCE
+***** BUYER_IDREF
+***** SUPPLIER_IDREF
+**** CURRENCY
+** ORDER_ITEM_LIST
+*** ORDER_ITEM
+**** LINE_ITEM_ID
+**** PRODUCT_ID
+***** SUPPLIER_PID
+**** QUANTITY
+**** ORDER_UNIT
+**** PRODUCT_PRICE_FIX
+***** PRICE_AMOUNT
+**** PRICE_LINE_AMOUNT
+** ORDER_SUMMARY
+**** TOTAL_ITEM_NUM
+**** TOTAL_AMOUNT
+
+== Sample File
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ORDER version="2.1" type="standard" xmlns="http://www.opentrans.org/XMLSchema/2.1" xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:ns2="http://www.bmecat.org/bmecat/2005" xmlns:ns4="http://www.w3.org/2000/09/xmldsig#">
+    <ORDER_HEADER>
+        <ORDER_INFO>
+            <ORDER_ID>1990785210</ORDER_ID>
+            <ORDER_DATE>2021-10-27T00:00:00</ORDER_DATE>
+            <PARTIES>
+                <PARTY>
+                    <ns2:PARTY_ID type="supplier_specific">0930688</ns2:PARTY_ID>
+                    <ns2:PARTY_ID type="gln">7609999129308</ns2:PARTY_ID>
+                    <PARTY_ROLE>buyer</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>Alltron AG</ns2:NAME>
+                        <CONTACT_DETAILS>
+                            <ns2:CONTACT_NAME>Nadine Fuchs</ns2:CONTACT_NAME>
+                            <ns2:PHONE>+41 62 889 60 56</ns2:PHONE>
+                            <ns2:EMAILS>
+                                <ns2:EMAIL>nadine.fuchs@alltron.ch</ns2:EMAIL>
+                            </ns2:EMAILS>
+                        </CONTACT_DETAILS>
+                        <ns2:STREET>Hintermättlistr. 3</ns2:STREET>
+                        <ns2:ZIP>5506</ns2:ZIP>
+                        <ns2:CITY>Mägenwil</ns2:CITY>
+                        <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+                        <ns2:VAT_ID>CHE-105.990.179 MWST</ns2:VAT_ID>
+                        <ns2:PHONE>062 889 88 88</ns2:PHONE>
+                    </ADDRESS>
+                </PARTY>
+                <PARTY>
+                    <ns2:PARTY_ID type="supplier_specific">0930688</ns2:PARTY_ID>
+                    <ns2:PARTY_ID type="gln">7613081000000</ns2:PARTY_ID>
+                    <PARTY_ROLE>delivery</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>Alltron AG</ns2:NAME>
+                        <ns2:STREET>Rossgassmoos 10</ns2:STREET>
+                        <ns2:ZIP>6130</ns2:ZIP>
+                        <ns2:BOXNO>Ramps 5-8</ns2:BOXNO>
+                        <ns2:CITY>Willisau</ns2:CITY>
+                        <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+                    </ADDRESS>
+                </PARTY>
+                <PARTY>
+                    <ns2:PARTY_ID type="customer_specific">A3520</ns2:PARTY_ID>
+                    <PARTY_ROLE>supplier</PARTY_ROLE>
+                    <ADDRESS>
+                        <ns2:NAME>Muster AG</ns2:NAME>
+                        <ns2:STREET>Samplestreet 1</ns2:STREET>
+                        <ns2:ZIP>8000</ns2:ZIP>
+                        <ns2:CITY>Zürich</ns2:CITY>
+                        <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
+                    </ADDRESS>
+                </PARTY>
+            </PARTIES>
+            <ORDER_PARTIES_REFERENCE>
+                <ns2:BUYER_IDREF type="supplier_specific">0930688</ns2:BUYER_IDREF>
+                <ns2:SUPPLIER_IDREF type="customer_specific">A3520</ns2:SUPPLIER_IDREF>
+                <SHIPMENT_PARTIES_REFERENCE>
+                    <DELIVERY_IDREF type="gln">7613081000000</DELIVERY_IDREF>
+                </SHIPMENT_PARTIES_REFERENCE>
+            </ORDER_PARTIES_REFERENCE>
+            <ns2:CURRENCY>CHF</ns2:CURRENCY>
+        </ORDER_INFO>
+    </ORDER_HEADER>
+    <ORDER_ITEM_LIST>
+        <ORDER_ITEM>
+            <LINE_ITEM_ID>10000</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <ns2:SUPPLIER_PID type="supplier_specific">111363</ns2:SUPPLIER_PID>
+                <ns2:INTERNATIONAL_PID type="ean">7109806181210</ns2:INTERNATIONAL_PID>
+                <ns2:BUYER_PID type="buyer_specific">345087</ns2:BUYER_PID>
+            </PRODUCT_ID>
+            <QUANTITY>5</QUANTITY>
+            <ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <ns2:PRICE_AMOUNT>41.06</ns2:PRICE_AMOUNT>
+            </PRODUCT_PRICE_FIX>
+            <PRICE_LINE_AMOUNT>205.3</PRICE_LINE_AMOUNT>
+            <DELIVERY_DATE type="fixed">
+                <DELIVERY_START_DATE>2021-10-28T00:00:00</DELIVERY_START_DATE>
+                <DELIVERY_END_DATE>2021-10-28T00:00:00</DELIVERY_END_DATE>
+            </DELIVERY_DATE>
+        </ORDER_ITEM>
+        <ORDER_ITEM>
+            <LINE_ITEM_ID>20000</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <ns2:SUPPLIER_PID type="supplier_specific">175892</ns2:SUPPLIER_PID>
+                <ns2:BUYER_PID type="buyer_specific">1210754</ns2:BUYER_PID>
+            </PRODUCT_ID>
+            <QUANTITY>30</QUANTITY>
+            <ns2:ORDER_UNIT>C62</ns2:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <ns2:PRICE_AMOUNT>7.1</ns2:PRICE_AMOUNT>
+            </PRODUCT_PRICE_FIX>
+            <PRICE_LINE_AMOUNT>213</PRICE_LINE_AMOUNT>
+            <DELIVERY_DATE type="fixed">
+                <DELIVERY_START_DATE>2021-10-28T00:00:00</DELIVERY_START_DATE>
+                <DELIVERY_END_DATE>2021-10-28T00:00:00</DELIVERY_END_DATE>
+            </DELIVERY_DATE>
+        </ORDER_ITEM>
+    </ORDER_ITEM_LIST>
+    <ORDER_SUMMARY>
+        <TOTAL_ITEM_NUM>2</TOTAL_ITEM_NUM>
+        <TOTAL_AMOUNT>3206.56</TOTAL_AMOUNT>
+    </ORDER_SUMMARY>
+</ORDER>
+----

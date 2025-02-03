@@ -1,0 +1,426 @@
+= Invoice Documentation
+
+[cols="1,1,1,1,1,1,1,1", options="header"]
+|===
+|xmlElement |BMECAT |attribute |attributeValue |sampleValue |mustCanShould |dataType |description
+
+|<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+| | | | |must | |Static
+
+|INVOICE
+| |xmlns |http://www.opentrans.org/XMLSchema/2.1 | |must | |Static
+
+|INVOICE
+| |version |2.1 | |must | |Static
+
+|INVOICE
+|BMECAT |xmlns:bmecat |http://www.bmecat.org/bmecat/2005 | |must |string |namespace can be defined or directly in element
+
+|• INVOICE_HEADER
+| | | | |must |element |
+
+|• • CONTROL_INFO
+| | | | |must |element |
+
+|• • • GENERATOR_INFO
+| | | |EDI |must |string |
+
+|• • • GENERATION_DATE
+| | | |2022-04-22T09:48:11 |must |datetime |
+
+|• • INVOICE_INFO
+| | | | |must |element |
+
+|• • • INVOICE_ID
+| | | |30535156 |must |string |
+
+|• • • INVOICE_DATE
+| | | |2023-04-22T09:48:11 |must |datetime |
+
+|• • • INVOICE_TYPE
+| | | |invoice |must |string |
+
+|• • • DELIVERYNOTE_ID
+| | | |12345678 |must |string |
+
+|• • • PARTIES
+| | | | |must |element |
+
+|• • • • PARTY
+| | | | |must |element |Must have buyer and supplier parties
+
+|• • • • • PARTY_ID
+|BMECAT |type |gln |760000000000 |must |string |Global Location Number
+
+|• • • • • PARTY_ID
+|BMECAT |type |supplier_specific |K1234567 |must |string |Party identifier
+
+|• • • • • PARTY_ROLE
+| | | |buyer |must |string |Must be buyer or supplier
+
+|• • • • • ADDRESS
+| | | | |must |element |
+
+|• • • • • • NAME
+|BMECAT | | |BRACK.CH AG |must |string |Name
+
+|• • • • • • STREET
+|BMECAT | | |Hintermättlistr. 3 |must |string |Street
+
+|• • • • • • ZIP
+|BMECAT | | |5506 |must |string |Postal Code
+
+|• • • • • • CITY
+|BMECAT | | |Mägenwil |must |string |City
+
+|• • • • • • COUNTRY_CODED
+|BMECAT | | |CH |must |string |Country Code ISO 3166-1 alpha-2
+
+|• • • • • • VAT_ID
+|BMECAT | | |CHE-111.222.333 MWST |must |string |Only for supplier
+
+|• • • INVOICE_ISSUER_IDREF
+|BMECAT |type |buyer_specific |L12345678 |must |string |Must match supplier PARTY_ID
+
+|• • • INVOICE_RECIPIENT_IDREF
+|BMECAT |type |gln |760000000000 |must |string |Must match buyer PARTY_ID
+
+|• • • CURRENCY
+|BMECAT | | |CHF |must |string |Currency Code ISO 4217
+
+|• • • PAYMENT
+| | | | |must |element |
+
+|• • • • ACCOUNT
+| | | | |must |element |
+
+|• • • • • HOLDER
+| | | |SUPPLIER NAME AG |must |string |Supplier Name
+
+|• • • • • BANK_ACCOUNT
+| |type |iban |IBAN-CODE-1234-1234-12345 |must |string |Enter your registered IBAN, NOTE: IBAN changes in EDI Msg wont change the Payment IBAN
+
+|• • • • PAYMENT_TERMS
+| | | | |must |element |
+
+|• • • • • TIME_FOR_PAYMENT
+| | | | |must |element |
+
+|• • • • • • DAYS
+| | | |30 |must |integer |Days for payment (use registered payment terms)
+
+|• • • • • VALUE_DATE
+| | | |2023-06-15 |must |date |Date of payment (use registered payment terms logic)
+
+|• INVOICE_ITEM_LIST
+| | | | |must |element |
+
+|• • INVOICE_ITEM
+| | | | |must |element |
+
+|• • • LINE_ITEM_ID
+| | | |1 |can |integer |Line Item ID
+
+|• • • PRODUCT_ID
+| | | | |must |element |
+
+|• • • • SUPPLIER_PID
+|BMECAT | | |SKU_123_456 |must |string |Supplier Product ID
+
+|• • • • BUYER_PID
+|BMECAT | | |250035 |can |string |Brack.Alltron Product ID
+
+|• • • • DESCRIPTION_SHORT
+|BMECAT | | |Caran d'Ache Druckbleistift Fixpencil |must |string |Short Description of the Product (can be empty but must be present)
+
+|• • • QUANTITY
+| | | |10 |must |integer |Quantity
+
+|• • • ORDER_UNIT
+|BMECAT | | |C62 |must |string |Fixed Value C62
+
+|• • • PRODUCT_PRICE_FIX
+| | | | |must |element |
+
+|• • • • PRICE_AMOUNT
+|BMECAT | | |10.31 |must |decimal |Price per Unit ex. VAT
+
+|• • • • TAX_DETAILS_FIX
+| | | | |must |element |
+
+|• • • • • TAX_TYPE
+|BMECAT | | |VAT |must |string |Fixed Value VAT
+
+|• • • • • TAX
+|BMECAT | | |0.077 |must |decimal |Value must be in decimal format 8.1% = 0.081
+
+|• • • • • TAX_AMOUNT
+| | | |7.94 |must |decimal |Tax Amount Price per Unit * Tax
+
+|• • • PRICE_LINE_AMOUNT
+| | | |103.10 |must |decimal |Price per Unit ex. VAT * Quantity
+
+|• • • ORDER_REFERENCE
+| | | | |must |element |
+
+|• • • • ORDER_ID
+| | | |4800070257 |must |string |Brack.Alltron Order ID
+
+|• INVOICE_SUMMARY
+| | | | |must |element |
+
+|• • NET_VALUE_GOODS
+| | | |148.7 |must |decimal |Sum of all Price_Line_Amount
+
+|• • TOTAL_ITEM_NUM
+| | | |9 |can |integer |Total Number of Items
+
+|• • TOTAL_AMOUNT
+| | | |160.15 |must |decimal |Sum of all Price_Line_Amount + TOTAL_TAX
+
+|• • TOTAL_TAX
+| | | | |must |element |
+
+|• • • TAX_DETAILS_FIX
+| | | | |must |element |
+
+|• • • • TAX_TYPE
+|BMECAT | | |VAT |must |string |Fixed Value VAT
+
+|• • • • TAX
+|BMECAT | | |0.077 |must |decimal |Value must be in decimal format 8.1% = 0.081
+
+|• • • • TAX_AMOUNT
+| | | |11.45 |must |decimal |Total Tax Amount
+
+|• • • • TAX_BASE
+| | | |148.7 |must |decimal |Same as NET_VALUE_GOODS (Sum of all Price_Line_Amount)
+|===
+
+---
+
+== XML Structure
+
+* INVOICE
+** INVOICE_HEADER
+*** CONTROL_INFO
+**** GENERATOR_INFO
+**** GENERATION_DATE
+*** INVOICE_INFO
+**** INVOICE_ID
+**** INVOICE_DATE
+**** INVOICE_TYPE
+**** DELIVERYNOTE_ID
+**** PARTIES
+***** PARTY
+****** PARTY_ID
+****** PARTY_ROLE
+****** ADDRESS
+******* NAME
+******* STREET
+******* ZIP
+******* CITY
+******* COUNTRY_CODED
+******* VAT_ID
+**** INVOICE_ISSUER_IDREF
+**** INVOICE_RECIPIENT_IDREF
+**** CURRENCY
+**** PAYMENT
+***** ACCOUNT
+****** HOLDER
+****** BANK_ACCOUNT
+***** PAYMENT_TERMS
+****** TIME_FOR_PAYMENT
+******* DAYS
+****** VALUE_DATE
+** INVOICE_ITEM_LIST
+*** INVOICE_ITEM
+**** LINE_ITEM_ID
+**** PRODUCT_ID
+***** SUPPLIER_PID
+***** BUYER_PID
+***** DESCRIPTION_SHORT
+**** QUANTITY
+**** ORDER_UNIT
+**** PRODUCT_PRICE_FIX
+***** PRICE_AMOUNT
+***** TAX_DETAILS_FIX
+****** TAX_TYPE
+****** TAX
+****** TAX_AMOUNT
+**** PRICE_LINE_AMOUNT
+**** ORDER_REFERENCE
+***** ORDER_ID
+** INVOICE_SUMMARY
+*** NET_VALUE_GOODS
+*** TOTAL_ITEM_NUM
+*** TOTAL_AMOUNT
+*** TOTAL_TAX
+**** TAX_DETAILS_FIX
+***** TAX_TYPE
+***** TAX
+***** TAX_AMOUNT
+***** TAX_BASE
+
+== Sample File
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<INVOICE xmlns="http://www.opentrans.org/XMLSchema/2.1" version="2.1"
+         xmlns:bmecat="http://www.bmecat.org/bmecat/2005">
+    <INVOICE_HEADER>
+        <CONTROL_INFO>
+            <GENERATOR_INFO>EDI</GENERATOR_INFO>
+            <GENERATION_DATE>2022-04-22T09:48:11</GENERATION_DATE>
+        </CONTROL_INFO>
+        <INVOICE_INFO>
+            <INVOICE_ID>30535156</INVOICE_ID>
+            <INVOICE_DATE>2023-04-22T09:48:11</INVOICE_DATE>
+            <INVOICE_TYPE>invoice</INVOICE_TYPE>
+            <DELIVERYNOTE_ID>12345678</DELIVERYNOTE_ID>
+            <PARTIES>
+                <PARTY>
+                    <bmecat:PARTY_ID type="gln">
+                        760000000000</bmecat:PARTY_ID>
+                    <bmecat:PARTY_ID type="supplier_specific">
+                        K1234567</bmecat:PARTY_ID>
+                    <PARTY_ROLE>Buyer</PARTY_ROLE>
+                    <ADDRESS>
+                        <bmecat:NAME>BRACK.CH AG</bmecat:NAME>
+                        <bmecat:STREET>Hintermättlistr. 3</bmecat:STREET>
+                        <bmecat:ZIP>5506</bmecat:ZIP>
+                        <bmecat:CITY>Mägenwil</bmecat:CITY>
+                        <bmecat:COUNTRY>Switzerland</bmecat:COUNTRY>
+                        <bmecat:COUNTRY_CODED>CH</bmecat:COUNTRY_CODED>
+                    </ADDRESS>
+                </PARTY>
+                <PARTY>
+                    <bmecat:PARTY_ID type="buyer_specific">
+                        L12345678</bmecat:PARTY_ID>
+                    <bmecat:PARTY_ID type="gln">
+                        760000999999</bmecat:PARTY_ID>
+                    <PARTY_ROLE>supplier</PARTY_ROLE>
+                    <ADDRESS>
+                        <bmecat:NAME>Supplier Name AG</bmecat:NAME>
+                        <bmecat:STREET>Hauptstrasse 2</bmecat:STREET>
+                        <bmecat:ZIP>3000</bmecat:ZIP>
+                        <bmecat:CITY>Bern</bmecat:CITY>
+                        <bmecat:COUNTRY_CODED>CH</bmecat:COUNTRY_CODED>
+                        <bmecat:VAT_ID>CHE-111.222.333 MWST</bmecat:VAT_ID>
+                    </ADDRESS>
+                </PARTY>
+            </PARTIES>
+            <INVOICE_ISSUER_IDREF type="buyer_specific">
+                L12345678</INVOICE_ISSUER_IDREF>
+            <INVOICE_RECIPIENT_IDREF type="gln">
+                760000000000</INVOICE_RECIPIENT_IDREF>
+            <bmecat:CURRENCY>CHF</bmecat:CURRENCY>
+            <PAYMENT>
+                <ACCOUNT>
+                    <HOLDER>SUPPLIER NAME AG</HOLDER>
+                    <BANK_ACCOUNT type="iban">
+                        IBAN-CODE-1234-1234-12345</BANK_ACCOUNT>
+                </ACCOUNT>
+                <PAYMENT_TERMS>
+                    <TIME_FOR_PAYMENT>
+                        <DAYS>30</DAYS>
+                    </TIME_FOR_PAYMENT>
+                    <VALUE_DATE>2023-06-15</VALUE_DATE>
+                </PAYMENT_TERMS>
+            </PAYMENT>
+        </INVOICE_INFO>
+    </INVOICE_HEADER>
+
+    <INVOICE_ITEM_LIST>
+        <INVOICE_ITEM>
+            <LINE_ITEM_ID>1</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <bmecat:BUYER_PID>250035</bmecat:BUYER_PID>
+                <bmecat:DESCRIPTION_SHORT>
+                    Caran d'Ache Druckbleistift Fixpencil
+                </bmecat:DESCRIPTION_SHORT>
+            </PRODUCT_ID>
+            <QUANTITY>10</QUANTITY>
+            <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <bmecat:PRICE_AMOUNT>10.31</bmecat:PRICE_AMOUNT>
+                <TAX_DETAILS_FIX>
+                    <bmecat:TAX_TYPE>VAT</bmecat:TAX_TYPE>
+                    <bmecat:TAX>0.077</bmecat:TAX>
+                    <TAX_AMOUNT>7.94</TAX_AMOUNT>
+                </TAX_DETAILS_FIX>
+            </PRODUCT_PRICE_FIX>
+            <PRICE_LINE_AMOUNT>103.10</PRICE_LINE_AMOUNT>
+            <ORDER_REFERENCE>
+                <ORDER_ID>4800070257</ORDER_ID>
+                <LINE_ITEM_ID>1</LINE_ITEM_ID>
+            </ORDER_REFERENCE>
+        </INVOICE_ITEM>
+
+        <INVOICE_ITEM>
+            <LINE_ITEM_ID>2</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <bmecat:BUYER_PID>249172</bmecat:BUYER_PID>
+                <bmecat:DESCRIPTION_SHORT>
+                    Staedtler OHP-Marker Lumocolor permanent F
+                </bmecat:DESCRIPTION_SHORT>
+            </PRODUCT_ID>
+            <QUANTITY>10</QUANTITY>
+            <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <bmecat:PRICE_AMOUNT>1.98</bmecat:PRICE_AMOUNT>
+                <TAX_DETAILS_FIX>
+                    <bmecat:TAX_TYPE>VAT</bmecat:TAX_TYPE>
+                    <bmecat:TAX>0.077</bmecat:TAX>
+                    <TAX_AMOUNT>1.52</TAX_AMOUNT>
+                </TAX_DETAILS_FIX>
+            </PRODUCT_PRICE_FIX>
+            <PRICE_LINE_AMOUNT>19.80</PRICE_LINE_AMOUNT>
+            <ORDER_REFERENCE>
+                <ORDER_ID>4800070257</ORDER_ID>
+                <LINE_ITEM_ID>2</LINE_ITEM_ID>
+            </ORDER_REFERENCE>
+        </INVOICE_ITEM>
+
+        <INVOICE_ITEM>
+            <LINE_ITEM_ID>3</LINE_ITEM_ID>
+            <PRODUCT_ID>
+                <bmecat:BUYER_PID>335127</bmecat:BUYER_PID>
+                <bmecat:DESCRIPTION_SHORT>
+                    Edding Boardmarker 29 EcoLine
+                </bmecat:DESCRIPTION_SHORT>
+            </PRODUCT_ID>
+            <QUANTITY>10</QUANTITY>
+            <bmecat:ORDER_UNIT>C62</bmecat:ORDER_UNIT>
+            <PRODUCT_PRICE_FIX>
+                <bmecat:PRICE_AMOUNT>2.58</bmecat:PRICE_AMOUNT>
+                <TAX_DETAILS_FIX>
+                    <bmecat:TAX_TYPE>VAT</bmecat:TAX_TYPE>
+                    <bmecat:TAX>0.077</bmecat:TAX>
+                    <TAX_AMOUNT>1.99</TAX_AMOUNT>
+                </TAX_DETAILS_FIX>
+            </PRODUCT_PRICE_FIX>
+            <PRICE_LINE_AMOUNT>25.80</PRICE_LINE_AMOUNT>
+            <ORDER_REFERENCE>
+                <ORDER_ID>4800070257</ORDER_ID>
+                <LINE_ITEM_ID>3</LINE_ITEM_ID>
+            </ORDER_REFERENCE>
+        </INVOICE_ITEM>
+
+    </INVOICE_ITEM_LIST>
+
+    <INVOICE_SUMMARY>
+        <TOTAL_ITEM_NUM>9</TOTAL_ITEM_NUM>
+        <NET_VALUE_GOODS>148.7</NET_VALUE_GOODS>
+        <TOTAL_AMOUNT>160.15</TOTAL_AMOUNT>
+        <TOTAL_TAX>
+            <TAX_DETAILS_FIX>
+                <bmecat:TAX_TYPE>VAT</bmecat:TAX_TYPE>
+                <bmecat:TAX>0.077</bmecat:TAX>
+                <TAX_AMOUNT>11.45</TAX_AMOUNT>
+                <TAX_BASE>148.7</TAX_BASE>
+            </TAX_DETAILS_FIX>
+        </TOTAL_TAX>
+    </INVOICE_SUMMARY>
+</INVOICE>
