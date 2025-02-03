@@ -155,10 +155,10 @@
                     <ADDRESS>
                         <ns2:NAME>Alltron AG</ns2:NAME>
                         <CONTACT_DETAILS>
-                            <ns2:CONTACT_NAME>Nadine Fuchs</ns2:CONTACT_NAME>
-                            <ns2:PHONE>+41 62 889 60 56</ns2:PHONE>
+                            <ns2:CONTACT_NAME>Erika Musterfrau</ns2:CONTACT_NAME>
+                            <ns2:PHONE>+41 62 123 45 67</ns2:PHONE>
                             <ns2:EMAILS>
-                                <ns2:EMAIL>nadine.fuchs@alltron.ch</ns2:EMAIL>
+                                <ns2:EMAIL>erika.musterfrau@alltron.ch</ns2:EMAIL>
                             </ns2:EMAILS>
                         </CONTACT_DETAILS>
                         <ns2:STREET>Hintermättlistr. 3</ns2:STREET>
@@ -166,7 +166,7 @@
                         <ns2:CITY>Mägenwil</ns2:CITY>
                         <ns2:COUNTRY_CODED>CH</ns2:COUNTRY_CODED>
                         <ns2:VAT_ID>CHE-105.990.179 MWST</ns2:VAT_ID>
-                        <ns2:PHONE>062 889 88 88</ns2:PHONE>
+                        <ns2:PHONE>062 111 22 33</ns2:PHONE>
                     </ADDRESS>
                 </PARTY>
                 <PARTY>
