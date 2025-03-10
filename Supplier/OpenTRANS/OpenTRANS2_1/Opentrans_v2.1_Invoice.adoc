@@ -131,6 +131,9 @@ Address
 [[References]]
 Address referencing
 ^^^^^^^^^^^^^^^^^^^^
+The type for each reference can be supplier_specific, buyer_specific or gln.
+Both references are mandatory and must be provided with their respective identifier, in alignment with the party elements above.
+
 .Address references
 [width="100%",options="header",cols="3,2,2"]
 |=======================================================================

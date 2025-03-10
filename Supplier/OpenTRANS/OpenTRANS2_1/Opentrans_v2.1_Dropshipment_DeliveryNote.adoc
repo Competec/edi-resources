@@ -137,6 +137,8 @@ Addresses may be omitted, except for final_delivery.
 [[PartiesRef]]
 Parties References
 ^^^^^^^^^^^^^^^^^^
+The type for each reference can be supplier_specific, buyer_specific or gln.
+All three references are mandatory and must be provided with their respective identifier, in alignment with the party elements above.
 
 .Parties references
 [width="100%",options="header",cols="3,2,2"]
