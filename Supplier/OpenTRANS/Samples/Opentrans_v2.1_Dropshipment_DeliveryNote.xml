@@ -31,6 +31,13 @@
                 <bmecat:PARTY_ID type="gln">769999999999</bmecat:PARTY_ID>
                 <PARTY_ROLE>buyer</PARTY_ROLE>
             </PARTY>
+            <PARTY>
+                <bmecat:PARTY_ID type="supplier_specific">C12345</bmecat:PARTY_ID>
+                <PARTY_ROLE>deliverer</PARTY_ROLE>
+                <ADDRESS>
+                    <bmecat:NAME>DHL EXPRESS</bmecat:NAME>
+                </ADDRESS>
+            </PARTY>
         </PARTIES>
 
         <bmecat:SUPPLIER_IDREF type="buyer_specific">L123456</bmecat:SUPPLIER_IDREF>
@@ -38,6 +45,7 @@
 
         <SHIPMENT_PARTIES_REFERENCE>
             <DELIVERY_IDREF type="buyer_specific">K22222</DELIVERY_IDREF>
+            <DELIVERER_IDREF type="supplier_specific">C12345</DELIVERER_IDREF>
         </SHIPMENT_PARTIES_REFERENCE>
 
         <SHIPMENT_ID>SHIP_ID_1234567</SHIPMENT_ID>

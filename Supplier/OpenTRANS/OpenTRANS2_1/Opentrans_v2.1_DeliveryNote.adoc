@@ -139,7 +139,7 @@ Addresses may be omitted, except for final_delivery.
 [[ShipPartiesRef]]
 Parties References
 ^^^^^^^^^^^^^^^^^^
-The type for each reference is supplier_specific.
+The type for each reference can be supplier_specific, buyer_specific or gln.
 
 .Parties references
 [width="100%",options="header",cols="3,2,2"]
