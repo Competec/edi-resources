@@ -214,8 +214,8 @@ Invoice Items
 | PRODUCT_ID            | Product IDs           | <<ProductID>>
 | QUANTITY              | Amount ordered        | 10
 | ORDER_UNIT            | Unit, always p. piece | C62
-| PRODUCT_PRICE_FIX     | Reference to Order by buyer    | <<ProductPrice>>
-| PRICE_LINE_AMOUNT     | ID to delivery address         | 103.10
+| PRODUCT_PRICE_FIX     | Price without VAT    | <<ProductPrice>>
+| PRICE_LINE_AMOUNT     | Total of line, without VAT         | 103.10
 | ORDER_REFERENCE       | reference to original Order    | <<OrderReference>>
 |=======================================================================
 
