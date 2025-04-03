@@ -1,5 +1,5 @@
 = Opentrans V2.1 Order
-Competec Service AG
+Brack.Alltron Service AG
 :doctype: book
 v1.1, 26.08.2024
 

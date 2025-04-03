@@ -19,6 +19,7 @@ This document describes the implementation of Edifact D01B for supplier delivery
 | 1.0      |11.07.2024 |Initial definition |SEBR
 | 1.1      |24.07.2024 |Corrections        |DAO
 | 1.2      |27.09.2024 |Conversion to Adoc, small corrections |SEBR, DAO
+| 1.3      |03.04.2025 |Rebrand to Brack.Alltron |BRA
 |===
 
 === Status Codes
@@ -267,7 +268,7 @@ NAD+UC+++Cornelia Muster+Streetname 1:Building 10b+Zürich++8005+CH'
 ----
 NAD+BY+7630000000001::9'
 NAD+SU+7630000000000::9'
-NAD+DP+7609999129308::9++Alltron AG+Street 10+Willisau Competec++6131+CH'
+NAD+DP+7609999129308::9++Alltron AG+Street 10+Willisau Brack.Alltron++6131+CH'
 ----
 
 <<<
@@ -574,7 +575,7 @@ a|
 ----
 NAD+BY+7630000000001::9'
 NAD+SU+7630000000000::9'
-NAD+DP+7609999129308::9++Alltron AG+Street 10+Willisau Competec++6131+CH'
+NAD+DP+7609999129308::9++Alltron AG+Street 10+Willisau Brack.Alltron++6131+CH'
 ----
 ^| SG2
 

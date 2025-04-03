@@ -17,6 +17,7 @@ This document describes the implementation of Edifact D01B for supplier orders.
 |*Version* |*Date* |*Change* |*Author*
 |1.0  |18.12.2023 |Initial definition |SEBR
 |1.1  |30.09.2024 |Conversion to Adoc, small corrections |SEBR
+|1.2 |03.04.2025 |Rebrand to Brack.Alltron |BRA
 |===
 
 === Status Codes
@@ -238,7 +239,7 @@ DP = Delivery Party #M#
 ^|                3042 |Street and number/p.o. box                m|M         |:Rossgassmoos 10 |Street name 1
 ^|                3042 |Street and number/p.o. box                m|C         |         |Street name 2
 ^|                …    |                                          m|          |         |Not in use
-|060            ^|3164 |City name                                 m|C         |+Willisau Competec |
+|060            ^|3164 |City name                                 m|C         |+Willisau Brack.Alltron |
 |070             |C819 |COUNTRY SUB-ENTITY DETAILS                m|C         |+CH      |Not in use
 |080            ^|3251 |Postcode identification                   m|C         |+6131    |PLZ
 |090            ^|3207 |Country, coded                            m|C         |         |Not in use
@@ -248,7 +249,7 @@ DP = Delivery Party #M#
 ----
 NAD+BY+123456::9'
 NAD+SU+7609999068409::9'
-NAD+DP+7613081000000++BRACK.CH AG+::Rossgassmoos 10+Willisau Competec+CH+6131'
+NAD+DP+7613081000000++BRACK.CH AG+::Rossgassmoos 10+Willisau Brack.Alltron+CH+6131'
 ----
 
 <<<
@@ -576,7 +577,7 @@ RFF+VN:3794276'
 
 2+a|
 ----
-NAD+DP+7613081000000+BRACK.CH AG+BRACK.CH AG+::Rossgassmoos 10+Willisau Competec+CH+6131'
+NAD+DP+7613081000000+BRACK.CH AG+BRACK.CH AG+::Rossgassmoos 10+Willisau Brack.Alltron+CH+6131'
 ----
 2+|SG 3
 

@@ -1,5 +1,5 @@
 = EDIFACT D01B ORDRSP
-Brack Alltron AG
+Brack.Alltron Service AG
 :doctype: book
 :toc:
 v1.0, 06-11-2024
@@ -19,6 +19,7 @@ The format is based on the message format recommended by https://www.gs1.org/edi
 |===
 |*Version* |*Date* |*Change* |*Author*
 |1.0  |06.11.2024 |Initial definition |PARU
+|1.1 |03.04.2025 |Rebrand to Brack.Alltron |BRA
 |===
 
 === Status Codes
