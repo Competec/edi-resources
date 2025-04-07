@@ -1,5 +1,5 @@
 = EDIFACT D96A INVOIC CreditNote
-Brack Alltron AG
+Brack.Alltron Service AG
 :doctype: book
 :toc:
 v1.2, 27-09-2024
@@ -17,6 +17,7 @@ The EDIFACT Credit Note message is an INVOIC message using type BGM+381.
 |===
 |*Version* |*Date* |*Change* |*Author*
 |1.0 |13.12.2024 |Initial definition |PARU
+|1.1 |03.04.2025 |Rebrand to Brack.Alltron |BRA
 |===
 
 === Status Codes

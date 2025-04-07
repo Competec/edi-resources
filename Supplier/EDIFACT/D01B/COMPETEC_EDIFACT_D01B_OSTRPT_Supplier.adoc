@@ -19,6 +19,7 @@ the ORDRSP message.
 |*Version* |*Date* |*Change* |*Author*
 |1.0      |26.09.2024 |Initial definition |SEBR
 |1.1      |27.09.2024 |Conversion to Adoc, small corrections |SEBR
+|1.2 |03.04.2025 |Rebrand to Brack.Alltron |BRA
 |===
 
 === Status Codes
@@ -184,7 +185,7 @@ BY = Buyer (optional, defaults to Brack AG)
 
 .Example:
 ----
-NAD+BY++Competec Service AG++Hintermättlistrasse 3+Mägenwil++5506+CH'
+NAD+BY++Brack.Alltron Service AG++Hintermättlistrasse 3+Mägenwil++5506+CH'
 NAD+SE+K1234+Musterfirma AG++Geisterstrasse 123+Zürich++8000+CH'
 ----
 
@@ -430,7 +431,7 @@ RFF+ABO:Bestellung aus Internetshop'
 
 4+a|
 ----
-NAD+BY++Competec Service AG++Hintermättlistrasse 3+Mägenwil++5506+CH'
+NAD+BY++Brack.Alltron Service AG++Hintermättlistrasse 3+Mägenwil++5506+CH'
 NAD+SE+K12345+Muster AG++Teststrasse 2+Zürich++8000+CH'
 ----
 |SG1
