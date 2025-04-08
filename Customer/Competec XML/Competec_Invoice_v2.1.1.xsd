@@ -365,6 +365,11 @@
 																		</xs:restriction>
 																	</xs:simpleType>
 																</xs:element>
+																<xs:element name="CREF" minOccurs="0" type="xs:string">
+																	<xs:annotation>
+																		<xs:documentation>Customer Reference</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
 																<xs:element name="ECUN" minOccurs="0">
 																	<xs:annotation>
 																		<xs:documentation>Endcustomer Name for Special Bid
@@ -420,6 +425,17 @@
 																				name="additional_line_information">
 																				<xs:complexType>
 																					<xs:sequence>
+																						<xs:element name="BORN" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Buyer Order Number
+																								</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:string">
+																									<xs:maxLength value="40"/>
+																								</xs:restriction>
+																							</xs:simpleType>
+																						</xs:element>
 																						<xs:element name="PTXT" minOccurs="0">
 																							<xs:annotation>
 																								<xs:documentation>Position Text
