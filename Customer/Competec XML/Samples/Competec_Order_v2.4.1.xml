@@ -52,6 +52,7 @@
                 <CARC>999</CARC>
                 <ITXT>Order Introduction</ITXT>
                 <HAIN>Handle with care</HAIN>
+                <PCOD>PROMO123</PCOD>
             </additional_information>
         </order_information>
     </order_header>
