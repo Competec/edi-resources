@@ -2,7 +2,7 @@
 Brack.Alltron Service AG
 :doctype: book
 :toc:
-v1.2, 27-09-2024
+v1.3, 17.04.2025
 
 == Customer Credit Note Message
 [preface]
@@ -15,9 +15,10 @@ The EDIFACT Credit Note message is an INVOIC message using type BGM+381.
 .Changelog
 [width="100%",cols="12%,14%,65%,9%",options="header"]
 |===
-|*Version* |*Date* |*Change* |*Author*
-|1.0 |13.12.2024 |Initial definition |PARU
-|1.1 |03.04.2025 |Rebrand to Brack.Alltron |BRA
+|*Version* |*Date*     |*Change*                 |*Author*
+|1.0       |13.12.2024 |Initial definition       |PARU
+|1.1       |03.04.2025 |Rebrand to Brack.Alltron |BRA
+|1.2       |17.04.2025 |Add ALC                  |BRA
 |===
 
 === Status Codes
@@ -296,6 +297,143 @@ RFF+VA:CHE-191.398.369 MWST'
 .Example:
 ----
 CUX+2:CHF:4'
+----
+
+
+=== Segment Group 15
+[width="100%",cols="100%",options="header",]
+|===
+|*0570 \| Segment Group 15 \| Allowances and Charges*
+|A group of segments specifying allowances and charges for the whole invoice.
+|===
+
+[width="100%",cols="1,1,4",options="header"]
+|===
+3+|*SG15 Used Segment List*
+|*Pos* |*Tag* |*Name*
+|0580 |ALC |Allowance or charge
+|===
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0580 \| Segment \| ALC \| Allowance or charge*
+6+|A segment identifying the charge or allowance and, where necessary, its calculation sequence.
+|*Pos*       |*Segment/Element* |*Description*          |*Status*  |*Example* |*Remarks*
+.2+|010  .2+^|5463 |Allowance or charge code qualifier  |M        m|+A       |
+4+|*_Supported codes:_* +
+A = Allowance +
+C = Charge +
+J = Adjustment
+|020         |C552 |ALLOWANCE/CHARGE INFORMATION        |C        m|          |Not used
+.2+|030  .2+^|4471 |SETTLEMENT MEANS CODE               |C        m|+6        |
+4+|                 *_Supported codes:_* +
+2 = Off invoice +
+6 = Charge to be paid by customer
+
+.4+|050   .1+|C214 |SPECIAL SERVICES IDENTIFICATION     |C        m|          |
+.1+^|          7161|Special service description code    |C        m|+AJ       |
+5+|                 *_Supported codes:_* +
+AJ = Adjustments +
+FC = Freight charge
+.1+^|         7160|Special service description          |C        m|+Rounding |
+|===
+
+.Example:
+----
+ALC+A++2++AJ:::Rounding'
+----
+
+=== Segment Group 19
+[width="100%",cols="100%",options="header",]
+|===
+|*0690 \| Segment Group 19 \| Amount*
+|A group of segments specifying a monetary amount for an allowance or charge.
+|===
+
+[width="100%",cols="1,1,4",options="header"]
+|===
+3+|*SG19 Used Segment List*
+|*Pos* |*Tag* |*Name*
+|0700  |MOA |Monetary amount
+|===
+
+<<<
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0700 \| Segment \| MOA \| Monetary amount*
+6+|A segment giving the total amounts for the whole invoice message.
+|*Pos*      |*Segment/Element* |*Description*      |*Status* |*Example* |*Remarks*
+.4+|010     |C516 |MONETARY AMOUNT                 |M       m|          |
+.2+^|        5025 |Monetary amount type qualifier  |M       m|+8       a|
+4+|                  *_Supported codes:_* +
+8 = Allowance or charge amount
+^|           5004 |Monetary amount                  |C       m|:35.81   |
+|===
+
+.Example:
+----
+MOA+8:8.1'
+MOA+8:0'
+----
+
+<<<
+=== Segment Group 21
+[width="100%",cols="100%",options="header",]
+|===
+|*0750 \| Segment Group 21 \| Taxes*
+|A group of segments specifying tax related information for the allowance or charge.
+|===
+
+[width="100%",cols="1,1,4",options="header"]
+|===
+3+|*SG21 Used Segment List*
+|*Pos* |*Tag* |*Name*
+|0760  |TAX |Duty/tax/fee details
+|0770  |MOA |Monetary Amount
+|===
+
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0760 \| Segment \| TAX \| Duty/tax/fee details*
+6+|A segment specifying the tax type to be summarized.
+|*Pos*       |*Segment/Element* |*Description*           |*Status* |*Example* |*Remarks*
+.2+|010  .2+^|5283 |Duty/tax/fee function qualifier      |M       m|+7        |
+4+|                 *_Supported code:_* 7 = Tax
+.3+|020      |C241 |DUTY/TAX/FEE TYPE                    |C       v|          |
+.2+|          5153 |Duty/tax/fee type, coded             |C       m|+VAT      |
+4+|                 *_Supported codes:_* VAT = Value added tax
+|030         |C533 |DUTY/TAX/FEE ACCOUNT DETAIL          |C       m|          |Not used
+|040        ^|5286 |Duty/tax/fee assessment basis        |C       m|          |Not used
+.2+|050      |C243 |DUTY/TAX/FEE DETAIL                  |C       m|          |
+^|            5278 |Duty/tax/fee rate                    |C       m|:8.1      |VAT rate
+.2+|060  .2+^|5305 |Duty/tax/fee category, coded         |C       m|+S        |
+4+|                 *_Supported code:_* S = Standard rate
+|070        ^|3446 |Party tax identification number      |C       m|          |Not used
+|===
+
+.Example:
+----
+TAX+7+VAT++0.62+:::7.7+S'
+----
+
+<<<
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*0770 \| Segment \| MOA \| Monetary amount*
+6+|A segment giving the total amounts for the whole invoice message.
+|*Pos*      |*Segment/Element* |*Description*      |*Status* |*Example* |*Remarks*
+.4+|010     |C516 |MONETARY AMOUNT                 |M       m|          |
+.2+^|        5025 |Monetary amount type qualifier  |M       m|+124     a|
+4+|                  *_Supported codes:_* +
+124 = Tax amount +
+125 = Taxable amount
+^|           5004 |Monetary amount                  |C       m|:35.81   |
+|===
+
+.Example:
+----
+MOA+8:8.1'
+MOA+8:0'
 ----
 
 <<<
