@@ -161,7 +161,6 @@ Element* |*Description*        |*Status* |*Example*    |*Remarks*
 .6+|010      |C506 |REFERENCE                         |M       m|RFF          |
 .2+^|         1153 |Reference qualifier               |M       m|+ON          |
 4+a|                *_Supported codes:_* +
-AAK = DespatchAdviceNumber +
 VN = Vendors Reference +
 #ON = Order number#
 .2+^|         1154 |Reference number                  |#C#       m|:1990845089' |
@@ -172,7 +171,6 @@ VN = Vendors Reference +
 .Example:
 ----
 RFF+ON:1990845089'
-RFF+CN:99.9999.9999.99'
 ----
 
 <<<
