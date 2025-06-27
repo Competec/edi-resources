@@ -477,6 +477,22 @@ RFF+LI:1000'
 
 <<<
 == Summary Section
+[width="100%",cols="1,2,4,1,2,2",options="header"]
+|===
+6+|*1140 \| Segment \| CNT \| Control Total*
+6+|
+|*Pos*  |*Segment/
+Element* |*Description*       |*Status* |*Example* |*Remarks*
+|010   ^|6069 |Control total type code qualifier  |M       m|+2       |Only type 2 supported
+|020   ^|6066 |Control total value                |M       m|+12      |Number of line items in message
+|===
+
+.Example:
+----
+CNT+2+12'
+----
+
+
 
 [width="100%",cols="1,2,4,1,2,2",options="header"]
 |===
@@ -597,6 +613,7 @@ Y
 
 a|
 ----
+CNT+2:12'
 UNT+24+1'
 UNZ+1+123'
 ----
