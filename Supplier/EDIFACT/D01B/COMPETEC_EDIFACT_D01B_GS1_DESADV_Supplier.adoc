@@ -224,7 +224,7 @@ Element* |*Description*       |*Status* m|*Example*        | *Remarks*
           DP = Delivery party +
 
 .2+|020   |C082 |PARTY IDENTIFICATION DETAILS        |C         m|                 |
-^|         3039 |Party identification                |M         m|+760999…         |Not required for UC party
+^|         3039 |Party identification                |M         m|+760999…         |GLN
 |030      |C058 |NAME AND ADDRESS                    |C         m|                 |Not in use
 .3+|040   |C080 |PARTY NAME                          |C         m|                 |
 ^|         3036 |Party name                          |M         m|+Cornelia Muster |Name 1
@@ -288,13 +288,13 @@ These segments are not processed and may be omitted.
 <<<
 == Detail Section
 
+Only Segment 17 ist parsed. All other information may be included in a later version.
+
 [width="100%",cols="100%",options="header",]
 |===
 |*0390 \| Segment Group 10 \| Consignment packing sequence*
 |A group of segments providing details of all package levels and of the individual despatched items contained in the consignment.
 |===
-
-Only Segment 17 ist parsed. All other information may be included later.
 
 [width="99%",cols="1,1,4",options="header",]
 |===
@@ -345,11 +345,11 @@ CPS+1'
 6+|A segment identifying the product being despatched
 |*Pos*    |*Segment/
 Element* |*Description* |*Status* |*Example* |*Remarks*
-|010     ^|1082 |Line item number                     |C         m|+1 |
-|020     ^|1229 |Action request/notification, coded   |C         m| |Not used
-.4+|030      |C212 |ITEM NUMBER IDENTIFICATION        |C         m| |
+|010     ^|1082 |Line item number                     |#M#       m|+1 |
+|020     ^|1229 |Action request/notification, coded   |C         m|   |Not used
+.4+|030      |C212 |ITEM NUMBER IDENTIFICATION        |C         m|   |
 ^|        7140 |Item number                           |C         m|+9120072855368 |EAN
-.2+^|     7143 |Item number type, coded               |C         m|:EN |
+.2+^|     7143 |Item number type, coded               |C         m|:SRV |
 4+a| *_Supported:_* +
 EN = International Article Numbering Association (EAN) +
 SRV = EAN.UCC Global Trade Item Number
@@ -377,7 +377,11 @@ Element* |*Description*                               |*Status*  |*Example* |*Re
 .4+|020      |C212 |ITEM NUMBER IDENTIFICATION        |M        m| |
 ^|            7140 |Item number                       |#C#      m|+1567285 |Brack Alltron item number
 .2+^|         7143 |Item number type, coded           |C        m|:IN |
-4+|                 *_Supported:_* #IN = Buyer's item number#
+4+|                 *_Supported:_* +
+                     #IN = Buyer's item number# +
+                     MF = Manufacturer's article number +
+                     SS = Suppliers's article number +
+                     SRV = EAN UCC
 |030  |C212 |ITEM NUMBER IDENTIFICATION                |C        m| |Not used
 |040  |C212 |ITEM NUMBER IDENTIFICATION                |C        m| |Not used
 |050  |C212 |ITEM NUMBER IDENTIFICATION                |C        m| |Not used
@@ -400,7 +404,6 @@ Element* |*Description*                                   |*Status* |*Example* |
 4+a| *_Supported:_* +
 A = Free-form long description +
 F = Free form
-
 |020       ^|7081 |Item characteristic, coded             |C        m| |Not in use
 .5+|030    ^|C273 |ITEM DESCRIPTION                       |C        m| |
 ^|           … | | | |Not in use
@@ -460,7 +463,9 @@ QTY+12:2:PCE'
 Element*   |*Description*                   |*Status* |*Example* |*Remarks*
 .5+|010    |C506 |REFERENCE                 |M       m| |
 .2+^|       1153 |Reference qualifier       |M       m|+LI |
-4+|               *_Supported codes:_*  #LI = Line item reference number#
+4+|               *_Supported codes:_*  +
+                  #LI = Line item reference number# +
+                  ON = Order Number Purchase
 ^|          1154 |Reference number         |#C#      m|:1000 |Brack Alltron order line number
 ^|          ...  4+|Not in use
 |===
@@ -504,7 +509,7 @@ UNZ+1+123'
 ----
 
 <<<
-== Example DESADV Message (warehouse delivery)
+== Example DESADV Message
 
 [width="100%",cols="1, 14,1"]
 |===
@@ -519,7 +524,7 @@ a|
 ----
 UNA:+.? '
 UNB+UNOC:3+7630000000000:14+7630000000001:14+240313:2214+123++DESADV++++1'
-UNH+1+DESADV:D:01B:UN'
+UNH+ME1+DESADV:D:01B:UN:EAN008'
 BGM+351+DN123456+9'
 DTM+137:20240313:102'
 DTM+17:20240229:102'
@@ -535,9 +540,10 @@ DTM+171:20240228:102'
 
 a|
 ----
-NAD+BY+7630000000001::9'
-NAD+SU+7630000000000::9'
-NAD+DP+7609999129308::9++Alltron AG+Street 10+Willisau Brack.Alltron++6131+CH'
+NAD+BY+GLN123456789++Brack.Alltron AG+Hintermättlistr. 3+Mägenwil++5506+CH'
+NAD+DP+GLN123456780++Brack.Alltron AG+Rossgassmoos 10+Willisau++6131+CH'
+NAD+SU+GLN111222333++Sample AG+Musterstr. 123+Mustern++9999+CH'
+RFF+VA:1234567'
 ----
 ^| SG2
 
