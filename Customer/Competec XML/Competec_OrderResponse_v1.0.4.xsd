@@ -360,7 +360,29 @@ dd.mm.yyyy</xs:documentation>
 															<xs:restriction base="xs:string"/>
 														</xs:simpleType>
 													</xs:element>
-												</xs:sequence>
+                                                    <xs:element name="MSCT" minOccurs="0">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Message Counter (if UPDT=Y, value >=2)
+                                                            </xs:documentation>
+                                                        </xs:annotation>
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:integer"/>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element name="UPDT" minOccurs="0">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Update (whether this is an updated order
+                                                                confirmation)
+                                                            </xs:documentation>
+                                                        </xs:annotation>
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string">
+                                                                <xs:enumeration value="Y"/>
+                                                                <xs:enumeration value="N"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                </xs:sequence>
 											</xs:complexType>
 										</xs:element>
 									</xs:sequence>
