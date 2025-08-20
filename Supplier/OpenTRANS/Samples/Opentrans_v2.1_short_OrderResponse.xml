@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ORDERRESPONSE xmlns="http://www.opentrans.org/XMLSchema/2.1" version="2.1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ORDERRESPONSE_HEADER>
+    <ORDERRESPONSE_INFO>
+      <ORDER_ID>1991160257</ORDER_ID>
+      <ORDERRESPONSE_DATE>2025-03-27T17:55:27</ORDERRESPONSE_DATE>
+    </ORDERRESPONSE_INFO>
+  </ORDERRESPONSE_HEADER>
+  <ORDERRESPONSE_ITEM_LIST>
+    <ORDERRESPONSE_ITEM>
+      <PRODUCT_ID>
+        <SUPPLIER_PID xmlns="http://www.bmecat.org/bmecat/2005" type="supplierProductKey">120050</SUPPLIER_PID>
+        <BUYER_PID xmlns="http://www.bmecat.org/bmecat/2005" type="DgProductId">1237373</BUYER_PID>
+        <DESCRIPTION_SHORT xmlns="http://www.bmecat.org/bmecat/2005">Zyxel SecuExtender, Zero Trust, IPSec VPN Subscr. 1-user, 3Y</DESCRIPTION_SHORT>
+      </PRODUCT_ID>
+      <QUANTITY>1</QUANTITY>
+      <DELIVERY_DATE>
+        <DELIVERY_START_DATE>2025-03-27</DELIVERY_START_DATE>
+        <DELIVERY_END_DATE>2025-03-27</DELIVERY_END_DATE>
+      </DELIVERY_DATE>
+    </ORDERRESPONSE_ITEM>
+  </ORDERRESPONSE_ITEM_LIST>
+</ORDERRESPONSE>
