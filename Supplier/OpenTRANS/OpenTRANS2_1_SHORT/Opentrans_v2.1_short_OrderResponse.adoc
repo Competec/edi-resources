@@ -1,0 +1,185 @@
+= Opentrans V2.1 OrderResponse SHORT Version
+Brack.Alltron Service AG
+:doctype: book
+v1.0, 19.08.2025
+
+[preface]
+== Preface
+
+This document describes the implementation of a shortened/simplified version based on Opentrans V2.1 for supplier Order Response / Confirmation. It removes the requirements for data that is not used for the processing of the order response.
+
+<<<
+
+== Order Response Header
+
+=== Control Info
+Control Info may be omitted.
+GENERATION_DATE is used for document date. If not provided, ORDERRESPONSE_DATE will be used instead.
+
+.control info elements
+[width="100%",options="header",cols="3,2,2,1"]
+|====================================================================================
+| Element name          | Description    | Example             | Required
+| GENERATOR_INFO        | Generator      | EDI                 |
+| GENERATION_DATE       | Date Time      | 2023-04-22T09:48:11 | preferred
+|====================================================================================
+
+<<<
+
+=== Order Response Info
+.order response info elements
+[width="100%",options="header",cols="3,2,2,1"]
+|====================================================================================
+| Element name               | Description         | Example                | Required
+| ORDER_ID                   | Order ID            | 1112223334             | Y
+| ORDERRESPONSE_DATE         | Date Time           | 2023-04-22T09:48:11    | Y
+| PARTIES                    | Parties             | <<Parties>>            | N
+|====================================================================================
+
+<<<
+== Order Response Item List
+
+[[OrderResponseItemList]]
+Order Response Items
+~~~~~~~~~~~~~~~~~~~~
+An Order Response must at least contain one valid line item.
+
+.OrderResponse item list element
+[width="100%",options="header"]
+|===================================================================================
+| Element name         | Description             | Example               | Remarks
+| ORDERRESPONSE_ITEM   | contains all line items | <<OrderResponseItem>> | might be empty, but then we do not know the status of the line items
+|===================================================================================
+
+[[OrderResponseItem]]
+=== Order Response Item
+
+If the line quantity is set to zero or less, the line is considered canceled.
+
+.Order Item Elements
+[width="100%",options="header",cols="3,2,2,1"]
+|=======================================================================
+| Element name             | Description            | Example             | Mandatory
+| LINE_ITEM_ID             | Line number from Order | 10                  |
+| PRODUCT_ID               | Product IDs            | <<ProductID>>       | Yes
+| QUANTITY                 | Amount ordered         | 5                   | Yes
+| ORDER_UNIT               | Unit, always p. piece  | C62 (fix)           |
+| PRODUCT_PRICE_FIX        | Price without VAT      | <<ProductPriceFix>> |
+| PRICE_LINE_AMOUNT        | total of line, without VAT | 88              |
+| DELIVERY_DATE            | delivery dates         | <<DeliveryDate>>    |
+|=======================================================================
+
+NOTE: If quantity is smaller or equals to 0, then the item is marked as cancelled
+
+NOTE: If DELIVERY_END_DATE is known, status is PROCESSING, otherwise it is UNKNOWN
+
+
+<<<
+[[ProductID]]
+==== Product ID
+
+.Product Id elements
+[width="90%",options="header"]
+|=======================================================================
+| Element name      | Description               | Example        | Remarks
+| SUPPLIER_PID      | Product id by supplier    | abc1234        | required when no LINE_ITEM_ID is provided
+| BUYER_PID         | Product id by buyer       | abc1234        | Expected <<GlossSku, sku>>
+| INTERNATIONAL_PID | EAN Code, only if present | 7109806181210  | ean
+|=======================================================================
+
+.Example:
+[source,xml]
+----
+<PRODUCT_ID>
+    <ns2:SUPPLIER_PID type="supplier_specific">AA123456</ns2:SUPPLIER_PID>
+    <ns2:INTERNATIONAL_PID type="ean">7109806181210</ns2:INTERNATIONAL_PID>
+    <ns2:BUYER_PID type="buyer_specific">123456</ns2:BUYER_PID>
+</PRODUCT_ID>
+----
+
+[[ProductPriceFix]]
+==== Product Price fix
+Product prices are always without vat.
+
+.Product price fix elemet
+[width="90%",options="header"]
+|=======================================================
+| Element name  | Description     | Example
+| PRICE_AMOUNT  | Price per unit  | 80.85
+|=======================================================
+
+.Example:
+[source,xml]
+----
+<PRODUCT_PRICE_FIX>
+    <ns2:PRICE_AMOUNT>80.85</ns2:PRICE_AMOUNT>
+</PRODUCT_PRICE_FIX>
+----
+
+<<<
+[[DeliveryDate]]
+==== Delivery Date
+The delivery end date will be considered as delivery date.
+
+.Delivery Date elements
+[width="90%",options="header"]
+|=======================================================
+| Element name         | Description              | Example
+| DELIVERY_START_DATE  | requested delivery date  | 2021-10-27
+| DELIVERY_END_DATE    | requested delivery date  | 2021-10-28
+|=======================================================
+
+.Example:
+[source,xml]
+----
+<DELIVERY_DATE type="fixed">
+    <DELIVERY_START_DATE>2021-10-28</DELIVERY_START_DATE>
+    <DELIVERY_END_DATE>2021-10-28</DELIVERY_END_DATE>
+</DELIVERY_DATE>
+----
+
+<<<
+
+== Appendix
+
+=== Sample Order Response
+
+[source,xml]
+----
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<ORDERRESPONSE xmlns:ns2="http://www.bmecat.org/bmecat/2005"
+               xmlns="http://www.opentrans.org/XMLSchema/2.1"
+               version="2.1">
+    <ORDERRESPONSE_HEADER>
+        <ORDERRESPONSE_INFO>
+            <ORDER_ID>1991072172</ORDER_ID>
+            <ORDERRESPONSE_DATE>2024-06-28T00:00:00</ORDERRESPONSE_DATE>
+        </ORDERRESPONSE_INFO>
+    </ORDERRESPONSE_HEADER>
+    <ORDERRESPONSE_ITEM_LIST>
+        <ORDERRESPONSE_ITEM>
+            <PRODUCT_ID>
+                <ns2:SUPPLIER_PID type="supplier_specific">73.83587</ns2:SUPPLIER_PID>
+            </PRODUCT_ID>
+            <QUANTITY>70</QUANTITY>
+            <PRODUCT_PRICE_FIX>
+                <ns2:PRICE_AMOUNT>5.34</ns2:PRICE_AMOUNT>
+            </PRODUCT_PRICE_FIX>
+            <DELIVERY_DATE type="optional">
+                <DELIVERY_START_DATE>2024-07-01</DELIVERY_START_DATE>
+                <DELIVERY_END_DATE>2024-07-01</DELIVERY_END_DATE>
+            </DELIVERY_DATE>
+        </ORDERRESPONSE_ITEM>
+    </ORDERRESPONSE_ITEM_LIST>
+</ORDERRESPONSE>
+----
+
+<<<
+
+[glossary]
+== Glossary
+
+[glossary]
+[[GlossSku]]
+sku::
+Stock Keeping Unit, product id by competec.
