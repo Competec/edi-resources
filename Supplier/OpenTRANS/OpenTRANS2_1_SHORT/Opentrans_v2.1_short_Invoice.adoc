@@ -35,7 +35,7 @@ This document describes the implementation of a shortened/simplified version bas
 | SUPPLIER_ORDER_ID       | Order Id by the Supplier | AB8363                | NO
 | PARTIES                 | Parties             | <<Parties>>                | YES
 | CURRENCY                | Currency            | CHF                        | YES
-| PAYMENT                 | Tracking URL        | <<Payment>>                |
+| PAYMENT                 | Payment Information | <<Payment>>                |
 |====================================================================================
 
 [[Parties]]
