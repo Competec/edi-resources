@@ -21,7 +21,7 @@ This document describes the implementation of a shortened/simplified version bas
 | GENERATION_DATE            | Date Time or Date only | 2023-04-22T09:48:11 / 2025-06-23
 |====================================================================================
 
-NOTE: The `GENERATION_DATE` defines, when the delivery note was created. If this is missing, then the `DISPATCHNOTIFICATION_DATE` is used. See <<Dispatch Notification Info>> for details.
+NOTE: The `GENERATION_DATE` defines when the delivery note was created. If this is missing, then the `DISPATCHNOTIFICATION_DATE` is used. See <<Dispatch Notification Info>> for details.
 
 === Dispatch Notification Info
 
@@ -41,13 +41,13 @@ NOTE: The `GENERATION_DATE` defines, when the delivery note was created. If this
 [[Parties]]
 Parties
 ^^^^^^
-NOTE: 3 Parties are always required. BUYER, SUPPLIER and one of DELIVERY or FINAL_DELIVERY. See <<PartyRoles>>
+NOTE: 3 Parties are always required: BUYER, SUPPLIER and one of DELIVERY or FINAL_DELIVERY. See <<PartyRoles>>
 
 .Party Elements
 [width="100%",options="header"]
 |=======================================================================
 | Element name   | Description                | Example      | Remarks
-| PARTY_ID       | ID                         | A1234        | Attribute type defines party the source of the id. See <<PartyIdTypes>>
+| PARTY_ID       | ID                         | A1234        | Attribute type defines the source of the id. See <<PartyIdTypes>>
 | PARTY_ROLE     | Identifies the role of this party | <<PartyRoles>> |
 | ADDRESS        | Address data               |  <<Address>> | for delivery party required.
 |=======================================================================
@@ -61,8 +61,8 @@ The type of the party defines the source / defining party for the ID. This defin
 |========================================================================
 | Type              | Description             | Example
 | buyer_specific    | Defined by the Buyer    | A200492
-| gln               | Defined by the Supplier | C488684
-| supplier_specific | GLN / EAN               | 760000000000
+| supplier_specific | Defined by the Supplier | C488684
+| gln               | GLN / EAN               | 760000000000
 |========================================================================
 
 [[PartyRoles]]
