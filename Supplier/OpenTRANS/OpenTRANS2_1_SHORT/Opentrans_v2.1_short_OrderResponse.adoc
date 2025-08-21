@@ -126,15 +126,15 @@ The delivery end date will be considered as delivery date.
 |=======================================================
 | Element name         | Description              | Example
 | DELIVERY_START_DATE  | requested delivery date  | 2021-10-27
-| DELIVERY_END_DATE    | requested delivery date  | 2021-10-28T00:00:00
+| DELIVERY_END_DATE    | requested delivery date  | 2021-10-28
 |=======================================================
 
 .Example:
 [source,xml]
 ----
 <DELIVERY_DATE type="fixed">
-    <DELIVERY_START_DATE>2021-10-28T00:00:00</DELIVERY_START_DATE>
-    <DELIVERY_END_DATE>2021-10-28T00:00:00</DELIVERY_END_DATE>
+    <DELIVERY_START_DATE>2021-10-28</DELIVERY_START_DATE>
+    <DELIVERY_END_DATE>2021-10-28</DELIVERY_END_DATE>
 </DELIVERY_DATE>
 ----
 
