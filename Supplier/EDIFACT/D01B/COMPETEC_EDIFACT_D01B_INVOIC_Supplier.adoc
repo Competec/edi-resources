@@ -450,7 +450,7 @@ PAT+1++5:3:D:20'
 6+|*1100 \| Segment \| LIN \| Line item*
 6+|A segment identifying the line item by the line number and configuration level, and additionally, identifying the product or service ordered.
 |*Pos*     |*Segment/Element* |*Description*           |*Status* |*Example* |*Remarks*
-|010      ^|1082 |Line item number                     |C       m|+1 |
+|010      ^|1082 |Line item number                     |C       m|+1 |Must be integer
 |020      ^|1229 |Action request                       |C       m| |Not used
 .4+|030    |C212 |ITEM NUMBER IDENTIFICATION           |C       m| |
 ^|          7140 |Item number                          |C       m|+9120072855368 |EAN

@@ -450,7 +450,7 @@ RCS+26+11:::OPG'
 6+|*1040 \| Segment \| LIN \| Line item*
 6+|A segment identifying the line item by the line number and configuration level, and additionally, identifying the product or service ordered.
 |*Pos*        |*Segment/Element* |*Description*         |*Status* |*Example* |*Remarks*
-|010         ^|1082 |Line item number                   |M     m|+10000 |
+|010         ^|1082 |Line item number                   |M     m|+10000 |integer
 |020         ^|1229 |Action request/notification, coded |C       m| |Not used
 .4+|030      ^|C212 |ITEM NUMBER IDENTIFICATION         |C       m| |
 ^|             7140 |Item number                        |C       m|+7612532010634 |EAN

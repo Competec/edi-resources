@@ -281,7 +281,7 @@ NAD+DP+7613081000000++BRACK.CH AG+::Rossgassmoos 10+Willisau Brack.Alltron+CH+61
 6+|A segment identifying the line item by the line number and configuration level, and additionally,
 identifying the product or service ordered.
 |*Pos*         |*Segment/Element* |*Description*                          |*Status* |*Example* |*Remarks*
-|010          ^|1082 |Line item number                                   m|#M#      |+10 |Must be unique in message
+|010          ^|1082 |Line item number                                   m|#M#      |+10 |Must be integer, must be unique in message
 .2+|020    .2+^|1229 |Action request / notification description code     m|#M#      |+5  |
 4+|                   *_Supported codes:_* +
                        2 = deleted +

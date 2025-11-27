@@ -247,7 +247,7 @@ DOC+220+2403356'
 6+|*0280 \| Segment \| LIN \| Line item*
 6+|A segment identifying the line item by the line number and configuration level, and additionally, identifying the product or service ordered.
 |*Pos*     |*Segment/Element* |*Description* |*Status* |*Example* |*Remarks*
-|010      ^|1082 |Line item number                    |C       m|+1 |Customer's line number
+|010      ^|1082 |Line item number                    |C       m|+1 |Must be integer, should be original order line id
 |020      ^|1229 |Action request/notification, coded  |C       m| |Not used
 .4+|030   ^|C212 |ITEM NUMBER IDENTIFICATION          |C       m| |
 ^|          7140 |Item number                         |C       m|+1410248 |

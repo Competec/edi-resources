@@ -343,7 +343,7 @@ CPS+1'
 6+|A segment identifying the product being despatched
 |*Pos*    |*Segment/
 Element* |*Description* |*Status* |*Example* |*Remarks*
-|010     ^|1082 |Line item number                     |#M#       m|+1 |
+|010     ^|1082 |Line item number                     |#M#       m|+1 |Must be integer
 |020     ^|1229 |Action request/notification, coded   |C         m|   |Not used
 .4+|030      |C212 |ITEM NUMBER IDENTIFICATION        |C         m|   |
 ^|        7140 |Item number                           |C         m|+9120072855368 |EAN
