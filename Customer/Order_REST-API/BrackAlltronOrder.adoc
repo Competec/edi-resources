@@ -273,37 +273,37 @@ XML element: `<message_header>` (all fields are XML _attributes_).
 
 | source
 | `source`
-|
+| X
 | String
-| Sender identifier. Customer specific
+| Sender identifier. Customer specific, agreed between parties.
 
 | destination
 | `destination`
-|
+| X
 | String
-| Receiver identifier. Fixed value: `20`
+| Receiver identifier. 10 = Brack, 20 = Alltron, 70 = Jamei
 
 | accesscode
 | `accesscode`
-|
+| X
 | String
-| Access code (leave empty)
+| Access code (use empty string)
 
 | test_flag
 | `test_flag`
-|
+| X
 | String
-| `0` = production order; `1` = test order (will not be processed)
+| `0` = production order; `1` = test order (will only be processed in Stage/Test)
 
 | message_type
 | `message_type`
-|
+| X
 | String
 | Message type. Fixed value: `order`
 
 | document_version
 | `document_version`
-|
+| X
 | String
 | Format version, e.g. `2.30`
 
@@ -315,19 +315,19 @@ XML element: `<message_header>` (all fields are XML _attributes_).
 
 | generation_date
 | `generation_date`
-|
+| X
 | String
 | Date the message was generated (DD.MM.YYYY)
 
 | generation_time
 | `generation_time`
-|
+| X
 | String
 | Time the message was generated (HH:MM:SS)
 
 | email_confirmation
 | `eMail_confirmation`
-|
+| X
 | String
 | E-mail address to receive order confirmation
 
@@ -339,6 +339,7 @@ XML element: `<message_header>` (all fields are XML _attributes_).
 === _OrderHeader_
 
 XML element: `<order_header>`.
+Used to identify the order and involved parties.
 
 [.fields-OrderHeader]
 [cols="2,1,2,4"]
@@ -346,17 +347,17 @@ XML element: `<order_header>`.
 | Field Name | Required | Type | Description
 
 | order_reference
-|
+| X
 | <<OrderReference>>
 | Buyer order number and date
 
 | order_party
-|
+| X
 | <<OrderParty>>
 | Buyer and ship-to party
 
 | order_information
-|
+| X
 | <<OrderInformation>>
 | Additional order-level information
 
@@ -376,13 +377,13 @@ XML element: `<order_reference>`.
 
 | born
 | `<BORN>`
-|
+| X
 | String
 | Buyer Order Number — your internal purchase order number
 
 | bord
 | `<BORD>`
-|
+| X
 | String
 | Buyer Order Date (DD.MM.YYYY)
 
@@ -401,7 +402,7 @@ XML element: `<order_party>`.
 | Field Name | Required | Type | Description
 
 | buyer_party
-|
+| X
 | <<BuyerParty>>
 | Identifies the ordering party
 
@@ -425,7 +426,7 @@ XML element: `<buyer_party>`.
 | Field Name | Required | Type | Description
 
 | party_id
-|
+| X
 | <<PartyId>>
 | Account number of the buyer
 
@@ -469,7 +470,7 @@ XML element: `<party_id>`.
 
 | lpan
 | `<LPAN>`
-|
+| X
 | String
 | Logical Party Account Number
 
@@ -489,7 +490,7 @@ XML element: `<name_address>`. Delivery address details.
 
 | pna1
 | `<PNA1>`
-|
+| X
 | String
 | Party name line 1 (e.g. contact person)
 
@@ -499,15 +500,21 @@ XML element: `<name_address>`. Delivery address details.
 | String
 | Party name line 2 (e.g. company name)
 
+| pna3
+| `<PNA*>`
+|
+| String
+| Party name line 3 (e.g. company name)
+
 | prff
 | `<PRFF>`
 |
 | String
-| Party reference (e.g. internal reference printed on label)
+| Party reference (Contact Person)
 
 | pstr
 | `<PSTR>`
-|
+| X
 | String
 | Street and house number
 
@@ -515,17 +522,17 @@ XML element: `<name_address>`. Delivery address details.
 | `<PPOB>`
 |
 | String
-| PO Box (alternative to street)
+| PO Box
 
 | pcty
 | `<PCTY>`
-|
+| X
 | String
 | City
 
 | ppoc
 | `<PPOC>`
-|
+| X
 | String
 | Postal code
 
@@ -533,7 +540,7 @@ XML element: `<name_address>`. Delivery address details.
 | `<PCTR>`
 |
 | String
-| Country code (ISO 3166-1 alpha-2, e.g. `CH`)
+| Country code (ISO 3166-1 alpha-2, e.g. `CH`, used as default if not set)
 
 |===
 
@@ -550,7 +557,7 @@ XML element: `<order_information>`.
 | Field Name | Required | Type | Description
 
 | additional_information
-|
+| X
 | <<AdditionalInformation>>
 | Order-level flags and references
 
@@ -570,15 +577,15 @@ XML element: `<additional_information>`.
 
 | lngc
 | `<LNGC>`
-|
+| X
 | String
-| Language code (e.g. `G` = German, `F` = French)
+| Language Code (G = German, F = French)
 
 | shcf
 | `<SHCF>`
-|
+| X
 | String
-| Ship confirm flag (`Y` = send shipping confirmation, `N` = do not send)
+| Ship complete Flag (Y= yes, N= no, M= multiple shipments)
 
 | itxt
 | `<ITXT>`
@@ -590,43 +597,43 @@ XML element: `<additional_information>`.
 | `<CREF>`
 |
 | String
-| Customer reference / cost centre
+| Customer Reference
 
 | ccom
 | `<CCOM>`
 |
 | String
-| Customer comment
+| Customer Phone Number
 
 | carc
 | `<CARC>`
 |
 | String
-| Carrier code
+| Carrier Code 0 = As agreed(Standard) / Other options on request
 
 | sfdf
 | `<SFDF>`
 |
 | String
-| Special freight / delivery flag
+| not in use
 
 | rddt
 | `<RDDT>`
 |
 | String
-| Requested delivery date
+| Requested Delivery Date. Format: dd.mm.yyyy
 
 | ecun
 | `<ECUN>`
 |
 | String
-| E-Commerce user number
+| not in use
 
 | ccna
 | `<CCNA>`
 |
 | String
-| Credit card name
+| Customer reference, contact person
 
 | hain
 | `<HAIN>`
@@ -638,7 +645,7 @@ XML element: `<additional_information>`.
 | `<PCOD>`
 |
 | String
-| Promotion / promo code
+| Promotion Code (used for marketing campaigns or newsletters, defined by supplier)
 
 |===
 
@@ -675,25 +682,25 @@ XML element: `<line_item_number>`. Represents a single order line.
 
 | blin
 | `<BLIN>`
-|
+| X
 | String
-| Buyer line number — sequential line identifier (e.g. `10000001`, `10000002`, ...)
+| Buyer line number — sequential line identifier (e.g. `1`, `2`, ...)
 
 | part_number
 |
-|
+| X
 | <<PartNumber>>
 | Article identifiers
 
 | quantity
 |
-|
+| X
 | <<Quantity>>
 | Ordered quantity
 
 | price
 |
-|
+| X
 | <<Price>>
 | Expected unit price
 
@@ -719,9 +726,9 @@ XML element: `<part_number>`.
 
 | litm
 | `<LITM>`
-|
+| X
 | String
-| Competec article number
+| Brack.Alltron article number
 
 | mitm
 | `<MITM>`
@@ -744,7 +751,7 @@ XML element: `<quantity>`.
 | Field Name | Required | Type | Description
 
 | quantity_value
-|
+| X
 | <<QuantityValue>>
 | Wrapper for the quantity value
 
@@ -764,9 +771,9 @@ XML element: `<quantity_value>`.
 
 | oqty
 | `<OQTY>`
-|
+| X
 | Long (int64)
-| Order quantity (positive integer)
+| Order quantity (positive integer, at least 1)
 
 |===
 
@@ -784,9 +791,9 @@ XML element: `<price>`.
 
 | uprc
 | `<UPRC>`
-|
+| X
 | String
-| Unit price (decimal, e.g. `49.95`)
+| Unit price net (decimal, e.g. `49.95`)
 
 |===
 
@@ -806,7 +813,7 @@ XML element: `<additional_line_information>`. Optional per-line metadata.
 | `<BORN>`
 |
 | String
-| Buyer order number reference at line level
+| Buyer order number reference at line level (not in use)
 
 | ptxt
 | `<PTXT>`
@@ -818,19 +825,19 @@ XML element: `<additional_line_information>`. Optional per-line metadata.
 | `<SBNR>`
 |
 | String
-| Serial / batch number
+| not in use
 
 | eucn
 | `<EUCN>`
 |
 | String
-| End-user company number
+| not in use
 
 | euea
 | `<EUEA>`
 |
 | String
-| End-user e-mail address
+| not in use
 
 | lref
 | `<LREF>`
