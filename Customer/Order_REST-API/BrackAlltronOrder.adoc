@@ -1,0 +1,847 @@
+= Brack.Alltron EDI Services
+Brack.Alltron Service AG
+1.3.0
+:toc: left
+:numbered:
+:toclevels: 4
+:source-highlighter: highlightjs
+:keywords: openapi, rest, Brack.Alltron EDI Services
+:app-name: Brack.Alltron EDI Services
+
+[abstract]
+.Abstract
+Service that allows customers to submit EDI Orders in the Competec XML format.
+
+== Servers
+
+* Pre-Prod / Test Server: https://edidev.competec.ch/rest/ediservices/
+* Production Server: https://edi.competec.ch/rest/ediservices/
+
+== Access
+
+* *HTTP Basic* Authentication _basicAuth_
+
+== Endpoints
+
+[.BrackAlltronXML]
+=== Brack.Alltron XML
+
+
+[.postBrackAlltronOrder]
+==== postBrackAlltronOrder
+
+`POST /xml/v1/order`
+
+Endpoint to submit new Brack.Alltron XML order
+
+===== Description
+
+This endpoint accepts Orders in the Competec XML format: https://github.com/Competec/edi-resources/blob/main/Customer/Competec%20XML/Competec_Order_v2.4.1.xsd[Competec_Order_v2.4.1.xsd]
+
+Content-Type must be `text/xml`.
+
+====== Body Parameter
+
+[cols="2,3,1"]
+|===
+|Name| Description| Required
+
+| CompetecOrder
+| Brack.Alltron XML order document (Competec XML format, version 2.4.x) — see <<CompetecOrder>>
+| X
+
+|===
+
+
+===== Responses
+
+.HTTP Response Codes
+[cols="2,3,3"]
+|===
+| Code | Message | Example
+
+| 200
+| OK — order accepted.
+|
+
+| 400
+| Bad request. Content could be parsed, but data is invalid or incomplete.
+| `Buyer_party Party_id LPAN is missing.`
+
+| 401
+| Unauthorized. Authorization information is missing or invalid.
+|
+
+| 406
+| Not Acceptable. The provided body is not in the right format (not valid XML).
+|
+
+| 500
+| Internal Server Error. Unexpected exception.
+|
+
+|===
+
+===== Examples
+
+====== Minimal order (one line item)
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<order>
+  <message_header
+    source="L01"
+    destination="20"
+    accesscode=""
+    test_flag="0"
+    message_type="order"
+    document_version_date="03.05.2005"
+    document_version="2.30"
+    generation_date="01.01.2024"
+    generation_time="10:00:00"
+    eMail_confirmation="orders@yourcompany.ch"/>
+  <order_header>
+    <order_reference>
+      <BORN>PO-20240101-001</BORN>
+      <BORD>01.01.2024</BORD>
+    </order_reference>
+    <order_party>
+      <buyer_party>
+        <party_id>
+          <LPAN>A123456</LPAN>
+        </party_id>
+      </buyer_party>
+      <ship_to_party>
+        <party_id><LPAN/></party_id>
+        <name_address>
+          <PNA1>Max Mustermann</PNA1>
+          <PNA2>Muster GmbH</PNA2>
+          <PSTR>Musterstrasse 1</PSTR>
+          <PPOB/>
+          <PCTY>Zurich</PCTY>
+          <PPOC>8001</PPOC>
+          <PCTR>CH</PCTR>
+        </name_address>
+      </ship_to_party>
+    </order_party>
+    <order_information>
+      <additional_information>
+        <LNGC>G</LNGC>
+        <SHCF>Y</SHCF>
+      </additional_information>
+    </order_information>
+  </order_header>
+  <order_body>
+    <line_item_number>
+      <BLIN>10000001</BLIN>
+      <part_number>
+        <LITM>1234567</LITM>
+        <MITM/>
+      </part_number>
+      <quantity>
+        <quantity_value><OQTY>2</OQTY></quantity_value>
+      </quantity>
+      <price><UPRC>49.95</UPRC></price>
+    </line_item_number>
+  </order_body>
+</order>
+----
+
+====== Order with explicit ship-to address and multiple line items
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<order>
+  <message_header
+    source="L01"
+    destination="20"
+    accesscode=""
+    test_flag="0"
+    message_type="order"
+    document_version_date="03.05.2005"
+    document_version="2.30"
+    generation_date="01.01.2024"
+    generation_time="10:00:00"
+    eMail_confirmation="orders@yourcompany.ch"/>
+  <order_header>
+    <order_reference>
+      <BORN>PO-20240101-002</BORN>
+      <BORD>01.01.2024</BORD>
+    </order_reference>
+    <order_party>
+      <buyer_party>
+        <party_id>
+          <LPAN>A123456</LPAN>
+        </party_id>
+      </buyer_party>
+      <ship_to_party>
+        <party_id><LPAN>SH-9999</LPAN></party_id>
+        <name_address>
+          <PNA1>Maria Muster</PNA1>
+          <PNA2>Filiale Bern</PNA2>
+          <PRFF>Referenz-001</PRFF>
+          <PSTR>Bahnhofstrasse 10</PSTR>
+          <PPOB/>
+          <PCTY>Bern</PCTY>
+          <PPOC>3001</PPOC>
+          <PCTR>CH</PCTR>
+        </name_address>
+      </ship_to_party>
+    </order_party>
+    <order_information>
+      <additional_information>
+        <CCOM>1</CCOM>
+        <CREF>KOSTENSTELLE-42</CREF>
+        <LNGC>G</LNGC>
+        <SHCF>Y</SHCF>
+        <ITXT>Sonderlieferung bitte vor 12 Uhr</ITXT>
+      </additional_information>
+    </order_information>
+  </order_header>
+  <order_body>
+    <line_item_number>
+      <BLIN>10000001</BLIN>
+      <part_number>
+        <LITM>1234567</LITM>
+        <MITM>MFG-ART-001</MITM>
+      </part_number>
+      <quantity>
+        <quantity_value><OQTY>3</OQTY></quantity_value>
+      </quantity>
+      <price><UPRC>49.95</UPRC></price>
+    </line_item_number>
+    <line_item_number>
+      <BLIN>10000002</BLIN>
+      <part_number>
+        <LITM>7654321</LITM>
+        <MITM/>
+      </part_number>
+      <quantity>
+        <quantity_value><OQTY>1</OQTY></quantity_value>
+      </quantity>
+      <price><UPRC>199.00</UPRC></price>
+    </line_item_number>
+  </order_body>
+</order>
+----
+
+
+[#models]
+== Models
+
+
+[#CompetecOrder]
+=== _CompetecOrder_
+
+Root element `<order>`. Contains the full order document.
+
+[.fields-CompetecOrder]
+[cols="2,1,2,4"]
+|===
+| Field Name | Required | Type | Description
+
+| message_header
+| X
+| <<MessageHeader>>
+| Message envelope attributes (see <<MessageHeader>>)
+
+| order_header
+| X
+| <<OrderHeader>>
+| Order metadata: reference, parties, and additional information
+
+| order_body
+| X
+| <<OrderBody>>
+| Order line items
+
+|===
+
+
+
+[#MessageHeader]
+=== _MessageHeader_
+
+XML element: `<message_header>` (all fields are XML _attributes_).
+
+[.fields-MessageHeader]
+[cols="2,1,1,2,4"]
+|===
+| Field Name | XML Attribute | Required | Type | Description
+
+| source
+| `source`
+|
+| String
+| Sender identifier. Customer specific
+
+| destination
+| `destination`
+|
+| String
+| Receiver identifier. Fixed value: `20`
+
+| accesscode
+| `accesscode`
+|
+| String
+| Access code (leave empty)
+
+| test_flag
+| `test_flag`
+|
+| String
+| `0` = production order; `1` = test order (will not be processed)
+
+| message_type
+| `message_type`
+|
+| String
+| Message type. Fixed value: `order`
+
+| document_version
+| `document_version`
+|
+| String
+| Format version, e.g. `2.30`
+
+| document_version_date
+| `document_version_date`
+|
+| String
+| Release date of the format version, e.g. `03.05.2005`
+
+| generation_date
+| `generation_date`
+|
+| String
+| Date the message was generated (DD.MM.YYYY)
+
+| generation_time
+| `generation_time`
+|
+| String
+| Time the message was generated (HH:MM:SS)
+
+| email_confirmation
+| `eMail_confirmation`
+|
+| String
+| E-mail address to receive order confirmation
+
+|===
+
+
+
+[#OrderHeader]
+=== _OrderHeader_
+
+XML element: `<order_header>`.
+
+[.fields-OrderHeader]
+[cols="2,1,2,4"]
+|===
+| Field Name | Required | Type | Description
+
+| order_reference
+|
+| <<OrderReference>>
+| Buyer order number and date
+
+| order_party
+|
+| <<OrderParty>>
+| Buyer and ship-to party
+
+| order_information
+|
+| <<OrderInformation>>
+| Additional order-level information
+
+|===
+
+
+
+[#OrderReference]
+=== _OrderReference_
+
+XML element: `<order_reference>`.
+
+[.fields-OrderReference]
+[cols="2,1,1,2,4"]
+|===
+| Field Name | XML Element | Required | Type | Description
+
+| born
+| `<BORN>`
+|
+| String
+| Buyer Order Number — your internal purchase order number
+
+| bord
+| `<BORD>`
+|
+| String
+| Buyer Order Date (DD.MM.YYYY)
+
+|===
+
+
+
+[#OrderParty]
+=== _OrderParty_
+
+XML element: `<order_party>`.
+
+[.fields-OrderParty]
+[cols="2,1,2,4"]
+|===
+| Field Name | Required | Type | Description
+
+| buyer_party
+|
+| <<BuyerParty>>
+| Identifies the ordering party
+
+| ship_to_party
+|
+| <<ShipToParty>>
+| Delivery address; may differ from buyer party
+
+|===
+
+
+
+[#BuyerParty]
+=== _BuyerParty_
+
+XML element: `<buyer_party>`.
+
+[.fields-BuyerParty]
+[cols="2,1,2,4"]
+|===
+| Field Name | Required | Type | Description
+
+| party_id
+|
+| <<PartyId>>
+| Account number of the buyer
+
+|===
+
+
+
+[#ShipToParty]
+=== _ShipToParty_
+
+XML element: `<ship_to_party>`. To ship to the buyer's default address, leave `<LPAN/>` empty and provide a `<name_address>` block.
+
+[.fields-ShipToParty]
+[cols="2,1,2,4"]
+|===
+| Field Name | Required | Type | Description
+
+| party_id
+|
+| <<PartyId>>
+| Delivery address account number (leave `<LPAN/>` empty to use buyer default)
+
+| name_address
+|
+| <<NameAddress>>
+| Explicit delivery address
+
+|===
+
+
+
+[#PartyId]
+=== _PartyId_
+
+XML element: `<party_id>`.
+
+[.fields-PartyId]
+[cols="2,1,1,2,4"]
+|===
+| Field Name | XML Element | Required | Type | Description
+
+| lpan
+| `<LPAN>`
+|
+| String
+| Logical Party Account Number
+
+|===
+
+
+
+[#NameAddress]
+=== _NameAddress_
+
+XML element: `<name_address>`. Delivery address details.
+
+[.fields-NameAddress]
+[cols="2,1,1,2,4"]
+|===
+| Field Name | XML Element | Required | Type | Description
+
+| pna1
+| `<PNA1>`
+|
+| String
+| Party name line 1 (e.g. contact person)
+
+| pna2
+| `<PNA2>`
+|
+| String
+| Party name line 2 (e.g. company name)
+
+| prff
+| `<PRFF>`
+|
+| String
+| Party reference (e.g. internal reference printed on label)
+
+| pstr
+| `<PSTR>`
+|
+| String
+| Street and house number
+
+| ppob
+| `<PPOB>`
+|
+| String
+| PO Box (alternative to street)
+
+| pcty
+| `<PCTY>`
+|
+| String
+| City
+
+| ppoc
+| `<PPOC>`
+|
+| String
+| Postal code
+
+| pctr
+| `<PCTR>`
+|
+| String
+| Country code (ISO 3166-1 alpha-2, e.g. `CH`)
+
+|===
+
+
+
+[#OrderInformation]
+=== _OrderInformation_
+
+XML element: `<order_information>`.
+
+[.fields-OrderInformation]
+[cols="2,1,2,4"]
+|===
+| Field Name | Required | Type | Description
+
+| additional_information
+|
+| <<AdditionalInformation>>
+| Order-level flags and references
+
+|===
+
+
+
+[#AdditionalInformation]
+=== _AdditionalInformation_
+
+XML element: `<additional_information>`.
+
+[.fields-AdditionalInformation]
+[cols="2,1,1,2,4"]
+|===
+| Field Name | XML Element | Required | Type | Description
+
+| lngc
+| `<LNGC>`
+|
+| String
+| Language code (e.g. `G` = German, `F` = French)
+
+| shcf
+| `<SHCF>`
+|
+| String
+| Ship confirm flag (`Y` = send shipping confirmation, `N` = do not send)
+
+| itxt
+| `<ITXT>`
+|
+| String
+| Free-text delivery instruction
+
+| cref
+| `<CREF>`
+|
+| String
+| Customer reference / cost centre
+
+| ccom
+| `<CCOM>`
+|
+| String
+| Customer comment
+
+| carc
+| `<CARC>`
+|
+| String
+| Carrier code
+
+| sfdf
+| `<SFDF>`
+|
+| String
+| Special freight / delivery flag
+
+| rddt
+| `<RDDT>`
+|
+| String
+| Requested delivery date
+
+| ecun
+| `<ECUN>`
+|
+| String
+| E-Commerce user number
+
+| ccna
+| `<CCNA>`
+|
+| String
+| Credit card name
+
+| hain
+| `<HAIN>`
+|
+| String
+| Handling instruction
+
+| pcod
+| `<PCOD>`
+|
+| String
+| Promotion / promo code
+
+|===
+
+
+
+[#OrderBody]
+=== _OrderBody_
+
+XML element: `<order_body>`.
+
+[.fields-OrderBody]
+[cols="2,1,2,4"]
+|===
+| Field Name | Required | Type | Description
+
+| line_item_number
+| X
+| List of <<LineItemNumber>>
+| One or more order line items
+
+|===
+
+
+
+[#LineItemNumber]
+=== _LineItemNumber_
+
+XML element: `<line_item_number>`. Represents a single order line.
+
+[.fields-LineItemNumber]
+[cols="2,1,1,2,4"]
+|===
+| Field Name | XML Element | Required | Type | Description
+
+| blin
+| `<BLIN>`
+|
+| String
+| Buyer line number — sequential line identifier (e.g. `10000001`, `10000002`, ...)
+
+| part_number
+|
+|
+| <<PartNumber>>
+| Article identifiers
+
+| quantity
+|
+|
+| <<Quantity>>
+| Ordered quantity
+
+| price
+|
+|
+| <<Price>>
+| Expected unit price
+
+| additional_line_information
+|
+|
+| <<AdditionalLineInformation>>
+| Optional per-line metadata
+
+|===
+
+
+
+[#PartNumber]
+=== _PartNumber_
+
+XML element: `<part_number>`.
+
+[.fields-PartNumber]
+[cols="2,1,1,2,4"]
+|===
+| Field Name | XML Element | Required | Type | Description
+
+| litm
+| `<LITM>`
+|
+| String
+| Competec article number
+
+| mitm
+| `<MITM>`
+|
+| String
+| Manufacturer article number (optional; use empty element `<MITM/>` if not known)
+
+|===
+
+
+
+[#Quantity]
+=== _Quantity_
+
+XML element: `<quantity>`.
+
+[.fields-Quantity]
+[cols="2,1,2,4"]
+|===
+| Field Name | Required | Type | Description
+
+| quantity_value
+|
+| <<QuantityValue>>
+| Wrapper for the quantity value
+
+|===
+
+
+
+[#QuantityValue]
+=== _QuantityValue_
+
+XML element: `<quantity_value>`.
+
+[.fields-QuantityValue]
+[cols="2,1,1,2,4"]
+|===
+| Field Name | XML Element | Required | Type | Description
+
+| oqty
+| `<OQTY>`
+|
+| Long (int64)
+| Order quantity (positive integer)
+
+|===
+
+
+
+[#Price]
+=== _Price_
+
+XML element: `<price>`.
+
+[.fields-Price]
+[cols="2,1,1,2,4"]
+|===
+| Field Name | XML Element | Required | Type | Description
+
+| uprc
+| `<UPRC>`
+|
+| String
+| Unit price (decimal, e.g. `49.95`)
+
+|===
+
+
+
+[#AdditionalLineInformation]
+=== _AdditionalLineInformation_
+
+XML element: `<additional_line_information>`. Optional per-line metadata.
+
+[.fields-AdditionalLineInformation]
+[cols="2,1,1,2,4"]
+|===
+| Field Name | XML Element | Required | Type | Description
+
+| born
+| `<BORN>`
+|
+| String
+| Buyer order number reference at line level
+
+| ptxt
+| `<PTXT>`
+|
+| String
+| Product text / description
+
+| sbnr
+| `<SBNR>`
+|
+| String
+| Serial / batch number
+
+| eucn
+| `<EUCN>`
+|
+| String
+| End-user company number
+
+| euea
+| `<EUEA>`
+|
+| String
+| End-user e-mail address
+
+| lref
+| `<LREF>`
+|
+| String
+| Line reference (customer internal)
+
+| cctr
+| `<CCTR>`
+|
+| String
+| Cost centre at line level
+
+|===
