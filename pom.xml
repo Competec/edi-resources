@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ch.brackalltron.bapi</groupId>
+  <artifactId>edi-recources</artifactId>
+  <version>1.0.0</version>
+  <name>Brack.Alltron EDI Resources</name>
+  <packaging>pom</packaging>
+
+  <properties>
+    <resource-plugin.version>3.5.0</resource-plugin.version>
+    <openapi.generator.version>7.21.0</openapi.generator.version>
+  </properties>
+
+  <dependencies>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>${openapi.generator.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${project.basedir}/Customer/Order_REST-API/openapi/apidoc.json</inputSpec>
+              <generatorName>asciidoc</generatorName>
+              <output>${project.build.directory}/Customer/Order_REST-API</output>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${resource-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>copy-openapi-doc</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.basedir}/Customer/Order_REST-API/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}/Customer/Order_REST-API</directory>
+                  <includes>
+                    <include>index.adoc</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

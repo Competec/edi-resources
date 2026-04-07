@@ -1,0 +1,115 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Brack.Alltron EDI Services",
+    "description": "Service that allows customers to submit EDI Orders",
+    "contact": {
+      "name": "Brack.Alltron Service AG"
+    },
+    "version": "1.3.0"
+  },
+  "servers": [
+    {
+      "description": "Test/Pre-Prod Server using Test Data",
+      "url": "https://edidev.competec.ch/rest/ediservices/"
+    },
+    {
+      "description": "Production Server using Live Data",
+      "url": "https://edi.competec.ch/rest/ediservices/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Brack.Alltron XML",
+      "description": "Brack.Alltron XML Endpoint"
+    }
+  ],
+  "paths": {
+    "/xml/v1/order": {
+      "post": {
+        "tags": [
+          "Brack.Alltron XML"
+        ],
+        "summary": "Endpoint to submit new Brack.Alltron XML order",
+        "operationId": "postBrackAlltronOrder",
+        "parameters": [],
+        "requestBody": {
+          "description": "Brack.Alltron XML order document (proprietary format, version 2.3x) ",
+          "content": {
+            "application/xml": {
+              "schema": {
+                "$ref": "./schemas/competec-xml.json#/components/schemas/CompetecOrder"
+              },
+              "examples": {
+                "minimal-order": {
+                  "summary": "Minimal order with one line item",
+                  "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<order>\n  <message_header source=\"L01\" destination=\"20\" accesscode=\"\" test_flag=\"0\" message_type=\"order\" document_version_date=\"17.04.2025\" document_version=\"2.4.1\" generation_date=\"01.01.2024\" generation_time=\"10:00:00\" eMail_confirmation=\"orders@example.com\"/>\n  <order_header>\n    <order_reference>\n      <BORN>PO-20240101-001</BORN>\n      <BORD>01.01.2024</BORD>\n    </order_reference>\n    <order_party>\n      <buyer_party>\n        <party_id>\n          <LPAN>A123456</LPAN>\n        </party_id>\n      </buyer_party>\n      <ship_to_party>\n        <party_id><LPAN/></party_id>\n        <name_address>\n          <PNA1>Max Mustermann</PNA1>\n          <PNA2>Muster GmbH</PNA2>\n          <PSTR>Musterstrasse 1</PSTR>\n          <PPOB/>\n          <PCTY>Zurich</PCTY>\n          <PPOC>8001</PPOC>\n          <PCTR>CH</PCTR>\n        </name_address>\n      </ship_to_party>\n    </order_party>\n    <order_information>\n      <additional_information>\n        <LNGC>G</LNGC>\n        <SHCF>Y</SHCF>\n      </additional_information>\n    </order_information>\n  </order_header>\n  <order_body>\n    <line_item_number>\n      <BLIN>10000001</BLIN>\n      <part_number>\n        <LITM>1234567</LITM>\n        <MITM/>\n      </part_number>\n      <quantity>\n        <quantity_value><OQTY>2</OQTY></quantity_value>\n      </quantity>\n      <price><UPRC>49.95</UPRC></price>\n    </line_item_number>\n  </order_body>\n</order>"
+                },
+                "order-with-ship-to": {
+                  "summary": "Order with explicit ship-to address and promo code",
+                  "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<order>\n  <message_header source=\"L01\" destination=\"20\" accesscode=\"\" test_flag=\"0\" message_type=\"order\" document_version_date=\"17.04.2025\" document_version=\"2.4.1\" generation_date=\"01.01.2024\" generation_time=\"10:00:00\" eMail_confirmation=\"orders@example.com\"/>\n  <order_header>\n    <order_reference>\n      <BORN>PO-20240101-002</BORN>\n      <BORD>01.01.2024</BORD>\n    </order_reference>\n    <order_party>\n      <buyer_party>\n        <party_id>\n          <LPAN>A123456</LPAN>\n        </party_id>\n      </buyer_party>\n      <ship_to_party>\n        <party_id><LPAN>SH-9999</LPAN></party_id>\n        <name_address>\n          <PNA1>Maria Muster</PNA1>\n          <PNA2>Filiale Bern</PNA2>\n          <PRFF>Referenz-001</PRFF>\n          <PSTR>Bahnhofstrasse 10</PSTR>\n          <PPOB/>\n          <PCTY>Bern</PCTY>\n          <PPOC>3001</PPOC>\n          <PCTR>CH</PCTR>\n        </name_address>\n      </ship_to_party>\n    </order_party>\n    <order_information>\n      <additional_information>\n        <CCOM>1</CCOM>\n        <CREF>KOSTENSTELLE-42</CREF>\n        <LNGC>G</LNGC>\n        <SHCF>Y</SHCF>\n        <ITXT>Sonderlieferung bitte vor 12 Uhr</ITXT>\n      </additional_information>\n    </order_information>\n  </order_header>\n  <order_body>\n    <line_item_number>\n      <BLIN>10000001</BLIN>\n      <part_number>\n        <LITM>1234567</LITM>\n        <MITM>MFG-ART-001</MITM>\n      </part_number>\n      <quantity>\n        <quantity_value><OQTY>3</OQTY></quantity_value>\n      </quantity>\n      <price><UPRC>49.95</UPRC></price>\n    </line_item_number>\n    <line_item_number>\n      <BLIN>10000002</BLIN>\n      <part_number>\n        <LITM>7654321</LITM>\n        <MITM/>\n      </part_number>\n      <quantity>\n        <quantity_value><OQTY>1</OQTY></quantity_value>\n      </quantity>\n      <price><UPRC>199.00</UPRC></price>\n    </line_item_number>\n  </order_body>\n</order>"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200"
+          },
+          "400": {
+            "description": "Bad request. Content could be parsed, but data is invalid/incomplete.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Buyer_party Party_id LPAN is missing."
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/401"
+          },
+          "406": {
+            "$ref": "#/components/responses/406"
+          },
+          "500": {
+            "$ref": "#/components/responses/500"
+          }
+        },
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "OK"
+      },
+      "400": {
+        "description": "Bad request. Invalid XML payload."
+      },
+      "401": {
+        "description": "Unauthorized. Authorization information is missing or invalid."
+      },
+      "406": {
+        "description": "Not Acceptable. The provided body is not in the right format."
+      },
+      "500": {
+        "description": "Internal Server Error. Unexpected exception."
+      }
+    }
+  }
+}

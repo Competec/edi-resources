@@ -1,0 +1,435 @@
+{
+  "components": {
+    "schemas": {
+      "Additional_information": {
+        "type": "object",
+        "properties": {
+          "carc": {
+            "type": "string",
+            "xml": {
+              "name": "CARC"
+            }
+          },
+          "ccom": {
+            "type": "string",
+            "xml": {
+              "name": "CCOM"
+            }
+          },
+          "sfdf": {
+            "type": "string",
+            "xml": {
+              "name": "SFDF"
+            }
+          },
+          "rddt": {
+            "type": "string",
+            "xml": {
+              "name": "RDDT"
+            }
+          },
+          "itxt": {
+            "type": "string",
+            "xml": {
+              "name": "ITXT"
+            }
+          },
+          "ecun": {
+            "type": "string",
+            "xml": {
+              "name": "ECUN"
+            }
+          },
+          "ccna": {
+            "type": "string",
+            "xml": {
+              "name": "CCNA"
+            }
+          },
+          "lngc": {
+            "type": "string",
+            "xml": {
+              "name": "LNGC"
+            }
+          },
+          "shcf": {
+            "type": "string",
+            "xml": {
+              "name": "SHCF"
+            }
+          },
+          "cref": {
+            "type": "string",
+            "xml": {
+              "name": "CREF"
+            }
+          },
+          "hain": {
+            "type": "string",
+            "xml": {
+              "name": "HAIN"
+            }
+          },
+          "pcod": {
+            "type": "string",
+            "xml": {
+              "name": "PCOD"
+            }
+          }
+        }
+      },
+      "Order_reference": {
+        "type": "object",
+        "properties": {
+          "born": {
+            "type": "string",
+            "xml": {
+              "name": "BORN"
+            }
+          },
+          "bord": {
+            "type": "string",
+            "xml": {
+              "name": "BORD"
+            }
+          }
+        }
+      },
+      "Ship_to_party": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "$ref": "#/components/schemas/Party_id"
+          },
+          "name_address": {
+            "$ref": "#/components/schemas/Name_address"
+          }
+        }
+      },
+      "Order_party": {
+        "type": "object",
+        "properties": {
+          "buyer_party": {
+            "$ref": "#/components/schemas/Buyer_party"
+          },
+          "ship_to_party": {
+            "$ref": "#/components/schemas/Ship_to_party"
+          }
+        }
+      },
+      "Message_header": {
+        "type": "object",
+        "required": true,
+        "properties": {
+          "generation_date": {
+            "type": "string",
+            "xml": {
+              "attribute": true
+            }
+          },
+          "accesscode": {
+            "type": "string",
+            "xml": {
+              "attribute": true
+            }
+          },
+          "document_version_date": {
+            "type": "string",
+            "xml": {
+              "attribute": true
+            }
+          },
+          "destination": {
+            "type": "string",
+            "xml": {
+              "attribute": true
+            }
+          },
+          "message_type": {
+            "type": "string",
+            "xml": {
+              "attribute": true
+            }
+          },
+          "generation_time": {
+            "type": "string",
+            "xml": {
+              "attribute": true
+            }
+          },
+          "source": {
+            "type": "string",
+            "xml": {
+              "attribute": true
+            }
+          },
+          "test_flag": {
+            "type": "string",
+            "xml": {
+              "attribute": true
+            }
+          },
+          "document_version": {
+            "type": "string",
+            "xml": {
+              "attribute": true
+            }
+          },
+          "email_confirmation": {
+            "type": "string",
+            "xml": {
+              "name": "eMail_confirmation",
+              "attribute": true
+            }
+          }
+        }
+      },
+      "Buyer_party": {
+        "type": "object",
+        "properties": {
+          "party_id": {
+            "$ref": "#/components/schemas/Party_id"
+          }
+        }
+      },
+      "Order_header": {
+        "type": "object",
+        "required": true,
+        "properties": {
+          "order_reference": {
+            "$ref": "#/components/schemas/Order_reference"
+          },
+          "order_information": {
+            "$ref": "#/components/schemas/Order_information"
+          },
+          "order_party": {
+            "$ref": "#/components/schemas/Order_party"
+          }
+        }
+      },
+      "Part_number": {
+        "type": "object",
+        "properties": {
+          "litm": {
+            "type": "string",
+            "xml": {
+              "name": "LITM"
+            }
+          },
+          "mitm": {
+            "type": "string",
+            "xml": {
+              "name": "MITM"
+            }
+          }
+        }
+      },
+      "Additional_line_information": {
+        "type": "object",
+        "properties": {
+          "born": {
+            "type": "string",
+            "xml": {
+              "name": "BORN"
+            }
+          },
+          "ptxt": {
+            "type": "string",
+            "xml": {
+              "name": "PTXT"
+            }
+          },
+          "sbnr": {
+            "type": "string",
+            "xml": {
+              "name": "SBNR"
+            }
+          },
+          "eucn": {
+            "type": "string",
+            "xml": {
+              "name": "EUCN"
+            }
+          },
+          "euea": {
+            "type": "string",
+            "xml": {
+              "name": "EUEA"
+            }
+          },
+          "lref": {
+            "type": "string",
+            "xml": {
+              "name": "LREF"
+            }
+          },
+          "cctr": {
+            "type": "string",
+            "xml": {
+              "name": "CCTR"
+            }
+          }
+        }
+      },
+      "Quantity": {
+        "type": "object",
+        "properties": {
+          "quantity_value": {
+            "$ref": "#/components/schemas/Quantity_value"
+          }
+        }
+      },
+      "Party_id": {
+        "type": "object",
+        "properties": {
+          "lpan": {
+            "type": "string",
+            "xml": {
+              "name": "LPAN"
+            }
+          }
+        }
+      },
+      "CompetecOrder": {
+        "type": "object",
+        "externalDocs": {
+          "url": "https://github.com/Competec/edi-resources/blob/main/Customer/Competec%20XML/Competec_Order_v2.4.1.xsd"
+        },
+        "properties": {
+          "message_header": {
+            "$ref": "#/components/schemas/Message_header"
+          },
+          "order_header": {
+            "$ref": "#/components/schemas/Order_header"
+          },
+          "order_body": {
+            "$ref": "#/components/schemas/Order_body"
+          }
+        },
+        "required": true,
+        "xml": {
+          "name": "order"
+        }
+      },
+      "Order_body": {
+        "type": "object",
+        "required": true,
+        "properties": {
+          "line_item_number": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Line_item_number"
+            }
+          }
+        }
+      },
+      "Order_information": {
+        "type": "object",
+        "properties": {
+          "additional_information": {
+            "$ref": "#/components/schemas/Additional_information"
+          }
+        }
+      },
+      "Name_address": {
+        "type": "object",
+        "properties": {
+          "pctr": {
+            "type": "string",
+            "xml": {
+              "name": "PCTR"
+            }
+          },
+          "ppob": {
+            "type": "string",
+            "xml": {
+              "name": "PPOB"
+            }
+          },
+          "prff": {
+            "type": "string",
+            "xml": {
+              "name": "PRFF"
+            }
+          },
+          "pna2": {
+            "type": "string",
+            "xml": {
+              "name": "PNA2"
+            }
+          },
+          "pna1": {
+            "type": "string",
+            "xml": {
+              "name": "PNA1"
+            }
+          },
+          "pcty": {
+            "type": "string",
+            "xml": {
+              "name": "PCTY"
+            }
+          },
+          "ppoc": {
+            "type": "string",
+            "xml": {
+              "name": "PPOC"
+            }
+          },
+          "pstr": {
+            "type": "string",
+            "xml": {
+              "name": "PSTR"
+            }
+          }
+        }
+      },
+      "Line_item_number": {
+        "type": "object",
+        "properties": {
+          "additional_line_information": {
+            "$ref": "#/components/schemas/Additional_line_information"
+          },
+          "quantity": {
+            "$ref": "#/components/schemas/Quantity"
+          },
+          "price": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "part_number": {
+            "$ref": "#/components/schemas/Part_number"
+          },
+          "blin": {
+            "type": "string",
+            "xml": {
+              "name": "BLIN"
+            }
+          }
+        }
+      },
+      "Quantity_value": {
+        "type": "object",
+        "properties": {
+          "oqty": {
+            "type": "integer",
+            "format": "int64",
+            "xml": {
+              "name": "OQTY"
+            }
+          }
+        }
+      },
+      "Price": {
+        "type": "object",
+        "properties": {
+          "uprc": {
+            "type": "string",
+            "xml": {
+              "name": "UPRC"
+            }
+          }
+        }
+      }
+    }
+  }
+}

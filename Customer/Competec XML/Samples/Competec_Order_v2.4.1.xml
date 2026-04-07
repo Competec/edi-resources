@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <order>
-    <message_header 
-        source="Muster AG" 
-        destination="10" 
-        accesscode="ABC12345" 
+    <message_header
+        source="Muster AG"
+        destination="10"
+        accesscode="ABC12345"
         test_flag="1"
-        message_type="order" 
-        document_version_date="01.11.2024" 
-        document_version="1.0" 
-        generation_date="19.11.2024" 
-        generation_time="10:30:00" 
-        eMail_confirmation="confirmation@musterag.com" 
+        message_type="order"
+        document_version_date="17.04.2025"
+        document_version="2.4.1"
+        generation_date="19.11.2024"
+        generation_time="10:30:00"
+        eMail_confirmation="confirmation@musterag.com"
     />
     <order_header>
         <order_reference>
