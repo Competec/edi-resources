@@ -1,12 +1,13 @@
 = Brack.Alltron EDI Services
-Brack.Alltron Service AG
-1.3.0
-:toc: left
+Brack Alltron AG
 :numbered:
-:toclevels: 4
 :source-highlighter: highlightjs
 :keywords: openapi, rest, Brack.Alltron EDI Services
 :app-name: Brack.Alltron EDI Services
+:doctype: book
+:toc:
+:toclevels: 4
+v2.4.1, 17.04.2025
 
 [abstract]
 .Abstract
@@ -26,21 +27,17 @@ Service that allows customers to submit EDI Orders in the Competec XML format.
 [.BrackAlltronXML]
 === Brack.Alltron XML
 
-
-[.postBrackAlltronOrder]
-==== postBrackAlltronOrder
-
 `POST /xml/v1/order`
 
 Endpoint to submit new Brack.Alltron XML order
 
-===== Description
+==== Description
 
 This endpoint accepts Orders in the Competec XML format: https://github.com/Competec/edi-resources/blob/main/Customer/Competec%20XML/Competec_Order_v2.4.1.xsd[Competec_Order_v2.4.1.xsd]
 
 Content-Type must be `text/xml`.
 
-====== Body Parameter
+===== Body Parameter
 
 [cols="2,3,1"]
 |===
@@ -82,9 +79,9 @@ Content-Type must be `text/xml`.
 
 |===
 
-===== Examples
+==== Examples
 
-====== Minimal order (one line item)
+===== Minimal order (one line item)
 
 [source,xml]
 ----
@@ -96,11 +93,11 @@ Content-Type must be `text/xml`.
     accesscode=""
     test_flag="0"
     message_type="order"
-    document_version_date="03.05.2005"
+    document_version_date="17.04.2025"
     document_version="2.30"
     generation_date="01.01.2024"
     generation_time="10:00:00"
-    eMail_confirmation="orders@yourcompany.ch"/>
+    eMail_confirmation="orders@example.com"/>
   <order_header>
     <order_reference>
       <BORN>PO-20240101-001</BORN>
@@ -148,7 +145,7 @@ Content-Type must be `text/xml`.
 </order>
 ----
 
-====== Order with explicit ship-to address and multiple line items
+===== Order with explicit ship-to address and multiple line items
 
 [source,xml]
 ----
@@ -160,11 +157,11 @@ Content-Type must be `text/xml`.
     accesscode=""
     test_flag="0"
     message_type="order"
-    document_version_date="03.05.2005"
-    document_version="2.30"
+    document_version_date="17.04.2025"
+    document_version="2.4.1"
     generation_date="01.01.2024"
     generation_time="10:00:00"
-    eMail_confirmation="orders@yourcompany.ch"/>
+    eMail_confirmation="orders@example.com"/>
   <order_header>
     <order_reference>
       <BORN>PO-20240101-002</BORN>
@@ -305,13 +302,13 @@ XML element: `<message_header>` (all fields are XML _attributes_).
 | `document_version`
 | X
 | String
-| Format version, e.g. `2.30`
+| Format version, current version `2.4.1`
 
 | document_version_date
 | `document_version_date`
 |
 | String
-| Release date of the format version, e.g. `03.05.2005`
+| Release date of the format version, current version `17.04.2005`
 
 | generation_date
 | `generation_date`
