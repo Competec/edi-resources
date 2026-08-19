@@ -324,7 +324,7 @@ Sample Order
         </PARTIES>
         <ORDER_PARTIES_REFERENCE>
           <bmecat:BUYER_IDREF type="supplier_specific">A1234</bmecat:BUYER_IDREF>
-          <bmecat:SUPPLIER_IDREF type="buyer_specific">>B5432</bmecat:SUPPLIER_IDREF>
+          <bmecat:SUPPLIER_IDREF type="buyer_specific">B5432</bmecat:SUPPLIER_IDREF>
         </ORDER_PARTIES_REFERENCE>
         <bmecat:CURRENCY>CHF</bmecat:CURRENCY>
       </ORDER_INFO>
